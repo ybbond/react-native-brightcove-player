@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, View, Image, Text } from 'react-native';
+import { ScrollView, StyleSheet, View, Image, Text, Modal, TouchableHighlight } from 'react-native';
 import { Header } from 'react-navigation';
 import {BCPlayer} from 'react-native-brightcove-player';
+
 
 const ACCOUNT_ID = '1872491397001';
 const POLICY_KEY = 'BCpkADawqM2kD-MtMQswS0cLWgf553m4yFUj8vRkvNVw6wybPb1CSVo3Y4mPyR7RQPv5zMoJbxYZpJMBeHhHJYFW4_FIfrvRvid1_xNlUCkCr8mdh35esbt0gJsqi-C_zIXH8xpXRIeiM_44';
@@ -10,7 +11,6 @@ const VIDEO_ID = '4089564165001';
 const AppHeader = (headerProps) => <Header {... headerProps} />;
 
 export default class VideoHeader extends Component {
-
 	static navigationOptions = ({ navigation }) => {
 		return {
 			headerTitle: 'Header Example',
@@ -34,13 +34,16 @@ export default class VideoHeader extends Component {
 							header: null
 						}) : this.props.navigation.setParams({
 							header: AppHeader
-						})
+						});
 					}}
 					onEvent={(event) => {
 						console.log(event);
 					}}
 					rotateToFullScreen
-				/>
+				>
+					<View style={styles.test}><Text style={styles.testText}>Test</Text></View>
+
+				</BCPlayer>
 
 				<ScrollView style={styles.scrollView} contentContainerStyle={{flexGrow:1}}>
 					<View style={styles.articleContainer}>
@@ -105,5 +108,18 @@ const styles = StyleSheet.create({
 		width: '100%',
 		aspectRatio: 16/9,
 		backgroundColor: '#000000'
+	},
+	test: {
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+		width: 100,
+		height: 100,
+		backgroundColor: 'red',
+		zIndex: 2147483647,
+		elevation: 3
+	},
+	testText: {
+		color: 'white'
 	}
 });

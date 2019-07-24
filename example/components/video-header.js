@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, View, Image, Text, Modal, TouchableHighlight } from 'react-native';
+import { ScrollView, StyleSheet, View, Image, Text, Button } from 'react-native';
 import { Header } from 'react-navigation';
 import {BCPlayer} from 'react-native-brightcove-player';
+import Overlay from './Overlay';
 
 
 const ACCOUNT_ID = '1872491397001';
@@ -18,6 +19,10 @@ export default class VideoHeader extends Component {
 		}
 	}
 
+	state = {
+		overlayVisible: true
+	}
+
 	render() {
 		return (
 			<View style={styles.container}>
@@ -27,7 +32,7 @@ export default class VideoHeader extends Component {
 					policyKey={POLICY_KEY}
 					videoId={VIDEO_ID}
 					play={true}
-					autoPlay={true}
+					autoPlay={false}
 					fullscreen={false}
 					onFullScreen={isLandscape => {
 						isLandscape ? this.props.navigation.setParams({
@@ -40,10 +45,25 @@ export default class VideoHeader extends Component {
 						console.log(event);
 					}}
 					rotateToFullScreen
-				/>
-					{/* <View style={styles.test}><Text style={styles.testText}>Test</Text></View>
 
-				</BCPlayer> */}
+
+					//This should work once you can see the overlay in fullscreen
+					// onEnterFullScreen={() => {
+					// 	this.setState({ overlayVisible: true });
+					// }}
+					// onExitFullScreen={() => {
+					// 	this.setState({ overlayVisible: false });
+					// }}
+				>
+					{/* This overlay is the child of the BCPlayer */}
+					<Overlay style={styles.overlay} visible={this.state.overlayVisible}>
+						<Button
+							title="Close me"
+							style={styles.buttonText}
+							onPress={() => { this.setState({ overlayVisible: false })}} />
+					</Overlay>
+
+				</BCPlayer>
 
 				<ScrollView style={styles.scrollView} contentContainerStyle={{flexGrow:1}}>
 					<View style={styles.articleContainer}>
@@ -109,17 +129,11 @@ const styles = StyleSheet.create({
 		aspectRatio: 16/9,
 		backgroundColor: '#000000'
 	},
-	test: {
-		position: 'absolute',
-		bottom: 0,
-		left: 0,
-		width: 100,
-		height: 100,
-		backgroundColor: 'red',
-		zIndex: 2147483647,
+	overlay: {
+		...StyleSheet.absoluteFillObject,
 		elevation: 3
 	},
-	testText: {
+	buttonText: {
 		color: 'white'
 	}
 });

@@ -11,7 +11,6 @@
     if (self = [super initWithFrame:frame]) {
         [self setup];
     }
-
     return self;
 }
 
@@ -33,16 +32,14 @@
     _targetVolume = 1.0;
     _autoPlay = NO;
 
+
 	// UIView *rectView = [[UIView alloc] initWithFrame:CGRectMake(60,170,200,80)];
 	// rectView.backgroundColor = [UIColor clearColor];
 	// rectView.layer.borderColor = [[UIColor blueColor] CGColor];
 	// rectView.layer.borderWidth = 2.0;
-	//[_playerView.overlayView addSubview:[self.childViewControllers objectAtIndex: 0]];
+	// [_playerView.overlayView addSubview:rectView];
 
     [self addSubview:_playerView];
-
-	//[self printSubviewsWithIndentation:0];
-
 
 }
 

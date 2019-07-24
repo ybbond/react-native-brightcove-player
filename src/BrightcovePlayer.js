@@ -102,9 +102,7 @@ class BrightcovePlayer extends Component {
         onError={event => {
           this.props.onError && this.props.onError(event.nativeEvent)
         }}
-      >
-	  	{this.props.children}
-	  </NativeBrightcovePlayer>
+      />
     );
   }
 }

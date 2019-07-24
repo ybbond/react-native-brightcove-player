@@ -179,7 +179,7 @@ class BCPlayer extends Component {
                     playerId={this.props.playerId ? this.props.playerId : `com.brightcove/react-native/${Platform.OS}`}
                     onBeforeEnterFullscreen={this.toggleFS.bind(this)}
                     onBeforeExitFullscreen={this.toggleFS.bind(this)}
-                >{children}</BrightcovePlayerWithEvents>
+                />
             </Animated.View>
         )
     }

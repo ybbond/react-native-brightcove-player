@@ -40,10 +40,10 @@ export default class VideoHeader extends Component {
 						console.log(event);
 					}}
 					rotateToFullScreen
-				>
-					<View style={styles.test}><Text style={styles.testText}>Test</Text></View>
+				/>
+					{/* <View style={styles.test}><Text style={styles.testText}>Test</Text></View>
 
-				</BCPlayer>
+				</BCPlayer> */}
 
 				<ScrollView style={styles.scrollView} contentContainerStyle={{flexGrow:1}}>
 					<View style={styles.articleContainer}>

@@ -11,6 +11,7 @@
     if (self = [super initWithFrame:frame]) {
         [self setup];
     }
+
     return self;
 }
 
@@ -32,10 +33,20 @@
     _targetVolume = 1.0;
     _autoPlay = NO;
 
+	// UIView *rectView = [[UIView alloc] initWithFrame:CGRectMake(60,170,200,80)];
+	// rectView.backgroundColor = [UIColor clearColor];
+	// rectView.layer.borderColor = [[UIColor blueColor] CGColor];
+	// rectView.layer.borderWidth = 2.0;
+	//[_playerView.overlayView addSubview:[self.childViewControllers objectAtIndex: 0]];
+
     [self addSubview:_playerView];
+
+	//[self printSubviewsWithIndentation:0];
+
+
 }
 
-- (void)setupService {
+- (void)setupPlaybackService {
     if ((!_playbackService || _playbackServiceDirty) && _accountId && _policyKey) {
         _playbackServiceDirty = NO;
         _playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId policyKey:_policyKey];
@@ -83,14 +94,14 @@
 - (void)setReferenceId:(NSString *)referenceId {
     _referenceId = referenceId;
     _videoId = NULL;
-    [self setupService];
+    [self setupPlaybackService];
     [self loadMovie];
 }
 
 - (void)setVideoId:(NSString *)videoId {
     _videoId = videoId;
     _referenceId = NULL;
-    [self setupService];
+    [self setupPlaybackService];
     [self loadMovie];
 }
 
@@ -103,13 +114,13 @@
     _accountId = accountId;
     _playbackServiceDirty = YES;
     _playbackController.analytics.account = accountId;
-    [self setupService];
+    [self setupPlaybackService];
     [self loadMovie];
 }
 
 - (void)setPlayerId:(NSString *)playerId {
     _playbackController.analytics.destination = [NSString stringWithFormat: @"bcsdk://%@", playerId];
-    [self setupService];
+    [self setupPlaybackService];
     [self loadMovie];
 }
 
@@ -121,7 +132,7 @@
 - (void)setPolicyKey:(NSString *)policyKey {
     _policyKey = policyKey;
     _playbackServiceDirty = YES;
-    [self setupService];
+    [self setupPlaybackService];
     [self loadMovie];
 }
 
@@ -145,6 +156,7 @@
         [_playerView performScreenTransitionWithScreenMode:BCOVPUIScreenModeNormal];
     }
 }
+
 
 - (void)setVolume:(NSNumber*)volume {
     _targetVolume = volume.doubleValue;
@@ -191,7 +203,7 @@
 }
 
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didReceiveLifecycleEvent:(BCOVPlaybackSessionLifecycleEvent *)lifecycleEvent {
-    
+
     [self createAirplayIconOverlay];
 
     if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventReady) {
@@ -238,7 +250,7 @@
             if (self.onPause) {
                 self.onPause(@{});
             }
-            
+
             // Hide controls view after pause a video
             [self refreshControlsView];
         }
@@ -391,7 +403,7 @@
 
             [_playerView.controlsContainerView addSubview:_route];
             [_playerView.controlsContainerView sendSubviewToBack:_route];
-            
+
             NSLayoutConstraint *centreHorizontallyConstraint = [NSLayoutConstraint
                                                                 constraintWithItem:_route
                                                                 attribute:NSLayoutAttributeCenterX
@@ -400,7 +412,7 @@
                                                                 attribute:NSLayoutAttributeCenterX
                                                                 multiplier:1.0
                                                                 constant:0];
-            
+
             NSLayoutConstraint *centreVerticallyConstraint = [NSLayoutConstraint
                                                               constraintWithItem:_route
                                                               attribute:NSLayoutAttributeCenterY
@@ -409,7 +421,7 @@
                                                               attribute:NSLayoutAttributeCenterY
                                                               multiplier:1.0
                                                               constant:0];
-            
+
             NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:_route
                                                                                attribute:NSLayoutAttributeWidth
                                                                                relatedBy:NSLayoutRelationEqual
@@ -425,9 +437,9 @@
                                                                                 attribute:NSLayoutAttributeNotAnAttribute
                                                                                multiplier:1.0
                                                                                  constant:200];
-            
+
             [_playerView addConstraints:@[centreHorizontallyConstraint, centreVerticallyConstraint, widthConstraint, heightConstraint]];
-            
+
             [self layoutIfNeeded];
         }
     } else {

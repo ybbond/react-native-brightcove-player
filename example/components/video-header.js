@@ -56,12 +56,12 @@ export default class VideoHeader extends Component {
 					// }}
 				>
 					{/* This overlay is the child of the BCPlayer */}
-					<Overlay style={styles.overlay} visible={this.state.overlayVisible}>
+					{/* <Overlay style={styles.overlay} visible={this.state.overlayVisible}>
 						<Button
 							title="Close me"
 							style={styles.buttonText}
 							onPress={() => { this.setState({ overlayVisible: false })}} />
-					</Overlay>
+					</Overlay> */}
 
 				</BCPlayer>
 

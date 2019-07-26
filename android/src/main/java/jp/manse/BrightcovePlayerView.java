@@ -3,12 +3,12 @@ package jp.manse;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.brightcove.player.display.ExoPlayerVideoDisplayComponent;
 import com.brightcove.player.edge.Catalog;
@@ -50,7 +50,7 @@ import jp.manse.util.AudioFocusManager;
 import jp.manse.util.NetworkChangeReceiver;
 import jp.manse.util.NetworkUtil;
 
-public class BrightcovePlayerView extends RelativeLayout implements LifecycleEventListener,
+public class BrightcovePlayerView extends ConstraintLayout implements LifecycleEventListener,
         AudioFocusManager.AudioFocusChangedListener, NetworkChangeReceiver.NetworkChangeListener {
     private ThemedReactContext context;
     private ReactApplicationContext applicationContext;
@@ -83,11 +83,9 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         this.applicationContext = applicationContext;
         this.applicationContext.addLifecycleEventListener(this);
         this.setBackgroundColor(Color.BLACK);
-
-        this.playerVideoView = new BrightcoveExoPlayerVideoView(this.context.getCurrentActivity());
-
-        this.addView(this.playerVideoView);
-        this.playerVideoView.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        // Inflate the BrightcovePlayerView with the custom layout
+        inflate(this.context.getCurrentActivity(), R.layout.brightcove_player_view, this);
+        this.playerVideoView = findViewById(R.id.bc_player_view);
         this.playerVideoView.finishInitialization();
         this.mediaController = new BrightcoveMediaController(this.playerVideoView);
         this.playerVideoView.setMediaController(this.mediaController);
@@ -109,6 +107,14 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         // Create Network Change Broadcast receiver and register this class to listen to network status changes
         this.networkChangeReceiver = new NetworkChangeReceiver();
         registerConnectivityChange();
+
+        findViewById(R.id.native_overlay_button).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setVisibility(GONE);
+                BrightcovePlayerView.this.findViewById(R.id.native_overlay).setVisibility(GONE);
+            }
+        });
 
         EventEmitter eventEmitter = this.playerVideoView.getEventEmitter();
         eventEmitter.on(EventType.VIDEO_SIZE_KNOWN, new EventListener() {

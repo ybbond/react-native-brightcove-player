@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Header } from 'react-navigation';
-import {BCPlayer} from 'react-native-brightcove-player';
+import {BrightcovePlayer} from 'react-native-brightcove-player';
 
 const ACCOUNT_ID = '1872491397001';
 const POLICY_KEY = 'BCpkADawqM2kD-MtMQswS0cLWgf553m4yFUj8vRkvNVw6wybPb1CSVo3Y4mPyR7RQPv5zMoJbxYZpJMBeHhHJYFW4_FIfrvRvid1_xNlUCkCr8mdh35esbt0gJsqi-C_zIXH8xpXRIeiM_44';
@@ -22,7 +22,7 @@ export default class VideoHeader extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
-				<BCPlayer
+				<BrightcovePlayer
 					style={styles.player}
 					accountId={ACCOUNT_ID}
 					policyKey={POLICY_KEY}

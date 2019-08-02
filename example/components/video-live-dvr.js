@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Header } from 'react-navigation';
-import {BCPlayer} from 'react-native-brightcove-player';
+import {BrightcovePlayer} from 'react-native-brightcove-player';
 
 // Dream 11 Account
 const ACCOUNT_ID = '6008340455001';
@@ -22,7 +22,7 @@ export default class VideoHeader extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
-				<BCPlayer
+				<BrightcovePlayer
 					style={styles.player}
 					accountId={ACCOUNT_ID}
 					policyKey={POLICY_KEY}

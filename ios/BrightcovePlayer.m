@@ -130,11 +130,12 @@
 }
 
 - (void)setPlay:(BOOL)play {
-    if (_playing == play) return;
+    if (_playing && play) return;
     if (play) {
         [_playbackController play];
     } else {
         [_playbackController pause];
+        _playing = FALSE;
     }
 }
 
@@ -191,7 +192,7 @@
 }
 
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didReceiveLifecycleEvent:(BCOVPlaybackSessionLifecycleEvent *)lifecycleEvent {
-    
+
     [self createAirplayIconOverlay];
 
     if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventReady) {
@@ -223,7 +224,7 @@
                 @"mediainfo": mediainfo
             });
         }
-        if (_autoPlay) {
+        if (_autoPlay && _playing) {
             [_playbackController play];
         }
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPlay) {
@@ -238,7 +239,7 @@
             if (self.onPause) {
                 self.onPause(@{});
             }
-            
+
             // Hide controls view after pause a video
             [self refreshControlsView];
         }
@@ -391,7 +392,7 @@
 
             [_playerView.controlsContainerView addSubview:_route];
             [_playerView.controlsContainerView sendSubviewToBack:_route];
-            
+
             NSLayoutConstraint *centreHorizontallyConstraint = [NSLayoutConstraint
                                                                 constraintWithItem:_route
                                                                 attribute:NSLayoutAttributeCenterX
@@ -400,7 +401,7 @@
                                                                 attribute:NSLayoutAttributeCenterX
                                                                 multiplier:1.0
                                                                 constant:0];
-            
+
             NSLayoutConstraint *centreVerticallyConstraint = [NSLayoutConstraint
                                                               constraintWithItem:_route
                                                               attribute:NSLayoutAttributeCenterY
@@ -409,7 +410,7 @@
                                                               attribute:NSLayoutAttributeCenterY
                                                               multiplier:1.0
                                                               constant:0];
-            
+
             NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:_route
                                                                                attribute:NSLayoutAttributeWidth
                                                                                relatedBy:NSLayoutRelationEqual
@@ -425,9 +426,9 @@
                                                                                 attribute:NSLayoutAttributeNotAnAttribute
                                                                                multiplier:1.0
                                                                                  constant:200];
-            
+
             [_playerView addConstraints:@[centreHorizontallyConstraint, centreVerticallyConstraint, widthConstraint, heightConstraint]];
-            
+
             [self layoutIfNeeded];
         }
     } else {

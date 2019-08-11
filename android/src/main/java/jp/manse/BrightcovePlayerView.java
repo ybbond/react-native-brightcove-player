@@ -335,7 +335,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     }
 
     public void setPlay(boolean play) {
-        if (this.playing == play) return;
+        if (this.playing && play) return;
         if (play) {
             this.playerVideoView.start();
         } else {
@@ -591,7 +591,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 
     @Override
     public void onConnected() {
-        // When network is regained, if this is not and offline video (VideoToken check), set the network forced pause flag to false and start playback 
+        // When network is regained, if this is not and offline video (VideoToken check), set the network forced pause flag to false and start playback
         if (isNetworkForcedPause && (videoToken == null || videoToken.isEmpty())) {
             isNetworkForcedPause = false;
             onNetworkConnectivityChange(NetworkUtil.STATUS_RECONNECTED);
@@ -601,7 +601,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 
     @Override
     public void onDisconnected() {
-        // When network is disconnected, if this is not and offline video (VideoToken check), then set a flag that the video will be forcebly paused when 
+        // When network is disconnected, if this is not and offline video (VideoToken check), then set a flag that the video will be forcebly paused when
         // the playback of the remaining buffered part of the video ends
         if (videoToken == null || videoToken.isEmpty()) {
             isNetworkForcedPause = true;

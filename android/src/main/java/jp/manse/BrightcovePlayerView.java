@@ -10,6 +10,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.akamai.android.exoplayer2loader.AkamaiExoPlayerLoader;
+import com.brightcove.player.controller.ExoPlayerSourceSelector;
+import com.brightcove.player.controller.NoSourceFoundException;
 import com.brightcove.player.display.ExoPlayerVideoDisplayComponent;
 import com.brightcove.player.edge.Catalog;
 import com.brightcove.player.edge.OfflineCatalog;
@@ -23,6 +26,7 @@ import com.brightcove.player.mediacontroller.BrightcoveMediaControlRegistry;
 import com.brightcove.player.mediacontroller.buttons.SeekButtonController;
 import com.brightcove.player.model.Video;
 import com.brightcove.player.analytics.Analytics;
+import com.brightcove.player.util.StringUtil;
 import com.brightcove.player.view.BrightcoveExoPlayerVideoView;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
@@ -36,6 +40,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.RendererCapabilities;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -43,8 +48,11 @@ import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import jp.manse.util.AudioFocusManager;
 import jp.manse.util.NetworkChangeReceiver;
@@ -76,6 +84,11 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     private NetworkChangeReceiver networkChangeReceiver;
     private boolean isNetworkForcedPause = false;
     private boolean isRegisteredConnectivityChanged = false;
+    private AkamaiExoPlayerLoader akamaiExoPlayerLoader;
+    private String akamaiConfigURL = "http://media-analytics.akamaized.net/analyticsplugin/configuration/SampleBeacon"
+        + ".xml";
+    private String currentStreamURL;
+    private String uuid;
 
     public BrightcovePlayerView(ThemedReactContext context, ReactApplicationContext applicationContext) {
         super(context);
@@ -101,6 +114,10 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 
         // Implement the analytics to the  Brightcove player
         this.analytics = this.playerVideoView.getAnalytics();
+
+        // Create Akamai ExoPlayerLoader
+        akamaiExoPlayerLoader = new AkamaiExoPlayerLoader(this.context.getCurrentActivity(), akamaiConfigURL, true);
+        uuid = UUID.randomUUID().toString();
 
         // Create AudioFocusManager instance and register BrightcovePlayerView as a listener
         this.audioFocusManager = new AudioFocusManager(this.context);
@@ -131,6 +148,12 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         eventEmitter.on(EventType.DID_SET_VIDEO, new EventListener() {
             @Override
             public void processEvent(Event e) {
+                setCurrentStreamURL(BrightcovePlayerView.this.playerVideoView.getCurrentVideo());
+                // Initialization of the ExoplayerLoader should happen after a video is set, otherwise ExoPlayer
+                // instance will be null
+                initializeAkamaiExoplayerLoader();
+                setAkamaiExoPlayerLoaderData();
+
 				WritableMap mediaInfo = Arguments.createMap();
 				mediaInfo.putString("title", BrightcovePlayerView.this.mediaInfo.get("name").toString());
 
@@ -528,6 +551,11 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 	    // Register to audio focus changes when the screen resumes
 	    audioFocusManager.registerListener(this);
         registerConnectivityChange();
+        if (!StringUtil.isEmpty(currentStreamURL)) {
+            // Re-initialize ExoplayerLoader when the host resumes
+            initializeAkamaiExoplayerLoader();
+            setAkamaiExoPlayerLoaderData();
+        }
     }
 
     @Override
@@ -535,6 +563,8 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         // Unregister from audio focus changes when the screen goes in the background
         audioFocusManager.unregisterListener();
         unregisterConnectivityChange();
+        // release the loader when the host is paused
+        releaseAkamaiExoplayerLoader();
     }
 
     @Override
@@ -545,12 +575,15 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         // Unregister from audio focus changes when the screen goes in the background
         audioFocusManager.unregisterListener();
         unregisterConnectivityChange();
+        // release the loader when the view is detached
+        releaseAkamaiExoplayerLoader();
     }
 
     @Override
     public void onHostDestroy() {
         this.playerVideoView.destroyDrawingCache();
         this.playerVideoView.clear();
+        this.currentStreamURL = "";
         this.removeAllViews();
         this.applicationContext.removeLifecycleEventListener(this);
     }
@@ -642,5 +675,41 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
                         BrightcovePlayerManager.EVENT_NETWORK_CONNECTIVITY_CHANGED,
                         event
                 );
+    }
+
+    private void setCurrentStreamURL(Video video) {
+        try {
+            String videoCloudURL = (new ExoPlayerSourceSelector()).selectSource(video).getUrl();
+            URL url = new URL(videoCloudURL);
+            // We just need the base url and the path to be passed to initializeLoader
+            currentStreamURL = url.getProtocol() + "://" + url.getHost() + url.getPath();
+        } catch (NoSourceFoundException | MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initializeAkamaiExoplayerLoader() {
+	    ExoPlayer exoPlayer =
+                ((ExoPlayerVideoDisplayComponent)this.playerVideoView.getVideoDisplay()).getExoPlayer();
+        akamaiExoPlayerLoader.initializeLoader(exoPlayer, currentStreamURL);
+        if (exoPlayer != null) {
+            ((SimpleExoPlayer) exoPlayer).addAnalyticsListener(akamaiExoPlayerLoader);
+        }
+    }
+
+    private void setAkamaiExoPlayerLoaderData() {
+        BrightcovePlayerView.this.akamaiExoPlayerLoader.setData("title", BrightcovePlayerView.this.mediaInfo.get("name").toString());
+        BrightcovePlayerView.this.akamaiExoPlayerLoader.setData("contentLength", BrightcovePlayerView.this.mediaInfo.get("duration").toString());
+        BrightcovePlayerView.this.akamaiExoPlayerLoader.setData("device", android.os.Build.DEVICE);
+        BrightcovePlayerView.this.akamaiExoPlayerLoader.setData("playerId", BrightcovePlayerView.this.playerId);
+        BrightcovePlayerView.this.akamaiExoPlayerLoader.setData("eventName", "ExoPlayerLoaderReactPlayer");
+        BrightcovePlayerView.this.akamaiExoPlayerLoader.setViewerId(uuid);
+        BrightcovePlayerView.this.akamaiExoPlayerLoader.setViewerDiagnosticsId(uuid);
+    }
+
+    private void releaseAkamaiExoplayerLoader() {
+        if (akamaiExoPlayerLoader != null){
+            akamaiExoPlayerLoader.releaseLoader();
+        }
     }
 }

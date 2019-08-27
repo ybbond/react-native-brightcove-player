@@ -3,6 +3,8 @@
 
 @interface BrightcovePlayer () <BCOVPlaybackControllerDelegate, BCOVPUIPlayerViewDelegate>
 
+#define kAnalyticDataType [NSMutableArray arrayWithObjects:@"title",@"eventName",@"deliveryType",@"category",@"subCategory",@"playerId", nil]
+
 @end
 
 @implementation BrightcovePlayer
@@ -10,6 +12,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self setup];
+        [self setupAnalytics];
     }
     return self;
 }
@@ -33,6 +36,15 @@
     _autoPlay = NO;
 
     [self addSubview:_playerView];
+}
+
+- (void)setupAnalytics {
+    _analytics = [[AV_AkamaiMediaAnalytics alloc] initWithBeaconXML:@"http://media-analytics.akamaized.net/analyticsplugin/configuration/SampleBeacon.xml"];
+    [_analytics enableDebugLogging];
+    [_analytics enableServerIpLookup];
+    [_analytics enableLocationSupport];
+    [_analytics setViewerId:[[NSUUID UUID] UUIDString]];
+    [_analytics setViewerDiagnosticsId:[[NSUUID UUID] UUIDString]];
 }
 
 - (void)setupService {
@@ -195,13 +207,17 @@
     [self createAirplayIconOverlay];
 
     if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventReady) {
-
+        _playbackSession = session;
+        
         if ([[_playerType uppercaseString] isEqualToString:@"LIVE"]) {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicLiveControlLayout];
+            [_analytics setData:[kAnalyticDataType objectAtIndex:deliveryType] value:@"L"];
         } else if ([[_playerType uppercaseString] isEqualToString:@"DVR"]) {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicLiveDVRControlLayout];
+            [_analytics setData:[kAnalyticDataType objectAtIndex:deliveryType] value:@"T"];
         } else {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicVODControlLayout];
+            [_analytics setData:[kAnalyticDataType objectAtIndex:deliveryType] value:@"O"];
         }
         // Once the controls are set to the layout, define the controls to the state sent to the player
         _playerView.controlsView.hidden = _disableDefaultControl;
@@ -209,7 +225,6 @@
         UITapGestureRecognizer *seekToTimeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSeekToTimeTap:)];
         [_playerView.controlsView.progressSlider addGestureRecognizer:seekToTimeTap];
 
-        _playbackSession = session;
         [self refreshVolume];
         [self refreshBitRate];
 
@@ -226,12 +241,16 @@
         if (_autoPlay) {
             [_playbackController play];
         }
+        
+        [_analytics setData:[kAnalyticDataType objectAtIndex:title] value:_mediaInfo[@"name"]];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPlay) {
         _playing = true;
         [self refreshPlaybackRate];
         if (self.onPlay) {
             self.onPlay(@{});
         }
+        
+        [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"Play Event"];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPause) {
         if (_playing) {
             _playing = false;
@@ -241,11 +260,15 @@
             
             // Hide controls view after pause a video
             [self refreshControlsView];
+            
+            [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"Pause Event"];
         }
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventEnd) {
         if (self.onEnd) {
             self.onEnd(@{});
         }
+        
+        [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"End Event"];
     }
 
      /**
@@ -310,6 +333,7 @@
         [self emitError:error];
     }
 
+    [_analytics setMediaPlayer:_playbackSession.player];
 }
 
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didChangeDuration:(NSTimeInterval)duration {

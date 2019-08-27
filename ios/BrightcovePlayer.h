@@ -13,6 +13,7 @@
 #import <React/UIView+React.h>
 #import <AVKit/AVKit.h>
 #import <av_malibrary/av_malibrary-Swift.h>
+#import <sys/utsname.h>
 
 @interface BrightcovePlayer : UIView<BCOVOfflineVideoManagerDelegate>
 
@@ -39,6 +40,7 @@
 @property (nonatomic, copy) NSString *videoToken;
 @property (nonatomic, copy) NSString *accountId;
 @property (nonatomic, copy) NSString *policyKey;
+@property (nonatomic, copy) NSString *playerId;
 @property (nonatomic, copy) RCTDirectEventBlock onReady;
 @property (nonatomic, copy) RCTDirectEventBlock onMetadataLoaded;
 @property (nonatomic, copy) RCTDirectEventBlock onPlay;
@@ -62,11 +64,10 @@
 
 typedef enum {
     title = 0,
-    eventName,
-    deliveryType,
-    category,
-    subCategory,
-    playerId
+    contentLength,
+    device,
+    playerId,
+    eventName
 } AnalyticType;
 
 @end

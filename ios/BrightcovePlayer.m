@@ -3,7 +3,7 @@
 
 @interface BrightcovePlayer () <BCOVPlaybackControllerDelegate, BCOVPUIPlayerViewDelegate>
 
-#define kAnalyticDataType [NSMutableArray arrayWithObjects:@"title",@"eventName",@"deliveryType",@"category",@"subCategory",@"playerId", nil]
+#define kAnalyticDataType [NSMutableArray arrayWithObjects:@"title",@"contentLength",@"device",@"playerId",@"eventName", nil]
 
 @end
 
@@ -43,8 +43,26 @@
     [_analytics enableDebugLogging];
     [_analytics enableServerIpLookup];
     [_analytics enableLocationSupport];
-    [_analytics setViewerId:[[NSUUID UUID] UUIDString]];
-    [_analytics setViewerDiagnosticsId:[[NSUUID UUID] UUIDString]];
+}
+
+- (void)setupAnalyticsData {
+    [_analytics setData:[kAnalyticDataType objectAtIndex:title] value:_mediaInfo[@"name"]];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:contentLength] value:[NSString stringWithFormat:@"%@", _mediaInfo[@"duration"]]];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:device] value:deviceName()];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:playerId] value:_playerId];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"ReactNativeBrightcovePlayer"];
+    
+    NSString *uuid = [[NSUUID UUID] UUIDString];
+    
+    [_analytics setViewerId:uuid];
+    [_analytics setViewerDiagnosticsId:uuid];
+}
+
+NSString *deviceName() {
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
 }
 
 - (void)setupService {
@@ -120,6 +138,7 @@
 }
 
 - (void)setPlayerId:(NSString *)playerId {
+    _playerId = playerId;
     _playbackController.analytics.destination = [NSString stringWithFormat: @"bcsdk://%@", playerId];
     [self setupService];
     [self loadMovie];
@@ -211,13 +230,10 @@
         
         if ([[_playerType uppercaseString] isEqualToString:@"LIVE"]) {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicLiveControlLayout];
-            [_analytics setData:[kAnalyticDataType objectAtIndex:deliveryType] value:@"L"];
         } else if ([[_playerType uppercaseString] isEqualToString:@"DVR"]) {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicLiveDVRControlLayout];
-            [_analytics setData:[kAnalyticDataType objectAtIndex:deliveryType] value:@"T"];
         } else {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicVODControlLayout];
-            [_analytics setData:[kAnalyticDataType objectAtIndex:deliveryType] value:@"O"];
         }
         // Once the controls are set to the layout, define the controls to the state sent to the player
         _playerView.controlsView.hidden = _disableDefaultControl;
@@ -242,15 +258,13 @@
             [_playbackController play];
         }
         
-        [_analytics setData:[kAnalyticDataType objectAtIndex:title] value:_mediaInfo[@"name"]];
+        [self setupAnalyticsData];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPlay) {
         _playing = true;
         [self refreshPlaybackRate];
         if (self.onPlay) {
             self.onPlay(@{});
         }
-        
-        [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"Play Event"];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPause) {
         if (_playing) {
             _playing = false;
@@ -260,15 +274,13 @@
             
             // Hide controls view after pause a video
             [self refreshControlsView];
-            
-            [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"Pause Event"];
         }
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventEnd) {
         if (self.onEnd) {
             self.onEnd(@{});
         }
         
-        [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"End Event"];
+        [_analytics handlePlayEnd:endReasonCodePlay_End_Detected];
     }
 
      /**
@@ -332,7 +344,7 @@
         NSLog(@"Lifecycle Event Fail error: %@", error);
         [self emitError:error];
     }
-
+    
     [_analytics setMediaPlayer:_playbackSession.player];
 }
 
@@ -496,6 +508,8 @@
 
     NSString *code = [NSString stringWithFormat:@"%ld", (long)[error code]];
 
+    [_analytics handleError:code];
+    
     self.onError(@{@"error_code": code, @"message": [error localizedDescription]});
 }
 

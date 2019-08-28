@@ -12,6 +12,8 @@
 #import <React/RCTBridge.h>
 #import <React/UIView+React.h>
 #import <AVKit/AVKit.h>
+#import <av_malibrary/av_malibrary-Swift.h>
+#import <sys/utsname.h>
 
 @interface BrightcovePlayer : UIView<BCOVOfflineVideoManagerDelegate>
 
@@ -31,12 +33,14 @@
 @property (nonatomic) NSDictionary *mediaInfo;
 @property (nonatomic) NSTimeInterval segmentDuration;
 @property (nonatomic) AVRoutePickerView *route;
+@property (nonatomic) AV_AkamaiMediaAnalytics *analytics;
 
 @property (nonatomic, copy) NSString *referenceId;
 @property (nonatomic, copy) NSString *videoId;
 @property (nonatomic, copy) NSString *videoToken;
 @property (nonatomic, copy) NSString *accountId;
 @property (nonatomic, copy) NSString *policyKey;
+@property (nonatomic, copy) NSString *playerId;
 @property (nonatomic, copy) RCTDirectEventBlock onReady;
 @property (nonatomic, copy) RCTDirectEventBlock onMetadataLoaded;
 @property (nonatomic, copy) RCTDirectEventBlock onPlay;
@@ -58,5 +62,12 @@
 -(void) setFullscreen:(BOOL *)fullscreen;
 -(void)dispose;
 
+typedef enum {
+    title = 0,
+    contentLength,
+    device,
+    playerId,
+    eventName
+} AnalyticType;
 
 @end

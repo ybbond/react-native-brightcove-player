@@ -44,4 +44,6 @@ android {
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.brightcove.player:exoplayer2:6.8.1'
+    implementation files('lib/libAkamaiExoPlayerLoader.jar')
+    implementation files('lib/libAndroidMediaAnalytics.jar')
 }

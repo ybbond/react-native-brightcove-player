@@ -3,7 +3,14 @@
 
 @interface BrightcovePlayer () <BCOVPlaybackControllerDelegate, BCOVPUIPlayerViewDelegate>
 
+
+@property (nonatomic) NSLayoutConstraint *centreHorizontallyConstraint;
+@property (nonatomic) NSLayoutConstraint *centreVerticallyConstraint;
+@property (nonatomic) NSLayoutConstraint *widthConstraint;
+@property (nonatomic) NSLayoutConstraint *heightConstraint;
+
 #define kAnalyticDataType [NSMutableArray arrayWithObjects:@"title",@"contentLength",@"device",@"playerId",@"eventName", nil]
+
 
 @end
 
@@ -396,6 +403,10 @@ NSString *deviceName() {
     } else if (screenMode == BCOVPUIScreenModeFull) {
         if (self.onEnterFullscreen) {
             self.onEnterFullscreen(@{});
+            
+            dispatch_async(dispatch_get_main_queue(), ^(void){
+                [self createAirplayIconOverlay];
+            });
         }
     }
 }
@@ -428,48 +439,63 @@ NSString *deviceName() {
 
             [_playerView.controlsContainerView addSubview:_route];
             [_playerView.controlsContainerView sendSubviewToBack:_route];
-
-            NSLayoutConstraint *centreHorizontallyConstraint = [NSLayoutConstraint
-                                                                constraintWithItem:_route
+            
+            _centreHorizontallyConstraint = [NSLayoutConstraint constraintWithItem:_route
                                                                 attribute:NSLayoutAttributeCenterX
                                                                 relatedBy:NSLayoutRelationEqual
-                                                                toItem:_playerView
+                                                                toItem:_playerView.controlsContainerView
                                                                 attribute:NSLayoutAttributeCenterX
                                                                 multiplier:1.0
                                                                 constant:0];
+            
+           _centreVerticallyConstraint = [NSLayoutConstraint constraintWithItem:_route
+                                                             attribute:NSLayoutAttributeCenterY
+                                                             relatedBy:NSLayoutRelationEqual
+                                                             toItem:_playerView.controlsContainerView
+                                                             attribute:NSLayoutAttributeCenterY
+                                                             multiplier:1.0
+                                                             constant:0];
+            
+            _widthConstraint = [NSLayoutConstraint constraintWithItem:_route attribute:NSLayoutAttributeWidth
+                                                                             relatedBy:NSLayoutRelationEqual
+                                                                             toItem:nil
+                                                                             attribute:NSLayoutAttributeNotAnAttribute
+                                                                             multiplier:1.0
+                                                                             constant:200];
 
-            NSLayoutConstraint *centreVerticallyConstraint = [NSLayoutConstraint
-                                                              constraintWithItem:_route
-                                                              attribute:NSLayoutAttributeCenterY
-                                                              relatedBy:NSLayoutRelationEqual
-                                                              toItem:_playerView
-                                                              attribute:NSLayoutAttributeCenterY
-                                                              multiplier:1.0
-                                                              constant:0];
-
-            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:_route
-                                                                               attribute:NSLayoutAttributeWidth
-                                                                               relatedBy:NSLayoutRelationEqual
-                                                                                  toItem:nil
-                                                                               attribute:NSLayoutAttributeNotAnAttribute
+            _heightConstraint = [NSLayoutConstraint constraintWithItem:_route attribute:NSLayoutAttributeHeight
+                                                                              relatedBy:NSLayoutRelationEqual
+                                                                              toItem:nil
+                                                                              attribute:NSLayoutAttributeNotAnAttribute
                                                                               multiplier:1.0
-                                                                                constant:200];
-
-            NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:_route
-                                                                                attribute:NSLayoutAttributeHeight
-                                                                                relatedBy:NSLayoutRelationEqual
-                                                                                   toItem:nil
-                                                                                attribute:NSLayoutAttributeNotAnAttribute
-                                                                               multiplier:1.0
-                                                                                 constant:200];
-
-            [_playerView addConstraints:@[centreHorizontallyConstraint, centreVerticallyConstraint, widthConstraint, heightConstraint]];
-
+                                                                              constant:200];
+            
+            [_playerView.controlsContainerView addConstraints:@[_centreHorizontallyConstraint, _centreVerticallyConstraint,
+                                                                _widthConstraint, _heightConstraint]];
+            
             [self layoutIfNeeded];
         }
     } else {
-        [_route removeFromSuperview];
+        [self cleanRemoveFromSuperview:_route];
     }
+}
+
+- (void)cleanRemoveFromSuperview:(UIView *)view {
+    if(!view || !view.superview) return;
+    
+    //First remove any constraints on the superview
+    NSMutableArray * constraints_to_remove = [NSMutableArray new];
+    UIView * superview = view.superview;
+    
+    for( NSLayoutConstraint * constraint in superview.constraints) {
+        if( constraint.firstItem == view ||constraint.secondItem == view ) {
+            [constraints_to_remove addObject:constraint];
+        }
+    }
+    [superview removeConstraints:constraints_to_remove];
+    
+    //Then remove the view itself.
+    [view removeFromSuperview];
 }
 
 - (BOOL)isAudioSessionUsingAirplayOutputRoute {

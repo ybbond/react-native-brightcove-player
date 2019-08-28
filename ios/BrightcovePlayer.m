@@ -3,6 +3,8 @@
 
 @interface BrightcovePlayer () <BCOVPlaybackControllerDelegate, BCOVPUIPlayerViewDelegate>
 
+#define kAnalyticDataType [NSMutableArray arrayWithObjects:@"title",@"contentLength",@"device",@"playerId",@"eventName", nil]
+
 @end
 
 @implementation BrightcovePlayer
@@ -10,6 +12,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self setup];
+        [self setupAnalytics];
     }
     return self;
 }
@@ -33,6 +36,33 @@
     _autoPlay = NO;
 
     [self addSubview:_playerView];
+}
+
+- (void)setupAnalytics {
+    _analytics = [[AV_AkamaiMediaAnalytics alloc] initWithBeaconXML:@"http://media-analytics.akamaized.net/analyticsplugin/configuration/SampleBeacon.xml"];
+    [_analytics enableDebugLogging];
+    [_analytics enableServerIpLookup];
+    [_analytics enableLocationSupport];
+}
+
+- (void)setupAnalyticsData {
+    [_analytics setData:[kAnalyticDataType objectAtIndex:title] value:_mediaInfo[@"name"]];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:contentLength] value:[NSString stringWithFormat:@"%@", _mediaInfo[@"duration"]]];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:device] value:deviceName()];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:playerId] value:_playerId];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"ReactNativeBrightcovePlayer"];
+    
+    NSString *uuid = [[NSUUID UUID] UUIDString];
+    
+    [_analytics setViewerId:uuid];
+    [_analytics setViewerDiagnosticsId:uuid];
+}
+
+NSString *deviceName() {
+    struct utsname systemInfo;
+    uname(&systemInfo);
+    
+    return [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
 }
 
 - (void)setupService {
@@ -108,6 +138,7 @@
 }
 
 - (void)setPlayerId:(NSString *)playerId {
+    _playerId = playerId;
     _playbackController.analytics.destination = [NSString stringWithFormat: @"bcsdk://%@", playerId];
     [self setupService];
     [self loadMovie];
@@ -196,7 +227,8 @@
     [self createAirplayIconOverlay];
 
     if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventReady) {
-
+        _playbackSession = session;
+        
         if ([[_playerType uppercaseString] isEqualToString:@"LIVE"]) {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicLiveControlLayout];
         } else if ([[_playerType uppercaseString] isEqualToString:@"DVR"]) {
@@ -210,7 +242,6 @@
         UITapGestureRecognizer *seekToTimeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSeekToTimeTap:)];
         [_playerView.controlsView.progressSlider addGestureRecognizer:seekToTimeTap];
 
-        _playbackSession = session;
         [self refreshVolume];
         [self refreshBitRate];
 
@@ -227,6 +258,8 @@
         if (_autoPlay && _playing) {
             [_playbackController play];
         }
+        
+        [self setupAnalyticsData];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPlay) {
         _playing = true;
         [self refreshPlaybackRate];
@@ -247,6 +280,8 @@
         if (self.onEnd) {
             self.onEnd(@{});
         }
+        
+        [_analytics handlePlayEnd:endReasonCodePlay_End_Detected];
     }
 
      /**
@@ -310,7 +345,8 @@
         NSLog(@"Lifecycle Event Fail error: %@", error);
         [self emitError:error];
     }
-
+    
+    [_analytics setMediaPlayer:_playbackSession.player];
 }
 
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didChangeDuration:(NSTimeInterval)duration {
@@ -473,6 +509,8 @@
 
     NSString *code = [NSString stringWithFormat:@"%ld", (long)[error code]];
 
+    [_analytics handleError:code];
+    
     self.onError(@{@"error_code": code, @"message": [error localizedDescription]});
 }
 

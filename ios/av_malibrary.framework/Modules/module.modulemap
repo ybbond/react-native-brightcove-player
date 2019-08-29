@@ -1,4 +1,0 @@
-framework module av_malibrary {
-    header "av_malibrary-Swift.h"
-    requires objc
-}

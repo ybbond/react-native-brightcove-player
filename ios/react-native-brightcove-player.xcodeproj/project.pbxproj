@@ -12,8 +12,6 @@
 		713443E1229BDB220071B8E4 /* BrightcovePlayerPosterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 713443DA229BDB220071B8E4 /* BrightcovePlayerPosterManager.m */; };
 		713443E2229BDB220071B8E4 /* BrightcovePlayerUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 713443DB229BDB220071B8E4 /* BrightcovePlayerUtil.m */; };
 		713443E3229BDB220071B8E4 /* BrightcovePlayerPoster.m in Sources */ = {isa = PBXBuildFile; fileRef = 713443DC229BDB220071B8E4 /* BrightcovePlayerPoster.m */; };
-		9694BA472315B12F004F052F /* av_malibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9694BA462315B12F004F052F /* av_malibrary.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		9694BA492315B15D004F052F /* av_malibrary.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9694BA462315B12F004F052F /* av_malibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9694BA4C2315B19A004F052F /* BrightcovePlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9694BA4B2315B199004F052F /* BrightcovePlayer.m */; };
 /* End PBXBuildFile section */
 
@@ -24,16 +22,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9694BA482315B152004F052F /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				9694BA492315B15D004F052F /* av_malibrary.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,7 +39,6 @@
 		713443DB229BDB220071B8E4 /* BrightcovePlayerUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrightcovePlayerUtil.m; sourceTree = "<group>"; };
 		713443DC229BDB220071B8E4 /* BrightcovePlayerPoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrightcovePlayerPoster.m; sourceTree = "<group>"; };
 		713443DD229BDB220071B8E4 /* BrightcovePlayerPoster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrightcovePlayerPoster.h; sourceTree = "<group>"; };
-		9694BA462315B12F004F052F /* av_malibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = av_malibrary.framework; sourceTree = "<group>"; };
 		9694BA4A2315B199004F052F /* BrightcovePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrightcovePlayer.h; sourceTree = "<group>"; };
 		9694BA4B2315B199004F052F /* BrightcovePlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrightcovePlayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,7 +48,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9694BA472315B12F004F052F /* av_malibrary.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,7 +57,6 @@
 		7100FCAA20A432C40014A205 = {
 			isa = PBXGroup;
 			children = (
-				9694BA462315B12F004F052F /* av_malibrary.framework */,
 				9694BA4A2315B199004F052F /* BrightcovePlayer.h */,
 				9694BA4B2315B199004F052F /* BrightcovePlayer.m */,
 				713443D3229BDB220071B8E4 /* BrightcovePlayerManager.h */,
@@ -106,7 +91,6 @@
 				7100FCAF20A432C40014A205 /* Sources */,
 				7100FCB020A432C40014A205 /* Frameworks */,
 				7100FCB120A432C40014A205 /* CopyFiles */,
-				9694BA482315B152004F052F /* CopyFiles */,
 			);
 			buildRules = (
 			);

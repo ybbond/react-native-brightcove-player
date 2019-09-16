@@ -9,6 +9,7 @@
 #import <BrightcovePlayerSDK/BCOVPlaybackSession.h>
 #import <BrightcovePlayerSDK/BCOVPUISlider.h>
 #import <BrightcovePlayerSDK/BCOVOfflineVideoManager.h>
+#import <BrightcovePlayerSDK/BCOVPUIButton.h>
 #import <React/RCTBridge.h>
 #import <React/UIView+React.h>
 #import <AVKit/AVKit.h>
@@ -57,6 +58,9 @@
 @property (nonatomic, copy) RCTDirectEventBlock onExitFullscreen;
 @property (nonatomic, copy) RCTDirectEventBlock onError;
 @property (nonatomic, copy) RCTDirectEventBlock onNetworkConnectivityChange;
+@property (nonatomic, copy) RCTDirectEventBlock onWatchedTime;
+@property (nonatomic, copy) RCTDirectEventBlock onRewind;
+@property (nonatomic, copy) RCTDirectEventBlock onLiveSelection;
 
 -(void) seekTo:(NSNumber *)time;
 -(void) setFullscreen:(BOOL *)fullscreen;

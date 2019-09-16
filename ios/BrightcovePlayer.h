@@ -57,6 +57,7 @@
 @property (nonatomic, copy) RCTDirectEventBlock onExitFullscreen;
 @property (nonatomic, copy) RCTDirectEventBlock onError;
 @property (nonatomic, copy) RCTDirectEventBlock onNetworkConnectivityChange;
+@property (nonatomic, copy) RCTDirectEventBlock onWatchedTime;
 
 -(void) seekTo:(NSNumber *)time;
 -(void) setFullscreen:(BOOL *)fullscreen;

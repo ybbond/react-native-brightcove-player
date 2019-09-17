@@ -288,6 +288,22 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
                 return false;
             }
         });
+
+        this.playerVideoView.getBrightcoveMediaController().getBrightcoveControlBar().findViewById(R.id.live).setOnTouchListener(new OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View v, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    WritableMap event = Arguments.createMap();
+                    ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
+                    reactContext
+                        .getJSModule(RCTEventEmitter.class)
+                        .receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_LIVE_BUTTON_CLICKED, event);
+                }
+                return false;
+            }
+        });
+
 		// Emits all the errors back to the React Native
       	eventEmitter.on(EventType.ERROR, new EventListener() {
             @Override

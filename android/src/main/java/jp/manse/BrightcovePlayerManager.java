@@ -34,6 +34,7 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
     public static final String EVENT_ENTER_FULLSCREEN = "event_enter_fullscreen";
     public static final String EVENT_EXIT_FULLSCREEN = "event_exit_fullscreen";
     public static final String EVENT_NETWORK_CONNECTIVITY_CHANGED = "event_network_connectivity_changed";
+    public static final String EVENT_LIVE_BUTTON_CLICKED = "event_live_button_clicked";
     public static final String PROPERTY_EVENT_SOURCE = "eventSource";
     public static final String PROPERTY_EVENT_SOURCE_CLICKED = "clicked";
     public static final String PROPERTY_EVENT_SOURCE_AUTO = "auto";
@@ -168,6 +169,7 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
         map.put(EVENT_EXIT_FULLSCREEN, (Object) MapBuilder.of("registrationName", "onExitFullscreen"));
         map.put(EVENT_ERROR, (Object) MapBuilder.of("registrationName", "onError"));
         map.put(EVENT_NETWORK_CONNECTIVITY_CHANGED, (Object) MapBuilder.of("registrationName", "onNetworkConnectivityChange"));
+        map.put(EVENT_LIVE_BUTTON_CLICKED, (Object) MapBuilder.of("registrationName", "Live Button Clicked"));
         return map;
     }
 }

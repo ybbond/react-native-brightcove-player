@@ -34,6 +34,9 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
     public static final String EVENT_ENTER_FULLSCREEN = "event_enter_fullscreen";
     public static final String EVENT_EXIT_FULLSCREEN = "event_exit_fullscreen";
     public static final String EVENT_NETWORK_CONNECTIVITY_CHANGED = "event_network_connectivity_changed";
+    public static final String PROPERTY_EVENT_SOURCE = "eventSource";
+    public static final String PROPERTY_EVENT_SOURCE_CLICKED = "clicked";
+    public static final String PROPERTY_EVENT_SOURCE_AUTO = "auto";
 
     private ReactApplicationContext applicationContext;
 

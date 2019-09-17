@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.Choreographer;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -76,6 +77,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 	private Map<String, Object> mediaInfo;
     private boolean autoPlay = true;
     private boolean playing = false;
+    private boolean pauseButtonClicked = false;
     private int bitRate = 0;
     private float playbackRate = 1;
 	private static final int SEEK_AMOUNT = 10000; // In milliseconds
@@ -181,6 +183,12 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
             public void processEvent(Event e) {
                 BrightcovePlayerView.this.playing = false;
                 WritableMap event = Arguments.createMap();
+                if (pauseButtonClicked) {
+                    event.putString(BrightcovePlayerManager.PROPERTY_EVENT_SOURCE, BrightcovePlayerManager.PROPERTY_EVENT_SOURCE_CLICKED);
+                    pauseButtonClicked = false;
+                } else {
+                    event.putString(BrightcovePlayerManager.PROPERTY_EVENT_SOURCE, BrightcovePlayerManager.PROPERTY_EVENT_SOURCE_AUTO);
+                }
                 ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_PAUSE, event);
                 // When the playback stops, release the audio focus
@@ -265,6 +273,19 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
                 reactContext
                         .getJSModule(RCTEventEmitter.class)
                         .receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_BUFFERING_COMPLETED, event);
+            }
+        });
+
+        this.playerVideoView.getBrightcoveMediaController().getBrightcoveControlBar().findViewById(R.id.play).setOnTouchListener(new OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if(playerVideoView.isPlaying()) {
+                        pauseButtonClicked = true;
+                    }
+                }
+                return false;
             }
         });
 		// Emits all the errors back to the React Native

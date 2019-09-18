@@ -172,7 +172,7 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
         map.put(EVENT_EXIT_FULLSCREEN, (Object) MapBuilder.of("registrationName", "onExitFullscreen"));
         map.put(EVENT_ERROR, (Object) MapBuilder.of("registrationName", "onError"));
         map.put(EVENT_NETWORK_CONNECTIVITY_CHANGED, (Object) MapBuilder.of("registrationName", "onNetworkConnectivityChange"));
-        map.put(EVENT_LIVE_BUTTON_CLICKED, (Object) MapBuilder.of("registrationName", "Live Button Clicked"));
+        map.put(EVENT_LIVE_BUTTON_CLICKED, (Object) MapBuilder.of("registrationName", "LIVE_BUTTON_CLICKED"));
         map.put(EVENT_WATCHED_TIME, (Object) MapBuilder.of("registrationName", "WATCHED_TIME"));
         map.put(EVENT_REWIND_BUTTON_CLICKED, (Object) MapBuilder.of("registrationName", "REWIND_BUTTON_CLICKED"));
         return map;

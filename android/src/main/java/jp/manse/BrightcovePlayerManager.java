@@ -40,6 +40,7 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
     public static final String PROPERTY_EVENT_SOURCE_AUTO = "auto";
     public static final String EVENT_WATCHED_TIME = "event_watched_time";
     public static final String PROPERTY_WATCHED_TIME_DURATION = "duration";
+    public static final String EVENT_REWIND_BUTTON_CLICKED = "event_rewind_button_clicked";
 
     private ReactApplicationContext applicationContext;
 
@@ -173,6 +174,7 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
         map.put(EVENT_NETWORK_CONNECTIVITY_CHANGED, (Object) MapBuilder.of("registrationName", "onNetworkConnectivityChange"));
         map.put(EVENT_LIVE_BUTTON_CLICKED, (Object) MapBuilder.of("registrationName", "Live Button Clicked"));
         map.put(EVENT_WATCHED_TIME, (Object) MapBuilder.of("registrationName", "WATCHED_TIME"));
+        map.put(EVENT_REWIND_BUTTON_CLICKED, (Object) MapBuilder.of("registrationName", "REWIND_BUTTON_CLICKED"));
         return map;
     }
 }

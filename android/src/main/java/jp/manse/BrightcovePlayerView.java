@@ -3,6 +3,7 @@ package jp.manse;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.Choreographer;
@@ -58,6 +59,7 @@ import java.util.UUID;
 import jp.manse.util.AudioFocusManager;
 import jp.manse.util.NetworkChangeReceiver;
 import jp.manse.util.NetworkUtil;
+import jp.manse.util.PlayTimer;
 
 public class BrightcovePlayerView extends RelativeLayout implements LifecycleEventListener,
         AudioFocusManager.AudioFocusChangedListener, NetworkChangeReceiver.NetworkChangeListener {
@@ -91,6 +93,33 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         + ".xml";
     private String currentStreamURL;
     private String uuid;
+    private PlayTimer playTimer;
+    final long heartBeatInterval = 30000;
+    final Handler handler = new Handler();
+    Runnable heartBeatRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            int watchTime;
+            if (playerVideoView.isPlaying()) {
+                playTimer.pause();
+                watchTime = playTimer.elapsedTime;
+                playTimer.stop();
+                playTimer.start();
+            } else {
+                watchTime = playTimer.elapsedTime;
+                playTimer.stop();
+            }
+
+            WritableMap event = Arguments.createMap();
+            event.putInt(BrightcovePlayerManager.PROPERTY_WATCHED_TIME_DURATION, watchTime);
+            ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
+            reactContext
+                .getJSModule(RCTEventEmitter.class)
+                .receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_WATCHED_TIME, event);
+            handler.postDelayed(this, heartBeatInterval);
+        }
+    };
 
     public BrightcovePlayerView(ThemedReactContext context, ReactApplicationContext applicationContext) {
         super(context);
@@ -170,6 +199,13 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         eventEmitter.on(EventType.DID_PLAY, new EventListener() {
             @Override
             public void processEvent(Event e) {
+                if (playTimer == null) {
+                    // This is the first time the player is playing a video
+                    playTimer = new PlayTimer();
+                    handler.postDelayed(heartBeatRunnable, heartBeatInterval);
+                }
+
+                playTimer.start();
                 BrightcovePlayerView.this.playing = true;
                 WritableMap event = Arguments.createMap();
                 ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
@@ -181,6 +217,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         eventEmitter.on(EventType.DID_PAUSE, new EventListener() {
             @Override
             public void processEvent(Event e) {
+                playTimer.pause();
                 BrightcovePlayerView.this.playing = false;
                 WritableMap event = Arguments.createMap();
                 if (pauseButtonClicked) {

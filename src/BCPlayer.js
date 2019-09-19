@@ -7,7 +7,9 @@ import {
     Dimensions,
     Platform,
     StatusBar,
-    StyleSheet
+    StyleSheet,
+    Text,
+    View
 } from 'react-native'
 import BrightcovePlayer from './BrightcovePlayer'
 import Orientation from 'react-native-orientation'
@@ -113,6 +115,10 @@ class BCPlayer extends Component {
         return false
     }
 
+    playVideo() {
+        this.player.playVideo(true)
+    }
+
     toggleFS() {
         this.setState({fullScreen: !this.state.fullScreen}, () => {
             if (this.state.fullScreen) {
@@ -161,6 +167,10 @@ class BCPlayer extends Component {
         } = this.props
 
         return (
+            <View>
+            <Text style={{color: 'red', zIndex: 1000, position: 'absolute'}} onPress={this.playVideo.bind(this)}>
+                Fuck You
+            </Text>
             <Animated.View
                 style={[
                     styles.background,
@@ -181,6 +191,7 @@ class BCPlayer extends Component {
                     disableDefaultControl={this.props.disableControls}
                 />
             </Animated.View>
+            </View>
         )
     }
 

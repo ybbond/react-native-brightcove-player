@@ -107,6 +107,22 @@ class BrightcovePlayer extends Component {
   }
 }
 
+BrightcovePlayer.prototype.playVideo = Platform.select({
+  ios: function (prop) {
+    NativeModules.BrightcovePlayerManager.playVideo(
+        ReactNative.findNodeHandle(this),
+        prop
+    );
+  },
+  android: function (prop) {
+    UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.playVideo,
+        [prop]
+    );
+  }
+});
+
 BrightcovePlayer.prototype.seekTo = Platform.select({
   ios: function(seconds) {
     NativeModules.BrightcovePlayerManager.seekTo(

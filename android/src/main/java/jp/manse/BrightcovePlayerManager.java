@@ -9,7 +9,7 @@ import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
-
+import com.facebook.react.bridge.ReactMethod;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,22 +18,19 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
     public static final String REACT_CLASS = "BrightcovePlayer";
     public static final int COMMAND_SEEK_TO = 1;
     public static final int COMMAND_SET_FULLSCREEN = 2;
+    public static final int COMMAND_PLAY_VIDEO = 3;
     public static final String EVENT_READY = "ready";
     public static final String EVENT_METADATA_LOADED = "metadata_loaded";
     public static final String EVENT_PLAY = "play";
     public static final String EVENT_PAUSE = "pause";
     public static final String EVENT_END = "end";
     public static final String EVENT_PROGRESS = "progress";
-    public static final String EVENT_ERROR = "error";
     public static final String EVENT_CHANGE_DURATION = "change_duration";
     public static final String EVENT_UPDATE_BUFFER_PROGRESS = "update_buffer_progress";
-    public static final String EVENT_BUFFERING_STARTED = "buffering_started";
-    public static final String EVENT_BUFFERING_COMPLETED = "buffering_copleted";
     public static final String EVENT_BEFORE_ENTER_FULLSCREEN = "event_before_enter_fullscreen";
     public static final String EVENT_BEFORE_EXIT_FULLSCREEN = "event_before_exit_fullscreen";
     public static final String EVENT_ENTER_FULLSCREEN = "event_enter_fullscreen";
     public static final String EVENT_EXIT_FULLSCREEN = "event_exit_fullscreen";
-    public static final String EVENT_NETWORK_CONNECTIVITY_CHANGED = "event_network_connectivity_changed";
 
     private ReactApplicationContext applicationContext;
 
@@ -118,11 +115,16 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
         view.setFullscreen(fullscreen);
     }
 
+    public void playVideo(BrightcovePlayerView view, boolean play) {
+           view.setPlay(play);
+       }
+
     @Override
     public Map<String, Integer> getCommandsMap() {
         return MapBuilder.of(
                 "seekTo", COMMAND_SEEK_TO,
-                "setFullscreen", COMMAND_SET_FULLSCREEN
+                "setFullscreen", COMMAND_SET_FULLSCREEN,
+                "playVideo", COMMAND_PLAY_VIDEO
         );
     }
 
@@ -143,6 +145,10 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
                 }
                 return;
             }
+            case COMMAND_PLAY_VIDEO:{
+                playVideo(view,args.getBoolean(0));
+                return;
+            }
         }
     }
 
@@ -157,14 +163,10 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
         map.put(EVENT_PROGRESS, (Object) MapBuilder.of("registrationName", "onProgress"));
         map.put(EVENT_CHANGE_DURATION, (Object) MapBuilder.of("registrationName", "onChangeDuration"));
         map.put(EVENT_UPDATE_BUFFER_PROGRESS, (Object) MapBuilder.of("registrationName", "onUpdateBufferProgress"));
-        map.put(EVENT_BUFFERING_STARTED, (Object) MapBuilder.of("registrationName", "onBufferingStarted"));
-        map.put(EVENT_BUFFERING_COMPLETED, (Object) MapBuilder.of("registrationName", "onBufferingCompleted"));
         map.put(EVENT_BEFORE_ENTER_FULLSCREEN, (Object) MapBuilder.of("registrationName", "onBeforeEnterFullscreen"));
         map.put(EVENT_BEFORE_EXIT_FULLSCREEN, (Object) MapBuilder.of("registrationName", "onBeforeExitFullscreen"));
         map.put(EVENT_ENTER_FULLSCREEN, (Object) MapBuilder.of("registrationName", "onEnterFullscreen"));
         map.put(EVENT_EXIT_FULLSCREEN, (Object) MapBuilder.of("registrationName", "onExitFullscreen"));
-        map.put(EVENT_ERROR, (Object) MapBuilder.of("registrationName", "onError"));
-        map.put(EVENT_NETWORK_CONNECTIVITY_CHANGED, (Object) MapBuilder.of("registrationName", "onNetworkConnectivityChange"));
         return map;
     }
 }

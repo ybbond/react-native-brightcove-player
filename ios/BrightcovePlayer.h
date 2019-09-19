@@ -59,7 +59,7 @@
 @property (nonatomic, copy) RCTDirectEventBlock onNetworkConnectivityChange;
 
 -(void) seekTo:(NSNumber *)time;
--(void) setFullscreen:(BOOL *)fullscreen;
+-(void) setFullscreen:(BOOL)fullscreen;
 -(void)dispose;
 
 typedef enum {

@@ -119,6 +119,10 @@ class BCPlayer extends Component {
         this.player.playVideo(true)
     }
 
+    setBitRate() {
+        this.player.setBitRate(240)
+    }
+
     toggleFS() {
         this.setState({fullScreen: !this.state.fullScreen}, () => {
             if (this.state.fullScreen) {

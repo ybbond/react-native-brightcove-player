@@ -107,6 +107,22 @@ class BrightcovePlayer extends Component {
   }
 }
 
+BrightcovePlayer.prototype.setBitRate = Platform.select({
+  ios: function (prop) {
+    NativeModules.BrightcovePlayerManager.setBitRate(
+        ReactNative.findNodeHandle(this),
+        prop
+    );
+  },
+  android: function (prop) {
+    UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.setBitRate,
+        [prop]
+    );
+  }
+});
+
 BrightcovePlayer.prototype.playVideo = Platform.select({
   ios: function (prop) {
     NativeModules.BrightcovePlayerManager.playVideo(

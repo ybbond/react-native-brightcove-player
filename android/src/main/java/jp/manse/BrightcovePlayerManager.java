@@ -128,7 +128,8 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
         return MapBuilder.of(
                 "seekTo", COMMAND_SEEK_TO,
                 "setFullscreen", COMMAND_SET_FULLSCREEN,
-                "playVideo", COMMAND_PLAY_VIDEO
+                "playVideo", COMMAND_PLAY_VIDEO,
+                "setBitRate", COMMAND_BIT_RATE
         );
     }
 
@@ -151,6 +152,10 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
             }
             case COMMAND_PLAY_VIDEO:{
                 playVideo(view,args.getBoolean(0));
+                return;
+            }
+            case COMMAND_BIT_RATE: {
+                view.setBitRate((int)bitRate);
                 return;
             }
         }

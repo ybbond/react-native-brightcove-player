@@ -246,7 +246,7 @@ function withEvents(BCPlayerComponent) {
 		onEvent(event) {
 			event = {
 				...event,
-				name: this.state.mediainfo && this.state.mediainfo.title || 'N/A',
+				contentName: this.state.mediainfo && this.state.mediainfo.title || 'N/A',
 				videoId: this.props.videoId,
 				referenceId: this.props.referenceId,
 				accountId: this.props.accountId,

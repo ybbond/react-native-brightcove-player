@@ -184,6 +184,15 @@ function withEvents(BCPlayerComponent) {
 		}
 
 		/**
+		 * Event triggered when the user watches content for X amount of time
+		 * @param {NativeEvent} event
+		 */
+		onWatchedTime(event) {
+			this.onEvent({'type': PlayerEventTypes.WATCHED_TIME});
+			this.props.onWatchedTime && this.props.onWatchedTime(event);
+		}
+
+		/**
 		 * Event triggered when an error gets triggered
 		 * @param {NativeEvent} event
 		 */
@@ -285,6 +294,7 @@ function withEvents(BCPlayerComponent) {
 				onEnterFullscreen={this.onEnterFullscreen.bind(this)}
 				onExitFullscreen={this.onExitFullscreen.bind(this)}
 				onLiveSelection={this.onLiveSelection.bind(this)}
+				onWatchedTime={this.onWatchedTime.bind(this)}
 				onError={this.onError.bind(this)}
 			/>;
 		}

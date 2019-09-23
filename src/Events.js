@@ -193,6 +193,15 @@ function withEvents(BCPlayerComponent) {
 		}
 
 		/**
+		 * Event triggered when the user watches content for X amount of time
+		 * @param {NativeEvent} event
+		 */
+		onRewind(event) {
+			this.onEvent({'type': PlayerEventTypes.REWIND_BUTTON_CLICKED});
+			this.props.onRewind && this.props.onRewind(event);
+		}
+
+		/**
 		 * Event triggered when an error gets triggered
 		 * @param {NativeEvent} event
 		 */
@@ -295,6 +304,7 @@ function withEvents(BCPlayerComponent) {
 				onExitFullscreen={this.onExitFullscreen.bind(this)}
 				onLiveSelection={this.onLiveSelection.bind(this)}
 				onWatchedTime={this.onWatchedTime.bind(this)}
+				onRewind={this.onRewind.bind(this)}
 				onError={this.onError.bind(this)}
 			/>;
 		}

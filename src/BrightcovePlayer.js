@@ -104,6 +104,10 @@ class BrightcovePlayer extends Component {
           this.props.onWatchedTime &&
           this.props.onWatchedTime(event.nativeEvent)
         }}
+        onRewind={event => {
+          this.props.onRewind &&
+          this.props.onRewind(event.nativeEvent)
+        }}
         onNetworkConnectivityChange={event => {
           this.props.onNetworkConnectivityChange && this.props.onNetworkConnectivityChange(event.nativeEvent)
         }}
@@ -180,6 +184,7 @@ BrightcovePlayer.propTypes = {
   onExitFullscreen: PropTypes.func,
   onLiveSelection: PropTypes.func,
   onWatchedTime: PropTypes.func,
+  onRewind: PropTypes.func,
   onError: PropTypes.func,
   onNetworkConnectivityChange: PropTypes.func
 };

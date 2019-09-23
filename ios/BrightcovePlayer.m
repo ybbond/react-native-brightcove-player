@@ -3,6 +3,8 @@
 
 @interface BrightcovePlayer () <BCOVPlaybackControllerDelegate, BCOVPUIPlayerViewDelegate>
 
+#pragma mark - Properties
+
 @property (nonatomic) NSLayoutConstraint *centreHorizontallyConstraint;
 @property (nonatomic) NSLayoutConstraint *centreVerticallyConstraint;
 @property (nonatomic) NSLayoutConstraint *widthConstraint;
@@ -11,19 +13,52 @@
 @property (nonatomic, strong) NSTimer *countTimer;
 @property (nonatomic, strong) NSTimer *sendTimer;
 
+#pragma mark - Constants
+
 #define kAnalyticDataType [NSMutableArray arrayWithObjects:@"title",@"contentLength",@"device",@"playerId",@"eventName", nil]
+#define kNameKey @"name"
+#define kDurationKey @"duration"
+#define kAkamaiEventName @"ReactNativeBrightcovePlayer"
+#define kMediaInfoKey @"mediainfo"
+#define kTitleKey @"title"
+#define kStatusKey @"status"
+#define kStalledValue @"stalled"
+#define kRecoveredValue @"recovered"
+#define kErrorKey @"error"
+#define kCurrentTimeKey @"currentTime"
+#define kBufferProgressKey @"bufferProgress"
+#define kErrorCodeKey @"error_code"
+#define kMessageKey @"message"
 
 @end
 
 @implementation BrightcovePlayer
 
+@synthesize playbackSession;
+
+#pragma mark - Lifecycle
+
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self setup];
-        [self setupAnalytics];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterForeground:)
+                                                     name:UIApplicationWillEnterForegroundNotification object:nil];
     }
     return self;
 }
+
+- (id<BCOVPlaybackController>)createPlaybackController {
+    BCOVBasicSessionProviderOptions *options = [BCOVBasicSessionProviderOptions alloc];
+    BCOVBasicSessionProvider *provider = [[BCOVPlayerSDKManager sharedManager] createBasicSessionProviderWithOptions:options];
+    return [BCOVPlayerSDKManager.sharedManager createPlaybackControllerWithSessionProvider:provider viewStrategy:nil];
+}
+
+- (void)dispose {
+    [self.playbackController setVideos:@[]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+#pragma mark - Setups
 
 - (void)startSendTimer {
     if (self.sendTimer == nil) {
@@ -86,25 +121,44 @@
     [self resetWatchedTime];
 }
 
+- (void)setupService {
+    if ((!_playbackService || _playbackServiceDirty) && _accountId && _policyKey) {
+        _playbackServiceDirty = NO;
+        _playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId policyKey:_policyKey];
+    }
+}
+
+#pragma mark - Akamai Analytics
+
 - (void)setupAnalytics {
     _analytics = [[AV_AkamaiMediaAnalytics alloc] initWithBeaconXML:@"http://media-analytics.akamaized.net/analyticsplugin/configuration/SampleBeacon.xml"];
     [_analytics enableDebugLogging];
     [_analytics enableServerIpLookup];
     [_analytics enableLocationSupport];
+    [_analytics setMediaPlayer:playbackSession.player];
+    [self setupAnalyticsData];
 }
 
 - (void)setupAnalyticsData {
-    [_analytics setData:[kAnalyticDataType objectAtIndex:title] value:_mediaInfo[@"name"]];
-    [_analytics setData:[kAnalyticDataType objectAtIndex:contentLength] value:[NSString stringWithFormat:@"%@", _mediaInfo[@"duration"]]];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:title] value:_mediaInfo[kNameKey]];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:contentLength] value:[NSString stringWithFormat:@"%@", _mediaInfo[kDurationKey]]];
     [_analytics setData:[kAnalyticDataType objectAtIndex:device] value:deviceName()];
     [_analytics setData:[kAnalyticDataType objectAtIndex:playerId] value:_playerId];
-    [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:@"ReactNativeBrightcovePlayer"];
+    [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:kAkamaiEventName];
     
     NSString *uuid = [[NSUUID UUID] UUIDString];
     
     [_analytics setViewerId:uuid];
     [_analytics setViewerDiagnosticsId:uuid];
 }
+
+#pragma mark - Notifications
+
+- (void)applicationEnterForeground:(NSNotification *)notification {
+    [self setupAnalytics];
+}
+
+#pragma mark - Device Information
 
 - (void)didJumpBack {
     if (self.onRewind) {
@@ -125,12 +179,7 @@ NSString *deviceName() {
     return [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
 }
 
-- (void)setupService {
-    if ((!_playbackService || _playbackServiceDirty) && _accountId && _policyKey) {
-        _playbackServiceDirty = NO;
-        _playbackService = [[BCOVPlaybackService alloc] initWithAccountId:_accountId policyKey:_policyKey];
-    }
-}
+#pragma mark - Loads
 
 - (void)loadMovie {
     if (_videoToken) {
@@ -164,10 +213,11 @@ NSString *deviceName() {
     }
 }
 
-- (id<BCOVPlaybackController>)createPlaybackController {
-    BCOVBasicSessionProviderOptions *options = [BCOVBasicSessionProviderOptions alloc];
-    BCOVBasicSessionProvider *provider = [[BCOVPlayerSDKManager sharedManager] createBasicSessionProviderWithOptions:options];
-    return [BCOVPlayerSDKManager.sharedManager createPlaybackControllerWithSessionProvider:provider viewStrategy:nil];
+#pragma mark - Setters
+
+- (void)setPlaybackSession:(id<BCOVPlaybackSession>)_playbackSession {
+    playbackSession = _playbackSession;
+    [self setupAnalytics];
 }
 
 - (void)setReferenceId:(NSString *)referenceId {
@@ -203,7 +253,6 @@ NSString *deviceName() {
     [self setupService];
     [self loadMovie];
 }
-
 
 - (void)setPlayerType:(NSString *)type {
     _playerType = type;
@@ -256,20 +305,20 @@ NSString *deviceName() {
 }
 
 - (void)refreshVolume {
-    if (!_playbackSession) return;
-    _playbackSession.player.volume = _targetVolume;
+    if (!self.playbackSession) return;
+    self.playbackSession.player.volume = _targetVolume;
 }
 
 - (void)refreshBitRate {
-    if (!_playbackSession) return;
-    AVPlayerItem *item = _playbackSession.player.currentItem;
+    if (!self.playbackSession) return;
+    AVPlayerItem *item = self.playbackSession.player.currentItem;
     if (!item) return;
     item.preferredPeakBitRate = _targetBitRate;
 }
 
 - (void)refreshPlaybackRate {
-    if (!_playbackSession || !_targetPlaybackRate) return;
-    _playbackSession.player.rate = _targetPlaybackRate;
+    if (!self.playbackSession || !_targetPlaybackRate) return;
+    self.playbackSession.player.rate = _targetPlaybackRate;
 }
 
 - (void)setDisableDefaultControl:(BOOL)disable {
@@ -282,12 +331,13 @@ NSString *deviceName() {
     }];
 }
 
+#pragma mark - BCOVPlaybackControllerDelegate
+
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didReceiveLifecycleEvent:(BCOVPlaybackSessionLifecycleEvent *)lifecycleEvent {
 
     [self createAirplayIconOverlay];
 
     if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventReady) {
-        _playbackSession = session;
         
         if ([[_playerType uppercaseString] isEqualToString:@"LIVE"]) {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicLiveControlLayout];
@@ -316,16 +366,14 @@ NSString *deviceName() {
         }
 
         if (self.onMetadataLoaded) {
-            NSDictionary *mediainfo = @{ @"title" : _mediaInfo[@"name"]};
+            NSDictionary *mediainfo = @{ kTitleKey : _mediaInfo[kNameKey]};
             self.onMetadataLoaded(@{
-                @"mediainfo": mediainfo
+                kMediaInfoKey: mediainfo
             });
         }
         if (_autoPlay && _playing) {
             [_playbackController play];
         }
-        
-        [self setupAnalyticsData];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPlay) {
         _playing = true;
         [self refreshPlaybackRate];
@@ -386,7 +434,7 @@ NSString *deviceName() {
       */
      if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPlaybackStalled) {
         if (self.onNetworkConnectivityChange) {
-            self.onNetworkConnectivityChange(@{@"status": @"stalled"});
+            self.onNetworkConnectivityChange(@{kStatusKey: kStalledValue});
         }
      }
      /**
@@ -394,21 +442,21 @@ NSString *deviceName() {
       */
      if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPlaybackRecovered) {
         if (self.onNetworkConnectivityChange) {
-            self.onNetworkConnectivityChange(@{@"status": @"recovered"});
+            self.onNetworkConnectivityChange(@{kStatusKey: kRecoveredValue});
         }
      }
      /**
       * A generic error has occurred.
       */
     if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventError) {
-        NSError *error = lifecycleEvent.properties[@"error"];
+        NSError *error = lifecycleEvent.properties[kErrorKey];
         NSLog(@"Lifecycle Event Fail error: %@", error);
         [self emitError:error];
      /**
       * The video failed to load.
       */
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventFail) {
-        NSError *error = lifecycleEvent.properties[@"error"];
+        NSError *error = lifecycleEvent.properties[kErrorKey];
         NSLog(@"Lifecycle Event Fail error: %@", error);
         [self emitError:error];
      /**
@@ -416,42 +464,42 @@ NSString *deviceName() {
       * network error.
       */
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventFailedToPlayToEndTime) {
-        NSError *error = lifecycleEvent.properties[@"error"];
+        NSError *error = lifecycleEvent.properties[kErrorKey];
         NSLog(@"Lifecycle Event Fail error: %@", error);
         [self emitError:error];
     }
     
-    [_analytics setMediaPlayer:_playbackSession.player];
+    [_analytics setMediaPlayer:self.playbackSession.player];
 }
 
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didChangeDuration:(NSTimeInterval)duration {
     _segmentDuration = duration;
     if (self.onChangeDuration) {
         self.onChangeDuration(@{
-                                @"duration": @(duration)
+                                kDurationKey: @(duration)
                                 });
     }
 }
 
--(void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didProgressTo:(NSTimeInterval)progress {
+- (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didProgressTo:(NSTimeInterval)progress {
     NSTimeInterval duration = CMTimeGetSeconds(session.player.currentItem.duration);
     if (self.onProgress && progress > 0 && progress != INFINITY) {
         self.onProgress(@{
-                          @"currentTime": @(progress),
-                          @"duration": @(!isnan(duration) ? duration : -1)
+                          kCurrentTimeKey: @(progress),
+                          kDurationKey: @(!isnan(duration) ? duration : -1)
                           });
     }
     float bufferProgress = _playerView.controlsView.progressSlider.bufferProgress;
     if (_lastBufferProgress != bufferProgress) {
         _lastBufferProgress = bufferProgress;
         self.onUpdateBufferProgress(@{
-                                      @"bufferProgress": @(bufferProgress),
-                                      @"duration": @(!isnan(duration) ? duration : -1)
+                                      kBufferProgressKey: @(bufferProgress),
+                                      kDurationKey: @(!isnan(duration) ? duration : -1)
                                       });
     }
 }
 
--(void)playerView:(BCOVPUIPlayerView *)playerView willTransitionToScreenMode:(BCOVPUIScreenMode)screenMode {
+- (void)playerView:(BCOVPUIPlayerView *)playerView willTransitionToScreenMode:(BCOVPUIScreenMode)screenMode {
     if (screenMode == BCOVPUIScreenModeNormal) {
         if (self.onBeforeExitFullscreen) {
             self.onBeforeExitFullscreen(@{});
@@ -463,7 +511,7 @@ NSString *deviceName() {
     }
 }
 
--(void)playerView:(BCOVPUIPlayerView *)playerView didTransitionToScreenMode:(BCOVPUIScreenMode)screenMode {
+- (void)playerView:(BCOVPUIPlayerView *)playerView didTransitionToScreenMode:(BCOVPUIScreenMode)screenMode {
     if (screenMode == BCOVPUIScreenModeNormal) {
         if (self.onExitFullscreen) {
             self.onExitFullscreen(@{});
@@ -479,6 +527,18 @@ NSString *deviceName() {
     }
 }
 
+- (void)playbackController:(id<BCOVPlaybackController>)controller didAdvanceToPlaybackSession:(id<BCOVPlaybackSession>)session {
+    self.playbackSession = session;
+}
+
+#pragma mark - BCOVPUIPlayerViewDelegate
+
+- (void)routePickerViewDidEndPresentingRoutes:(AVRoutePickerView *)routePickerView  API_AVAILABLE(ios(11.0)){
+    [self createAirplayIconOverlay];
+}
+
+#pragma mark - Custom Methods
+
 - (void)handleSeekToTimeTap:(UITapGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateEnded) {
         CGPoint location = [recognizer locationInView:[recognizer.view superview]];
@@ -492,14 +552,14 @@ NSString *deviceName() {
     }
 }
 
-- (void)routePickerViewDidEndPresentingRoutes:(AVRoutePickerView *)routePickerView {
-    [self createAirplayIconOverlay];
-}
-
 - (void)createAirplayIconOverlay {
     if ([self isAudioSessionUsingAirplayOutputRoute]) {
         if (![_route isDescendantOfView:_playerView.controlsContainerView]) {
-            _route = [[AVRoutePickerView alloc] init];
+            if (@available(iOS 11.0, *)) {
+                _route = [[AVRoutePickerView alloc] init];
+            } else {
+                // Fallback on earlier versions
+            }
             _route.backgroundColor = [UIColor clearColor];
             _route.tintColor = [UIColor clearColor];
             _route.activeTintColor = [UIColor colorWithWhite:1.0 alpha:1.0];
@@ -591,10 +651,6 @@ NSString *deviceName() {
     return percentage;
 }
 
--(void)dispose {
-    [self.playbackController setVideos:@[]];
-}
-
 - (void)emitError:(NSError *)error {
 
     if (!self.onError) {
@@ -605,7 +661,7 @@ NSString *deviceName() {
 
     [_analytics handleError:code];
     
-    self.onError(@{@"error_code": code, @"message": [error localizedDescription]});
+    self.onError(@{kErrorCodeKey: code, kMessageKey: [error localizedDescription]});
 }
 
 - (void)refreshControlsView {

@@ -63,7 +63,7 @@
 @property (nonatomic, copy) RCTDirectEventBlock onLiveSelection;
 
 -(void) seekTo:(NSNumber *)time;
--(void) setFullscreen:(BOOL *)fullscreen;
+-(void) setFullscreen:(BOOL)fullscreen;
 -(void)dispose;
 
 typedef enum {

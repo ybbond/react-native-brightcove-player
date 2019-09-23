@@ -20,7 +20,6 @@ function withEvents(BCPlayerComponent) {
 		 * @param {NativeEvent} event
 		 */
 		onReady(event) {
-			this.onEvent({'type': PlayerEventTypes.READY});
 			this.onEvent({'type': PlayerEventTypes.IMPRESSION});
 			this.props.onReady && this.props.onReady(event);
 		}

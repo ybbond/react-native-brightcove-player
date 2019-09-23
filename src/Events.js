@@ -251,7 +251,8 @@ function withEvents(BCPlayerComponent) {
 				referenceId: this.props.referenceId,
 				accountId: this.props.accountId,
 				playerId: this.props.playerId,
-				platform: Platform.OS
+				platform: Platform.OS,
+				mediaType: this.props.playerType === 'VoD' ? 'VoD' : 'LiveStream'
 			}
 			this.props.onEvent && this.props.onEvent(event);
 		}

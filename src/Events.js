@@ -175,6 +175,15 @@ function withEvents(BCPlayerComponent) {
 		}
 
 		/**
+		 * Event triggered when the user clicks on the live button
+		 * @param {NativeEvent} event
+		 */
+		onLiveSelection(event) {
+			this.onEvent({'type': PlayerEventTypes.LIVE_BUTTON_CLICKED});
+			this.props.onLiveSelection && this.props.onLiveSelection(event);
+		}
+
+		/**
 		 * Event triggered when an error gets triggered
 		 * @param {NativeEvent} event
 		 */
@@ -275,6 +284,7 @@ function withEvents(BCPlayerComponent) {
 				onNetworkConnectivityChange={this.onNetworkConnectivityChange.bind(this)}
 				onEnterFullscreen={this.onEnterFullscreen.bind(this)}
 				onExitFullscreen={this.onExitFullscreen.bind(this)}
+				onLiveSelection={this.onLiveSelection.bind(this)}
 				onError={this.onError.bind(this)}
 			/>;
 		}

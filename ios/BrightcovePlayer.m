@@ -9,6 +9,9 @@
 @property (nonatomic) NSLayoutConstraint *centreVerticallyConstraint;
 @property (nonatomic) NSLayoutConstraint *widthConstraint;
 @property (nonatomic) NSLayoutConstraint *heightConstraint;
+@property (nonatomic) int watchedTime;
+@property (nonatomic, strong) NSTimer *countTimer;
+@property (nonatomic, strong) NSTimer *sendTimer;
 
 #pragma mark - Constants
 
@@ -57,6 +60,44 @@
 
 #pragma mark - Setups
 
+- (void)startSendTimer {
+    if (self.sendTimer == nil) {
+        if (@available(iOS 10.0, *)) {
+            self.sendTimer = [NSTimer scheduledTimerWithTimeInterval:30.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+                if (self.onWatchedTime && _playing) {
+                    self.onWatchedTime(@{ @"WATCHED_TIME": [NSNumber numberWithInt:self.watchedTime] });
+                }
+            }];
+        }
+    }
+}
+
+- (void)stopSendTimer {
+    [self.sendTimer invalidate];
+    self.sendTimer = nil;
+}
+
+- (void)startCountTimer {
+    if (self.countTimer == nil) {
+        if (@available(iOS 10.0, *)) {
+            self.countTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+                if (self.playing) {
+                    self.watchedTime++;
+                }
+            }];
+        }
+    }
+}
+
+- (void)stopCountTimer {
+    [self.countTimer invalidate];
+    self.countTimer = nil;
+}
+
+- (void)resetWatchedTime {
+    self.watchedTime = 1;
+}
+
 - (void)setup {
     _playbackController = [BCOVPlayerSDKManager.sharedManager createPlaybackController];
     _playbackController.delegate = self;
@@ -76,6 +117,8 @@
     _autoPlay = NO;
 
     [self addSubview:_playerView];
+    
+    [self resetWatchedTime];
 }
 
 - (void)setupService {
@@ -116,6 +159,18 @@
 }
 
 #pragma mark - Device Information
+
+- (void)didJumpBack {
+    if (self.onRewind) {
+        self.onRewind(@{ });
+    }
+}
+
+- (void)didPressLive {
+    if (self.onLiveSelection) {
+        self.onLiveSelection(@{ });
+    }
+}
 
 NSString *deviceName() {
     struct utsname systemInfo;
@@ -294,6 +349,12 @@ NSString *deviceName() {
         // Once the controls are set to the layout, define the controls to the state sent to the player
         _playerView.controlsView.hidden = _disableDefaultControl;
 
+        // Add Jump back button action to track event
+        [_playerView.controlsView.jumpBackButton addTarget:self action:@selector(didJumpBack) forControlEvents:UIControlEventTouchUpInside];
+        
+        // Add Live button action to track event
+        [_playerView.controlsView.liveButton addTarget:self action:@selector(didPressLive) forControlEvents:UIControlEventTouchUpInside];
+        
         UITapGestureRecognizer *seekToTimeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSeekToTimeTap:)];
         [_playerView.controlsView.progressSlider addGestureRecognizer:seekToTimeTap];
 
@@ -319,6 +380,9 @@ NSString *deviceName() {
         if (self.onPlay) {
             self.onPlay(@{});
         }
+        
+        [self startSendTimer];
+        [self startCountTimer];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPause) {
         if (_playing) {
             _playing = false;
@@ -326,6 +390,8 @@ NSString *deviceName() {
                 self.onPause(@{});
             }
 
+            [self stopCountTimer];
+            
             // Hide controls view after pause a video
             [self refreshControlsView];
         }
@@ -333,6 +399,10 @@ NSString *deviceName() {
         if (self.onEnd) {
             self.onEnd(@{});
         }
+        
+        [self stopCountTimer];
+        [self stopSendTimer];
+        [self resetWatchedTime];
         
         [_analytics handlePlayEnd:endReasonCodePlay_End_Detected];
     }

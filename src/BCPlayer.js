@@ -163,6 +163,19 @@ class BCPlayer extends Component {
     }
 
     render() {
+        const theme = {
+            title: '#FFF',
+            more: '#FFF',
+            center: '#FFF',
+            fullscreen: '#FFF',
+            volume: '#FFF',
+            scrubberThumb: '#FFF',
+            scrubberBar: '#FFF',
+            seconds: '#FFF',
+            duration: '#FFF',
+            progress: '#FFF',
+            loading: '#FFF'
+        }
         const {
             paused,
             fullscreen,
@@ -196,6 +209,7 @@ class BCPlayer extends Component {
                     onSeekRelease={pos => this.onSeekRelease(pos)}
                     progress={progress}
                     currentTime={currentTime}
+                    theme={theme}
                     duration={duration}
                     inlineOnly={inlineOnly}
                 />

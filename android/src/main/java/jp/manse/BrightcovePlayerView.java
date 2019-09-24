@@ -418,7 +418,6 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     public void setPlayerId(String playerId) {
         this.playerId = playerId;
 		this.analytics.setDestination("bcsdk://" + playerId);
-        this.loadVideo();
     }
 
     public void setVideoId(String videoId) {
@@ -435,7 +434,9 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 
     public void setVideoToken(String videoToken) {
         this.videoToken = videoToken;
-        this.loadVideo();
+        if (videoToken == null || videoToken.isEmpty()) {
+            this.loadVideo();
+        }
     }
 
     public void setAutoPlay(boolean autoPlay) {
@@ -573,7 +574,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 
         this.catalog = new Catalog(this.playerVideoView.getEventEmitter(), this.accountId, this.policyKey);
 
-		if (this.accountId != null) {
+		if (this.accountId != null && this.policyKey != null) {
 			if (this.videoId != null) {
 				this.catalog.findVideoByID(this.videoId, listener);
 			} else if (this.referenceId != null) {

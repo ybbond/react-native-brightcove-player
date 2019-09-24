@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient'
+import LinearGradient from './gradient/index'
 import { ToggleIcon, Time, Scrubber } from '../'
 
 const styles = StyleSheet.create({

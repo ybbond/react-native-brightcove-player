@@ -5004,7 +5004,7 @@ react-native-animatable@^1.3.1:
 
 "react-native-brightcove-player@git://github.com/pankaj-pp/react-native-brightcove-player.git#custom-controls":
   version "1.6.5"
-  resolved "git://github.com/pankaj-pp/react-native-brightcove-player.git#cb68489f3a7450f533ffda227f11a2de2ac2ff04"
+  resolved "git://github.com/pankaj-pp/react-native-brightcove-player.git#f5b3697bda269065b48b34304d1c5b8bcb24c3bf"
   dependencies:
     prop-types "^15.5.10"
     react-native-linear-gradient "^2.5.6"

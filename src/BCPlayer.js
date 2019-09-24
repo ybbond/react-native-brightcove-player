@@ -169,6 +169,74 @@ class BCPlayer extends Component {
         ]).start()
     }
 
+    setDuration(duration) {
+        this.setState({duration : duration.duration})
+    }
+
+    toggleMute() {
+        this.setState({ muted: !this.state.muted })
+    }
+
+    seek(percent) {
+        const currentTime = percent * this.state.duration
+        this.setState({ seeking: true, currentTime })
+    }
+
+    seekTo(seconds) {
+        const percent = seconds / this.state.duration
+        if (seconds > this.state.duration) {
+            throw new Error(`Current time (${seconds}) exceeded the duration ${this.state.duration}`)
+            return false
+        }
+        return this.onSeekRelease(percent)
+    }
+
+    onSeekRelease(percent) {
+        const seconds = percent * this.state.duration
+        this.setState({ progress: percent, seeking: false }, () => {
+            this.player.seekTo(seconds)
+        })
+    }
+
+    progress(time) {
+        const { currentTime, duration} = time
+        const progress = currentTime / duration
+        if (!this.state.seeking) {
+            this.setState({ progress, currentTime }, () => {
+                // this.props.onProgress(time)
+            })
+        }
+    }
+
+    toggleMute() {
+        this.setState({ muted: !this.state.muted })
+    }
+
+    togglePlay() {
+        this.setState({ paused: !this.state.paused }, () => {
+            this.props.onPlay(!this.state.paused)
+            Orientation.getOrientation((e, orientation) => {
+                if (this.props.inlineOnly) return
+                if (!this.state.paused) {
+                    if (this.props.fullScreenOnly && !this.state.fullScreen) {
+                        this.setState({ fullScreen: true }, () => {
+                            this.props.onFullScreen(this.state.fullScreen)
+                            const initialOrient = Orientation.getInitialOrientation()
+                            const height = orientation !== initialOrient ?
+                                Win.width : Win.height
+                            this.animToFullscreen(height)
+                            if (this.props.rotateToFullScreen) Orientation.lockToLandscape()
+                        })
+                    }
+                    KeepAwake.activate()
+                } else {
+                    KeepAwake.deactivate()
+                }
+            })
+        })
+    }
+
+
     render() {
         const theme = {
             title: '#FFF',
@@ -195,47 +263,52 @@ class BCPlayer extends Component {
         const {
             style
         } = this.props
+        console.log(muted);
 
         return (
             <View>
-            <Text style={{color: 'red', zIndex: 1000, position: 'absolute'}} onPress={this.playVideo.bind(this)}>
-                Fuck You
-            </Text>
-                <ControlBar
-                    toggleFS={() => this.props.toggleFS()}
-                    toggleMute={() => this.props.toggleMute()}
-                    togglePlay={() => this.props.playVideo()}
-                    muted={muted}
-                    paused={paused}
-                    fullscreen={fullScreen}
-                    onSeek={pos => this.onSeek(pos)}
-                    onSeekRelease={pos => this.onSeekRelease(pos)}
-                    progress={progress}
-                    currentTime={currentTime}
-                    theme={theme}
-                    duration={duration}
-                    inlineOnly={false}
-                />
-            <Animated.View
-                style={[
-                    styles.background,
-                    fullScreen ?
-                        (styles.fullScreen, {height: this.animFullscreen})
-                        : {height: this.animInline},
-                    fullScreen ? null : style
-                ]}
-            >
-                <StatusBar hidden={fullScreen}/>
-                <BrightcovePlayerWithEvents
-                    ref={(player) => this.player = player}
-                    {...this.props}
-                    style={[styles.player, this.props.style]}
-                    playerId={this.props.playerId ? this.props.playerId : `com.brightcove/react-native/${Platform.OS}`}
-                    onBeforeEnterFullscreen={this.toggleFS.bind(this)}
-                    onBeforeExitFullscreen={this.toggleFS.bind(this)}
-                    disableDefaultControl={this.props.disableControls}
-                />
-            </Animated.View>
+                <Text style={{color: 'red', zIndex: 1000, position: 'absolute'}} onPress={this.playVideo.bind(this)}>
+                    Fuck You
+                </Text>
+                <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
+                    <ControlBar
+                        toggleFS={() => this.toggleFS()}
+                        toggleMute={() => this.toggleMute()}
+                        togglePlay={() => this.playVideo()}
+                        muted={muted}
+                        paused={paused}
+                        fullscreen={fullScreen}
+                        onSeek={pos => this.seek(pos)}
+                        onSeekRelease={pos => this.onSeekRelease(pos)}
+                        progress={progress}
+                        currentTime={currentTime}
+                        theme={theme}
+                        duration={duration.duration || duration}
+                        inlineOnly={false}
+                    />
+                </View>
+                <Animated.View
+                    style={[
+                        styles.background,
+                        fullScreen ?
+                            (styles.fullScreen, {height: this.animFullscreen})
+                            : {height: this.animInline},
+                        fullScreen ? null : style
+                    ]}
+                >
+                    <StatusBar hidden={fullScreen}/>
+                    <BrightcovePlayerWithEvents
+                        ref={(player) => this.player = player}
+                        {...this.props}
+                        style={[styles.player, this.props.style]}
+                        playerId={this.props.playerId ? this.props.playerId : `com.brightcove/react-native/${Platform.OS}`}
+                        onBeforeEnterFullscreen={this.toggleFS.bind(this)}
+                        onBeforeExitFullscreen={this.toggleFS.bind(this)}
+                        disableDefaultControl={true}
+                        onChangeDuration={(duration) => this.setDuration(duration)}
+                        onProgress={e => this.progress(e)}
+                    />
+                </Animated.View>
             </View>
         )
     }

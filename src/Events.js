@@ -98,6 +98,11 @@ function withEvents(BCPlayerComponent) {
 		}
 
 
+		onDurationChange(event) {
+			this.props.onDurationChange && this.props.onDurationChange(event);
+		}
+
+
 		/**
 		 * Event triggered as the stream progress.
 		 * @param {NativeEvent} event
@@ -276,6 +281,7 @@ function withEvents(BCPlayerComponent) {
 				onEnterFullscreen={this.onEnterFullscreen.bind(this)}
 				onExitFullscreen={this.onExitFullscreen.bind(this)}
 				onError={this.onError.bind(this)}
+				onChangeDuration={this.onChangeDuration.bind(this)}
 			/>;
 		}
 	}

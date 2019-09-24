@@ -23,4 +23,4 @@ public class BrightcovePlayerPackage implements ReactPackage {
                 new LinearGradientManager(reactContext)
         );
     }
-}
+}y

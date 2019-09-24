@@ -1,4 +1,4 @@
-package com.BV.LinearGradient;
+package jp.manse.LinearGradient;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.uimanager.PixelUtil;

@@ -156,7 +156,7 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
                 return;
             }
             case COMMAND_BIT_RATE: {
-                view.setBitRate((int)bitRate);
+                view.setBitRate((int)args.getDouble(0));
                 return;
             }
         }

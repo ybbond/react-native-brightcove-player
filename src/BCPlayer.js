@@ -14,6 +14,7 @@ import {
 import BrightcovePlayer from './BrightcovePlayer'
 import Orientation from 'react-native-orientation'
 import withEvents from './Events'
+import {ControlBar} from "./ControlBar";
 
 // Wraps the Brightcove player with special Events
 const BrightcovePlayerWithEvents = withEvents(BrightcovePlayer)
@@ -163,6 +164,15 @@ class BCPlayer extends Component {
 
     render() {
         const {
+            paused,
+            fullscreen,
+            muted,
+            progress,
+            currentTime,
+            duration,
+            inlineOnly
+        } = this.props
+        const {
             fullScreen
         } = this.state
 
@@ -175,6 +185,20 @@ class BCPlayer extends Component {
             <Text style={{color: 'red', zIndex: 1000, position: 'absolute'}} onPress={this.playVideo.bind(this)}>
                 Fuck You
             </Text>
+                <ControlBar
+                    toggleFS={() => this.props.toggleFS()}
+                    toggleMute={() => this.props.toggleMute()}
+                    togglePlay={() => this.props.playVideo()}
+                    muted={muted}
+                    paused={paused}
+                    fullscreen={fullscreen}
+                    onSeek={pos => this.onSeek(pos)}
+                    onSeekRelease={pos => this.onSeekRelease(pos)}
+                    progress={progress}
+                    currentTime={currentTime}
+                    duration={duration}
+                    inlineOnly={inlineOnly}
+                />
             <Animated.View
                 style={[
                     styles.background,

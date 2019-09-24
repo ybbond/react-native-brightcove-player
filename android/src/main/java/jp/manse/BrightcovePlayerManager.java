@@ -19,6 +19,7 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
     public static final int COMMAND_SEEK_TO = 1;
     public static final int COMMAND_SET_FULLSCREEN = 2;
     public static final int COMMAND_PLAY_VIDEO = 3;
+    public static final int COMMAND_BIT_RATE = 4;
     public static final String EVENT_READY = "ready";
     public static final String EVENT_METADATA_LOADED = "metadata_loaded";
     public static final String EVENT_PLAY = "play";

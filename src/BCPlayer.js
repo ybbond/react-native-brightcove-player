@@ -50,7 +50,14 @@ class BCPlayer extends Component {
             percentageTracked: {Q1: false, Q2: false, Q3: false, Q4: false},
             mediainfo: null,
             onRotate: false,
-            appState: AppState.currentState
+            appState: AppState.currentState,
+            muted: false,
+            loading: false,
+            duration: 0,
+            progress: 0,
+            currentTime: 0,
+            seeking: false,
+            renderError: false
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -177,16 +184,12 @@ class BCPlayer extends Component {
             loading: '#FFF'
         }
         const {
+            fullScreen,
             paused,
-            fullscreen,
             muted,
             progress,
-            currentTime,
             duration,
-            inlineOnly
-        } = this.props
-        const {
-            fullScreen
+            currentTime
         } = this.state
 
         const {
@@ -204,14 +207,14 @@ class BCPlayer extends Component {
                     togglePlay={() => this.props.playVideo()}
                     muted={muted}
                     paused={paused}
-                    fullscreen={fullscreen}
+                    fullscreen={fullScreen}
                     onSeek={pos => this.onSeek(pos)}
                     onSeekRelease={pos => this.onSeekRelease(pos)}
                     progress={progress}
                     currentTime={currentTime}
                     theme={theme}
                     duration={duration}
-                    inlineOnly={inlineOnly}
+                    inlineOnly={false}
                 />
             <Animated.View
                 style={[

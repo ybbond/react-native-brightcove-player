@@ -3,9 +3,11 @@ package jp.manse;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Handler;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.Choreographer;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -57,6 +59,7 @@ import java.util.UUID;
 import jp.manse.util.AudioFocusManager;
 import jp.manse.util.NetworkChangeReceiver;
 import jp.manse.util.NetworkUtil;
+import jp.manse.util.PlayTimer;
 
 public class BrightcovePlayerView extends RelativeLayout implements LifecycleEventListener,
         AudioFocusManager.AudioFocusChangedListener, NetworkChangeReceiver.NetworkChangeListener {
@@ -76,6 +79,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 	private Map<String, Object> mediaInfo;
     private boolean autoPlay = true;
     private boolean playing = false;
+    private boolean pauseButtonClicked = false;
     private int bitRate = 0;
     private float playbackRate = 1;
 	private static final int SEEK_AMOUNT = 10000; // In milliseconds
@@ -89,6 +93,33 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         + ".xml";
     private String currentStreamURL;
     private String uuid;
+    private PlayTimer playTimer;
+    final long heartBeatInterval = 30000;
+    final Handler handler = new Handler();
+    Runnable heartBeatRunnable = new Runnable() {
+
+        @Override
+        public void run() {
+            int watchTime;
+            if (playerVideoView.isPlaying()) {
+                playTimer.pause();
+                watchTime = playTimer.elapsedTime;
+                playTimer.stop();
+                playTimer.start();
+            } else {
+                watchTime = playTimer.elapsedTime;
+                playTimer.stop();
+            }
+
+            WritableMap event = Arguments.createMap();
+            event.putInt(BrightcovePlayerManager.PROPERTY_WATCHED_TIME_DURATION, watchTime);
+            ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
+            reactContext
+                .getJSModule(RCTEventEmitter.class)
+                .receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_WATCHED_TIME, event);
+            handler.postDelayed(this, heartBeatInterval);
+        }
+    };
 
     public BrightcovePlayerView(ThemedReactContext context, ReactApplicationContext applicationContext) {
         super(context);
@@ -168,6 +199,13 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         eventEmitter.on(EventType.DID_PLAY, new EventListener() {
             @Override
             public void processEvent(Event e) {
+                if (playTimer == null) {
+                    // This is the first time the player is playing a video
+                    playTimer = new PlayTimer();
+                    handler.postDelayed(heartBeatRunnable, heartBeatInterval);
+                }
+
+                playTimer.start();
                 BrightcovePlayerView.this.playing = true;
                 WritableMap event = Arguments.createMap();
                 ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
@@ -179,8 +217,15 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         eventEmitter.on(EventType.DID_PAUSE, new EventListener() {
             @Override
             public void processEvent(Event e) {
+                playTimer.pause();
                 BrightcovePlayerView.this.playing = false;
                 WritableMap event = Arguments.createMap();
+                if (pauseButtonClicked) {
+                    event.putString(BrightcovePlayerManager.PROPERTY_EVENT_SOURCE, BrightcovePlayerManager.PROPERTY_EVENT_SOURCE_CLICKED);
+                    pauseButtonClicked = false;
+                } else {
+                    event.putString(BrightcovePlayerManager.PROPERTY_EVENT_SOURCE, BrightcovePlayerManager.PROPERTY_EVENT_SOURCE_AUTO);
+                }
                 ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_PAUSE, event);
                 // When the playback stops, release the audio focus
@@ -267,6 +312,46 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
                         .receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_BUFFERING_COMPLETED, event);
             }
         });
+
+        eventEmitter.on(EventType.REWIND, new EventListener() {
+            @Override
+            public void processEvent(Event e) {
+                WritableMap event = Arguments.createMap();
+                ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
+                reactContext
+                    .getJSModule(RCTEventEmitter.class)
+                    .receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_REWIND_BUTTON_CLICKED, event);
+            }
+        });
+
+        this.playerVideoView.getBrightcoveMediaController().getBrightcoveControlBar().findViewById(R.id.play).setOnTouchListener(new OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if(playerVideoView.isPlaying()) {
+                        pauseButtonClicked = true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        this.playerVideoView.getBrightcoveMediaController().getBrightcoveControlBar().findViewById(R.id.live).setOnTouchListener(new OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View v, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    WritableMap event = Arguments.createMap();
+                    ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
+                    reactContext
+                        .getJSModule(RCTEventEmitter.class)
+                        .receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_LIVE_BUTTON_CLICKED, event);
+                }
+                return false;
+            }
+        });
+
 		// Emits all the errors back to the React Native
       	eventEmitter.on(EventType.ERROR, new EventListener() {
             @Override

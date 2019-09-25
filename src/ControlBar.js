@@ -51,12 +51,10 @@ const ControlBar = (props) => {
             <QualityControl
                 paddingLeft
                 theme={theme.volume}
-                onPress={() => props.toggleMute()}
                 isOn={muted}
                 iconOff="volume-up"
                 iconOn="volume-mute"
                 size={20}
-                qualityControlMenu={qualityControlMenu}
                 toggleQuality = {() => props.toggleQuality()}
 
             />

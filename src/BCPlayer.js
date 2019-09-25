@@ -10,6 +10,7 @@ import {
     StyleSheet,
     Text,
     View,
+    Button,
     TouchableOpacity
 } from 'react-native'
 import BrightcovePlayer from './BrightcovePlayer'
@@ -172,16 +173,16 @@ class BCPlayer extends Component {
     }
 
     setDuration(duration) {
-        this.setState({duration : duration.duration})
+        this.setState({duration: duration.duration})
     }
 
     toggleMute() {
-        this.setState({ muted: !this.state.muted })
+        this.setState({muted: !this.state.muted})
     }
 
     seek(percent) {
         const currentTime = percent * this.state.duration
-        this.setState({ seeking: true, currentTime })
+        this.setState({seeking: true, currentTime})
     }
 
     seekTo(seconds) {
@@ -195,28 +196,28 @@ class BCPlayer extends Component {
 
     onSeekRelease(percent) {
         const seconds = percent * this.state.duration
-        this.setState({ progress: percent, seeking: false }, () => {
+        this.setState({progress: percent, seeking: false}, () => {
             this.player.seekTo(seconds)
         })
     }
 
     progress(time) {
-        const { currentTime, duration} = time
+        const {currentTime, duration} = time
         const progress = currentTime / duration
         if (!this.state.seeking) {
-            this.setState({ progress, currentTime }, () => {
+            this.setState({progress, currentTime}, () => {
                 // this.props.onProgress(time)
             })
         }
     }
 
     toggleMute() {
-        this.setState({ muted: !this.state.muted })
+        this.setState({muted: !this.state.muted})
     }
 
     toggleQuality() {
         console.log('im here');
-        this.setState({ qualityControlMenu: !this.state.qualityControlMenu })
+        this.setState({qualityControlMenu: !this.state.qualityControlMenu})
     }
 
     togglePlay() {
@@ -246,6 +247,7 @@ class BCPlayer extends Component {
 
 
     render() {
+        const qualityContent = ['Low', 'Medium', 'High']
         const theme = {
             title: '#ff5000',
             more: '#ff5000',
@@ -275,19 +277,38 @@ class BCPlayer extends Component {
 
         return (
             <View>
-                {/*<Text style={{color: 'red', zIndex: 1001, position: 'absolute'}} onPress={this.playVideo.bind(this)}>*/}
-                {/*    Fuck You*/}
-                {/*</Text>*/}
-                <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', display: 'flex',flexDirection: 'row', height: '80%', alignContent: 'stretch' }}>
-                    <View style={{ display: 'flex', flexGrow: 1}}>
+
+                <View style={{
+                    color: 'red',
+                    zIndex: 1000,
+                    position: 'absolute',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    height: '80%',
+                    alignContent: 'stretch'
+                }}>
+                    <View style={{display: 'flex', flexGrow: 1}}>
                     </View>
-                    <TouchableOpacity style={{ display: 'flex', flexGrow: 1}} onPress={this.togglePlay.bind(this)}>
+                    <TouchableOpacity style={{display: 'flex', flexGrow: 1}} onPress={this.togglePlay.bind(this)}>
 
                     </TouchableOpacity>
                     <View style={{display: 'flex', flexGrow: 1}}>
                     </View>
 
                 </View>
+                {qualityControlMenu &&
+                <TouchableOpacity style={{zIndex: 1100, position: 'absolute', width: '100%', height: '85%'}}
+                                  onPress={() => this.toggleQuality()}>
+
+                    <View style={{zIndex: 1100, position: 'absolute', bottom: 0, right: '20%', borderWidth: 1, borderColor: 'white'}}>
+                        {
+                            qualityContent.map((data) => <TouchableOpacity color={'grey'} style={{padding: 2, borderBottomWidth: 1, borderColor: 'white', backgroundColor: 'grey'}}
+                                                                           onPress={() => this.toggleQuality()}>
+                                <Text style={{color: 'white'}}>{data}</Text></TouchableOpacity>)
+                        }
+                    </View>
+                </TouchableOpacity>}
                 <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
                     <ControlBar
                         toggleFS={() => this.toggleFS()}
@@ -302,8 +323,7 @@ class BCPlayer extends Component {
                         theme={theme}
                         duration={duration.duration || duration}
                         inlineOnly={false}
-                        qualityControlMenu = {qualityControlMenu}
-                        toggleQuality = {() => this.toggleQuality()}
+                        toggleQuality={() => this.toggleQuality()}
                     />
                 </View>
                 <Animated.View

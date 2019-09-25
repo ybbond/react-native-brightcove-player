@@ -32,11 +32,11 @@ const QualityControl = (props) => {
     return (
         <View style={styles.btnContainer}>
             <TouchableOpacity
-                onPress={() => props.onPress()}
+                onPress={() => props.toggleQuality()}
             >
                 <Icons
                     style={padding}
-                    name={"volume-down"}
+                    name={"high-quality"}
                     color={theme}
                     size={size}
                 />

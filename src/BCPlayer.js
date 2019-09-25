@@ -58,7 +58,8 @@ class BCPlayer extends Component {
             progress: 0,
             currentTime: 0,
             seeking: false,
-            renderError: false
+            renderError: false,
+            qualityControlMenu: false,
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -213,6 +214,11 @@ class BCPlayer extends Component {
         this.setState({ muted: !this.state.muted })
     }
 
+    toggleQuality() {
+        console.log('im here');
+        this.setState({ qualityControlMenu: !this.state.qualityControlMenu })
+    }
+
     togglePlay() {
         this.setState({paused: !this.state.paused}, () => this.player.playVideo(this.state.paused))
         // this.setState({ paused: !this.state.paused }, () => {
@@ -259,7 +265,8 @@ class BCPlayer extends Component {
             muted,
             progress,
             duration,
-            currentTime
+            currentTime,
+            qualityControlMenu
         } = this.state
 
         const {
@@ -272,9 +279,9 @@ class BCPlayer extends Component {
                 {/*    Fuck You*/}
                 {/*</Text>*/}
                 <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', display: 'flex',flexDirection: 'row', height: '80%', alignContent: 'stretch' }}>
-                    <View style={{display: 'flex', flexGrow: 1}}>
+                    <View style={{ display: 'flex', flexGrow: 1}}>
                     </View>
-                    <TouchableOpacity style={{display: 'flex', flexGrow: 1}} onPress={this.togglePlay.bind(this)}>
+                    <TouchableOpacity style={{backgroundColor: 'green', display: 'flex', flexGrow: 1}} onPress={this.togglePlay.bind(this)}>
 
                     </TouchableOpacity>
                     <View style={{display: 'flex', flexGrow: 1}}>
@@ -295,6 +302,8 @@ class BCPlayer extends Component {
                         theme={theme}
                         duration={duration.duration || duration}
                         inlineOnly={false}
+                        qualityControlMenu = {qualityControlMenu}
+                        toggleQuality = {() => this.toggleQuality()}
                     />
                 </View>
                 <Animated.View

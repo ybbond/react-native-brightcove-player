@@ -9,7 +9,8 @@ import {
     StatusBar,
     StyleSheet,
     Text,
-    View
+    View,
+    TouchableOpacity
 } from 'react-native'
 import BrightcovePlayer from './BrightcovePlayer'
 import Orientation from 'react-native-orientation'
@@ -44,7 +45,7 @@ class BCPlayer extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            paused: !props.autoPlay,
+            paused: false,
             fullScreen: false,
             inlineHeight: Win.width * 0.5625,
             percentageTracked: {Q1: false, Q2: false, Q3: false, Q4: false},
@@ -213,43 +214,44 @@ class BCPlayer extends Component {
     }
 
     togglePlay() {
-        this.setState({ paused: !this.state.paused }, () => {
-            this.props.onPlay(!this.state.paused)
-            Orientation.getOrientation((e, orientation) => {
-                if (this.props.inlineOnly) return
-                if (!this.state.paused) {
-                    if (this.props.fullScreenOnly && !this.state.fullScreen) {
-                        this.setState({ fullScreen: true }, () => {
-                            this.props.onFullScreen(this.state.fullScreen)
-                            const initialOrient = Orientation.getInitialOrientation()
-                            const height = orientation !== initialOrient ?
-                                Win.width : Win.height
-                            this.animToFullscreen(height)
-                            if (this.props.rotateToFullScreen) Orientation.lockToLandscape()
-                        })
-                    }
-                    KeepAwake.activate()
-                } else {
-                    KeepAwake.deactivate()
-                }
-            })
-        })
+        this.setState({paused: !this.state.paused}, () => this.player.playVideo(this.state.paused))
+        // this.setState({ paused: !this.state.paused }, () => {
+        //     this.props.onPlay(!this.state.paused)
+        //     Orientation.getOrientation((e, orientation) => {
+        //         if (this.props.inlineOnly) return
+        //         if (!this.state.paused) {
+        //             if (this.props.fullScreenOnly && !this.state.fullScreen) {
+        //                 this.setState({ fullScreen: true }, () => {
+        //                     this.props.onFullScreen(this.state.fullScreen)
+        //                     const initialOrient = Orientation.getInitialOrientation()
+        //                     const height = orientation !== initialOrient ?
+        //                         Win.width : Win.height
+        //                     this.animToFullscreen(height)
+        //                     if (this.props.rotateToFullScreen) Orientation.lockToLandscape()
+        //                 })
+        //             }
+        //             KeepAwake.activate()
+        //         } else {
+        //             KeepAwake.deactivate()
+        //         }
+        //     })
+        // })
     }
 
 
     render() {
         const theme = {
-            title: '#FFF',
-            more: '#FFF',
-            center: '#FFF',
-            fullscreen: '#FFF',
-            volume: '#FFF',
-            scrubberThumb: '#FFF',
-            scrubberBar: '#FFF',
-            seconds: '#FFF',
-            duration: '#FFF',
-            progress: '#FFF',
-            loading: '#FFF'
+            title: '#ff5000',
+            more: '#ff5000',
+            center: '#ff5000',
+            fullscreen: '#ff5000',
+            volume: '#ff5000',
+            scrubberThumb: '#ff5000',
+            scrubberBar: '#ff5000',
+            seconds: '#ff5000',
+            duration: '#ff5000',
+            progress: '#ff5000',
+            loading: '#ff5000'
         }
         const {
             fullScreen,
@@ -266,16 +268,25 @@ class BCPlayer extends Component {
 
         return (
             <View>
-                <Text style={{color: 'red', zIndex: 1000, position: 'absolute'}} onPress={this.playVideo.bind(this)}>
-                    Fuck You
-                </Text>
+                {/*<Text style={{color: 'red', zIndex: 1001, position: 'absolute'}} onPress={this.playVideo.bind(this)}>*/}
+                {/*    Fuck You*/}
+                {/*</Text>*/}
+                <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', display: 'flex',flexDirection: 'row', height: '80%', alignContent: 'stretch' }}>
+                    <View style={{display: 'flex', flexGrow: 1}}>
+                    </View>
+                    <TouchableOpacity style={{display: 'flex', flexGrow: 1}} onPress={this.togglePlay.bind(this)}>
+
+                    </TouchableOpacity>
+                    <View style={{display: 'flex', flexGrow: 1}}>
+                    </View>
+
+                </View>
                 <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
                     <ControlBar
                         toggleFS={() => this.toggleFS()}
                         toggleMute={() => this.toggleMute()}
                         togglePlay={() => this.playVideo()}
                         muted={muted}
-                        paused={paused}
                         fullscreen={fullScreen}
                         onSeek={pos => this.seek(pos)}
                         onSeekRelease={pos => this.onSeekRelease(pos)}

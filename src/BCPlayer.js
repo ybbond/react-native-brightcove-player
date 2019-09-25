@@ -18,6 +18,7 @@ import Orientation from 'react-native-orientation'
 import withEvents from './Events'
 import {ControlBar} from "./ControlBar"
 import {ScreenButtons} from "./screenButtons"
+import {QualityOverlayButtons} from "./qualityOverlayButtons"
 
 
 // Wraps the Brightcove player with special Events
@@ -280,18 +281,8 @@ class BCPlayer extends Component {
         return (
             <View>
                 <ScreenButtons onPress={() => this.togglePlay.bind(this)}/>
-                {qualityControlMenu &&
-                <TouchableOpacity style={{zIndex: 1100, position: 'absolute', width: '100%', height: '85%'}}
-                                  onPress={() => this.toggleQuality()}>
-
-                    <View style={{zIndex: 1100, position: 'absolute', bottom: 0, right: '20%', borderWidth: 1, borderColor: 'white'}}>
-                        {
-                            qualityContent.map((data) => <TouchableOpacity color={'grey'} style={{padding: 2, borderBottomWidth: 1, borderColor: 'white', backgroundColor: 'grey'}}
-                                                                           onPress={() => this.toggleQuality()}>
-                                <Text style={{color: 'white'}}>{data}</Text></TouchableOpacity>)
-                        }
-                    </View>
-                </TouchableOpacity>}
+                {qualityControlMenu && <QualityOverlayButtons onPress={() => this.toggleQuality.bind(this)} qualityContent={qualityContent}/>
+                }
                 <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
                     <ControlBar
                         toggleFS={() => this.toggleFS()}

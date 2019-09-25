@@ -26,12 +26,12 @@ const styles = StyleSheet.create({
 })
 
 const QualityOverlayButtons = (props) => (<TouchableOpacity style={styles.ovlyContainer}
-                                                            onPress={props.onPress()}>
+                                                            onPress={props.onPress(null)}>
 
     <View style={styles.btnContainer}>
         {
-            props.qualityContent.map((data) => <TouchableOpacity color={'grey'} style={styles.individualButton}
-                                                                 onPress={props.onPress()}>
+            props.qualityContent.map((data, index) => <TouchableOpacity color={'grey'} style={styles.individualButton}
+                                                                        onPress={props.onPress(index)} key={index}>
                 <Text style={{color: 'white'}}>{data}</Text></TouchableOpacity>)
         }
     </View>

@@ -218,9 +218,11 @@ class BCPlayer extends Component {
         this.setState({muted: !this.state.muted})
     }
 
-    toggleQuality() {
-        console.log('im here');
+    toggleQuality(value) {
+        const quality = [120, 250, 750]
         this.setState({qualityControlMenu: !this.state.qualityControlMenu})
+        console.log(value)
+        value && this.player.setBitRate(quality[value])
     }
 
     togglePlay() {
@@ -281,7 +283,7 @@ class BCPlayer extends Component {
         return (
             <View>
                 <ScreenButtons onPress={() => this.togglePlay.bind(this)}/>
-                {qualityControlMenu && <QualityOverlayButtons onPress={() => this.toggleQuality.bind(this)} qualityContent={qualityContent}/>
+                {qualityControlMenu && <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)} qualityContent={qualityContent}/>
                 }
                 <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
                     <ControlBar

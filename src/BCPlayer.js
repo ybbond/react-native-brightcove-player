@@ -16,7 +16,9 @@ import {
 import BrightcovePlayer from './BrightcovePlayer'
 import Orientation from 'react-native-orientation'
 import withEvents from './Events'
-import {ControlBar} from "./ControlBar";
+import {ControlBar} from "./ControlBar"
+import {ScreenButtons} from "./ScreenButtons"
+
 
 // Wraps the Brightcove player with special Events
 const BrightcovePlayerWithEvents = withEvents(BrightcovePlayer)
@@ -277,26 +279,7 @@ class BCPlayer extends Component {
 
         return (
             <View>
-
-                <View style={{
-                    color: 'red',
-                    zIndex: 1000,
-                    position: 'absolute',
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    height: '80%',
-                    alignContent: 'stretch'
-                }}>
-                    <View style={{display: 'flex', flexGrow: 1}}>
-                    </View>
-                    <TouchableOpacity style={{display: 'flex', flexGrow: 1}} onPress={this.togglePlay.bind(this)}>
-
-                    </TouchableOpacity>
-                    <View style={{display: 'flex', flexGrow: 1}}>
-                    </View>
-
-                </View>
+                <ScreenButtons onPress={() => this.togglePlay.bind(this)}/>
                 {qualityControlMenu &&
                 <TouchableOpacity style={{zIndex: 1100, position: 'absolute', width: '100%', height: '85%'}}
                                   onPress={() => this.toggleQuality()}>

@@ -17,7 +17,7 @@ import BrightcovePlayer from './BrightcovePlayer'
 import Orientation from 'react-native-orientation'
 import withEvents from './Events'
 import {ControlBar} from "./ControlBar"
-import {ScreenButtons} from "./ScreenButtons"
+import {ScreenButtons} from "./screenButtons"
 
 
 // Wraps the Brightcove player with special Events

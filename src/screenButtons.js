@@ -1,19 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
-import Icons from 'react-native-vector-icons/MaterialIcons'
-import {ToggleIcon} from "./ToggleIcon";
 
 const styles = StyleSheet.create({
     btnContainer: {
-        alignItems: 'center',
-        backgroundColor,
-        justifyContent: 'center'
-    }
-})
-
-const ScreenButtons = (props) => {
-    return <View style={{
         color: 'red',
         zIndex: 1000,
         position: 'absolute',
@@ -22,13 +12,18 @@ const ScreenButtons = (props) => {
         flexDirection: 'row',
         height: '80%',
         alignContent: 'stretch'
-    }}>
-        <View style={{display: 'flex', flexGrow: 1}}>
+    },
+    individualButton : {display: 'flex', flexGrow: 1},
+})
+
+const ScreenButtons = (props) => {
+    return <View style={styles.btnContainer}>
+        <View style={styles.individualButton}>
         </View>
-        <TouchableOpacity style={{display: 'flex', flexGrow: 1}} onPress={props.onPress()}>
+        <TouchableOpacity style={styles.individualButton} onPress={props.onPress()}>
 
         </TouchableOpacity>
-        <View style={{display: 'flex', flexGrow: 1}}>
+        <View style={styles.individualButton}>
         </View>
 
     </View>

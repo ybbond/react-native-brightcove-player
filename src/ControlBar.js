@@ -1,95 +1,91 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {View, StyleSheet, TouchableOpacity, Dimensions, Text, Button} from 'react-native'
-import Icons from 'react-native-vector-icons/MaterialIcons'
-
-const backgroundColor = 'transparent'
+import { StyleSheet } from 'react-native'
+import LinearGradient from './gradient/index'
+import { ToggleIcon} from './ToggleIcon'
+import {Time } from './Time'
+import {Scrubber} from './Scrubber'
+import {QualityControl} from "./qualityControl";
 
 const styles = StyleSheet.create({
-    btnContainer: {
-        alignItems: 'center',
-        backgroundColor,
-        justifyContent: 'center'
+    container: {
+        flexDirection: 'row',
+        height: 35,
+        alignSelf: 'stretch',
+        justifyContent: 'flex-end'
     }
 })
 
-const QualityControl = (props) => {
+const ControlBar = (props) => {
     const {
-        paddingLeft,
-        paddingRight,
-        isOn,
-        iconOn,
-        iconOff,
+        onSeek,
+        onSeekRelease,
+        progress,
+        currentTime,
+        duration,
+        muted,
+        fullscreen,
         theme,
-        size,
-        qualityControlMenu,
+        inlineOnly,
+        qualityControlMenu
     } = props
-    const qualityList = ['240', '720', '1040']
-    const dim = Dimensions.get('window')
-
-    const padding = {
-        paddingLeft: paddingLeft ? 10 : 0,
-        paddingRight: paddingRight ? 5 : 0
-    }
 
     return (
-        <View style={styles.btnContainer}>
-            {qualityControlMenu && <View>
-                {/*<TouchableOpacity  onPress={() => console.log('reached')}>*/}
-                {/*    <View style={{*/}
-                {/*        backgroundColor: 'red',*/}
-                {/*        zIndex: 2000,*/}
-                {/*        position: 'absolute',*/}
-                {/*        width: '5000%',*/}
-                {/*        height: dim.height,*/}
-                {/*        bottom: '100%',*/}
-                {/*        right: -90*/}
-                {/*    }}>*/}
-                {/*    </View>*/}
-                {/*</TouchableOpacity>*/}
-                <View style={{
-                    backgroundColor: 'green',
-                    zIndex: 2500,
-                    position: 'absolute',
-                    width: '200%',
-                    bottom: '100%',
-                    left: '80%'
-                }}>
-                    {qualityList.map((data) =>
-                        <Button key={data} title={data} onPress={() => console.log('reach')}/>)}
-                </View>
-            </View>}
-            <TouchableOpacity
-                onPress={() => props.toggleQuality()}
-            >
-                <Icons
-                    style={padding}
-                    name={"volume-down"}
-                    color={theme}
-                    size={size}
-                />
-            </TouchableOpacity>
-        </View>
+        <LinearGradient colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,1)']} style={styles.container}>
+            <Time time={currentTime} theme={theme.seconds} />
+            <Scrubber
+                onSeek={pos => onSeek(pos)}
+                onSeekRelease={pos => onSeekRelease(pos)}
+                progress={progress}
+                theme={{ scrubberThumb: theme.scrubberThumb, scrubberBar: theme.scrubberBar }}
+            />
+            <ToggleIcon
+                paddingLeft
+                theme={theme.volume}
+                onPress={() => props.toggleMute()}
+                isOn={muted}
+                iconOff="volume-up"
+                iconOn="volume-mute"
+                size={20}
+            />
+            <QualityControl
+                paddingLeft
+                theme={theme.volume}
+                onPress={() => props.toggleMute()}
+                isOn={muted}
+                iconOff="volume-up"
+                iconOn="volume-mute"
+                size={20}
+                qualityControlMenu={qualityControlMenu}
+                toggleQuality = {() => props.toggleQuality()}
+
+            />
+            <Time time={duration} theme={theme.duration} />
+            { !inlineOnly &&
+            <ToggleIcon
+                paddingRight
+                onPress={() => props.toggleFS()}
+                iconOff="fullscreen"
+                iconOn="fullscreen-exit"
+                isOn={fullscreen}
+                theme={theme.fullscreen}
+            />}
+        </LinearGradient>
     )
 }
 
-QualityControl.propTypes = {
-    onPress: PropTypes.func,
-    isOn: PropTypes.bool,
-    iconOff: PropTypes.string.isRequired,
-    iconOn: PropTypes.string.isRequired,
-    theme: PropTypes.string.isRequired,
-    size: PropTypes.number,
-    paddingRight: PropTypes.bool,
-    paddingLeft: PropTypes.bool
+ControlBar.propTypes = {
+    toggleFS: PropTypes.func.isRequired,
+    toggleMute: PropTypes.func.isRequired,
+    onSeek: PropTypes.func.isRequired,
+    onSeekRelease: PropTypes.func.isRequired,
+    fullscreen: PropTypes.bool.isRequired,
+    muted: PropTypes.bool.isRequired,
+    inlineOnly: PropTypes.bool.isRequired,
+    progress: PropTypes.number.isRequired,
+    currentTime: PropTypes.number.isRequired,
+    duration: PropTypes.number.isRequired,
+    theme: PropTypes.object.isRequired
 }
 
-QualityControl.defaultProps = {
-    onPress: undefined,
-    isOn: false,
-    size: 25,
-    paddingRight: false,
-    paddingLeft: false
-}
-
-export {QualityControl}
+export { ControlBar }

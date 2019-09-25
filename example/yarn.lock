@@ -1529,9 +1529,9 @@ chardet@^0.4.0:
   integrity sha1-tUc7M9yXxCTl2Y3IfVXU2KKci/I=
 
 chownr@^1.1.1:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.1.2.tgz#a18f1e0b269c8a6a5d3c86eb298beb14c3dd7bf6"
-  integrity sha512-GkfeAQh+QNy3wquu9oIZr6SS5x7wGdSgNQvD10X3r+AZr1Oys22HW8kAmDMvNg2+Dm0TeGaEuO8gFwdBXxwO8A==
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.1.3.tgz#42d837d5239688d55f303003a508230fa6727142"
+  integrity sha512-i70fVHhmV3DtTl6nqvZOnIjbY0Pe4kAUjwHj8z0zAdgBtYrJyYwLKCCuRBQ5ppkyL0AkN7HKRnETdmdp1zqNXw==
 
 ci-info@^2.0.0:
   version "2.0.0"
@@ -5004,7 +5004,7 @@ react-native-animatable@^1.3.1:
 
 "react-native-brightcove-player@git://github.com/pankaj-pp/react-native-brightcove-player.git#custom-controls":
   version "1.6.5"
-  resolved "git://github.com/pankaj-pp/react-native-brightcove-player.git#a2029c4db02a4bad2b97437709efe77a21544f60"
+  resolved "git://github.com/pankaj-pp/react-native-brightcove-player.git#e140006c29772efcc2ed37330119473c0a6b6ede"
   dependencies:
     prop-types "^15.5.10"
     react-native-linear-gradient "^2.5.6"

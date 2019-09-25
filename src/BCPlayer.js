@@ -281,7 +281,7 @@ class BCPlayer extends Component {
                 <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', display: 'flex',flexDirection: 'row', height: '80%', alignContent: 'stretch' }}>
                     <View style={{ display: 'flex', flexGrow: 1}}>
                     </View>
-                    <TouchableOpacity style={{backgroundColor: 'green', display: 'flex', flexGrow: 1}} onPress={this.togglePlay.bind(this)}>
+                    <TouchableOpacity style={{ display: 'flex', flexGrow: 1}} onPress={this.togglePlay.bind(this)}>
 
                     </TouchableOpacity>
                     <View style={{display: 'flex', flexGrow: 1}}>

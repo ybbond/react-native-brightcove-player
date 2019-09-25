@@ -263,7 +263,6 @@ class BCPlayer extends Component {
         const {
             style
         } = this.props
-        console.log(muted);
 
         return (
             <View>

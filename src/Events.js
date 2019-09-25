@@ -281,7 +281,7 @@ function withEvents(BCPlayerComponent) {
 				onEnterFullscreen={this.onEnterFullscreen.bind(this)}
 				onExitFullscreen={this.onExitFullscreen.bind(this)}
 				onError={this.onError.bind(this)}
-				onChangeDuration={this.onChangeDuration.bind(this)}
+				onDurationChange={this.onDurationChange.bind(this)}
 			/>;
 		}
 	}

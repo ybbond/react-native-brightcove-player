@@ -165,15 +165,15 @@
 #pragma mark - Device Information
 
 - (void)didJumpBack {
-    if (self.onRewind) {
-        self.onRewind(@{ });
-    }
+    [_playbackController seekToTime:CMTimeMakeWithSeconds(CMTimeGetSeconds(playbackSession.player.currentTime) - 15, NSEC_PER_SEC) completionHandler:^(BOOL finished) {
+        if (self.onRewind) {
+            self.onRewind(@{ });
+        }
+    }];
 }
 
 - (void)didPressLive {
-    if (self.onLiveSelection) {
-        self.onLiveSelection(@{ });
-    }
+    [self seekToLive];
 }
 
 NSString *deviceName() {
@@ -350,13 +350,16 @@ NSString *deviceName() {
         } else {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicVODControlLayout];
         }
+        
         // Once the controls are set to the layout, define the controls to the state sent to the player
         _playerView.controlsView.hidden = _disableDefaultControl;
         
-        // Add Jump back button action to track event
+        // Override Jump back button action to track event
+        
         [_playerView.controlsView.jumpBackButton addTarget:self action:@selector(didJumpBack) forControlEvents:UIControlEventTouchUpInside];
         
         // Add Live button action to track event
+        
         [_playerView.controlsView.liveButton addTarget:self action:@selector(didPressLive) forControlEvents:UIControlEventTouchUpInside];
         
         UITapGestureRecognizer *seekToTimeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSeekToTimeTap:)];
@@ -555,6 +558,23 @@ NSString *deviceName() {
 
         [_playbackController seekToTime:CMTimeMakeWithSeconds(CMTimeGetSeconds(newTime), NSEC_PER_SEC) completionHandler:^(BOOL finished) {
             [_analytics handleSeek];
+        }];
+    }
+}
+
+- (void)seekToLive {
+    NSArray *seekableTimeRanges = playbackSession.player.currentItem.seekableTimeRanges;
+    
+    if (seekableTimeRanges.count > 0) {
+        NSValue *range = seekableTimeRanges[seekableTimeRanges.count - 1];
+        CMTimeRange timeRange = range.CMTimeRangeValue;
+        Float64 startSeconds = CMTimeGetSeconds(timeRange.start);
+        Float64 durationSeconds = CMTimeGetSeconds(timeRange.duration);
+        
+        [_playbackController seekToTime:CMTimeMakeWithSeconds(startSeconds + durationSeconds, 1) completionHandler:^(BOOL finished) {
+            if (self.onLiveSelection) {
+                self.onLiveSelection(@{ });
+            }
         }];
     }
 }

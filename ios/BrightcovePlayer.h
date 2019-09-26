@@ -13,7 +13,7 @@
 #import <React/RCTBridge.h>
 #import <React/UIView+React.h>
 #import <AVKit/AVKit.h>
-#import <av_malibrary/av_malibrary-Swift.h>
+#import <ma_sdk/ma_sdk-Swift.h>
 #import <sys/utsname.h>
 
 @interface BrightcovePlayer : UIView<BCOVOfflineVideoManagerDelegate>
@@ -34,7 +34,7 @@
 @property (nonatomic) NSDictionary *mediaInfo;
 @property (nonatomic) NSTimeInterval segmentDuration;
 @property (nonatomic) AVRoutePickerView *route;
-@property (nonatomic) AV_AkamaiMediaAnalytics *analytics;
+@property (nonatomic) AkamaiMediaAnalytics *analytics;
 
 @property (nonatomic, copy) NSString *referenceId;
 @property (nonatomic, copy) NSString *videoId;

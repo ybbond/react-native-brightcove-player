@@ -220,7 +220,7 @@ class BCPlayer extends Component {
     }
 
     toggleQuality(value) {
-        const quality = [449000, 1199000, 2001000]
+        const quality = [120000, 500000, 750000]
         this.setState({qualityControlMenu: !this.state.qualityControlMenu})
         console.log(quality[value]);
         quality[value] ? this.setState({bitRate: quality[value]}) : null

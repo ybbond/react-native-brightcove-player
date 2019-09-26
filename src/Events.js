@@ -20,7 +20,6 @@ function withEvents(BCPlayerComponent) {
 		 * @param {NativeEvent} event
 		 */
 		onReady(event) {
-			this.onEvent({'type': PlayerEventTypes.READY});
 			this.onEvent({'type': PlayerEventTypes.IMPRESSION});
 			this.props.onReady && this.props.onReady(event);
 		}
@@ -176,6 +175,33 @@ function withEvents(BCPlayerComponent) {
 		}
 
 		/**
+		 * Event triggered when the user clicks on the live button
+		 * @param {NativeEvent} event
+		 */
+		onLiveSelection(event) {
+			this.onEvent({'type': PlayerEventTypes.LIVE_BUTTON_CLICKED});
+			this.props.onLiveSelection && this.props.onLiveSelection(event);
+		}
+
+		/**
+		 * Event triggered when the user watches content for X amount of time
+		 * @param {NativeEvent} event
+		 */
+		onWatchedTime(event) {
+			this.onEvent({'type': PlayerEventTypes.WATCHED_TIME});
+			this.props.onWatchedTime && this.props.onWatchedTime(event);
+		}
+
+		/**
+		 * Event triggered when the user watches content for X amount of time
+		 * @param {NativeEvent} event
+		 */
+		onRewind(event) {
+			this.onEvent({'type': PlayerEventTypes.REWIND_BUTTON_CLICKED});
+			this.props.onRewind && this.props.onRewind(event);
+		}
+
+		/**
 		 * Event triggered when an error gets triggered
 		 * @param {NativeEvent} event
 		 */
@@ -230,7 +256,7 @@ function withEvents(BCPlayerComponent) {
 				 * Error Code that indicates there was an error returned by the API. It could be any error from the API.
 				 */
 				if (error_code === '3') {
-					error_code = 'PLAYER_ERROR';
+					return { errorCode: 'PLAYER_ERROR', errorMessage: 'There was an error with the server. Please try again.' + ((errorMessage) ? `(${errorMessage})` : '') };
 				}
 			}
 
@@ -246,12 +272,13 @@ function withEvents(BCPlayerComponent) {
 		onEvent(event) {
 			event = {
 				...event,
-				name: this.state.mediainfo && this.state.mediainfo.title || 'N/A',
+				contentName: this.state.mediainfo && this.state.mediainfo.title || 'N/A',
 				videoId: this.props.videoId,
 				referenceId: this.props.referenceId,
 				accountId: this.props.accountId,
 				playerId: this.props.playerId,
-				platform: Platform.OS
+				platform: Platform.OS,
+				mediaType: this.props.playerType === 'VoD' ? 'VoD' : 'LiveStream'
 			}
 			this.props.onEvent && this.props.onEvent(event);
 		}
@@ -275,6 +302,9 @@ function withEvents(BCPlayerComponent) {
 				onNetworkConnectivityChange={this.onNetworkConnectivityChange.bind(this)}
 				onEnterFullscreen={this.onEnterFullscreen.bind(this)}
 				onExitFullscreen={this.onExitFullscreen.bind(this)}
+				onLiveSelection={this.onLiveSelection.bind(this)}
+				onWatchedTime={this.onWatchedTime.bind(this)}
+				onRewind={this.onRewind.bind(this)}
 				onError={this.onError.bind(this)}
 			/>;
 		}

@@ -1,0 +1,11 @@
+framework module ma_sdk {
+  umbrella header "ma_sdk.h"
+
+  export *
+  module * { export * }
+}
+
+module ma_sdk.Swift {
+    header "ma_sdk-Swift.h"
+    requires objc
+}

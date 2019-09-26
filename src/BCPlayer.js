@@ -64,7 +64,8 @@ class BCPlayer extends Component {
             seeking: false,
             renderError: false,
             qualityControlMenu: false,
-            bitRate: 120
+            bitRate: 120000,
+            showControls: false
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -220,14 +221,15 @@ class BCPlayer extends Component {
     }
 
     toggleQuality(value) {
-        const quality = [120000, 500000, 750000]
+        const quality = [449000, 1199000, 2001000]
         this.setState({qualityControlMenu: !this.state.qualityControlMenu})
         console.log(quality[value]);
         quality[value] ? this.setState({bitRate: quality[value]}) : null
+
     }
 
     togglePlay() {
-        this.setState({paused: !this.state.paused}, () => this.player.playVideo(this.state.paused))
+        this.setState({paused: !this.state.paused, showControls: false}, () => this.player.playVideo(this.state.paused))
         // this.setState({ paused: !this.state.paused }, () => {
         //     this.props.onPlay(!this.state.paused)
         //     Orientation.getOrientation((e, orientation) => {
@@ -249,6 +251,17 @@ class BCPlayer extends Component {
         //         }
         //     })
         // })
+    }
+
+    forward() {
+        this.setState({progress: (this.state.currentTime + 10) / this.state.duration, seeking: false}, () => {
+            this.player.seekTo(this.state.currentTime + 10)
+        })
+    }
+    rewind() {
+        this.setState({progress: (this.state.currentTime - 10) / this.state.duration, seeking: false}, () => {
+            this.player.seekTo(this.state.currentTime - 10)
+        })
     }
 
 
@@ -274,19 +287,25 @@ class BCPlayer extends Component {
             progress,
             duration,
             currentTime,
-            qualityControlMenu
+            qualityControlMenu,
+            loading,
+            showControls
         } = this.state
 
         const {
             style
         } = this.props
 
+        console.log({showControls})
+
         return (
             <View>
-                <ScreenButtons onPress={() => this.togglePlay.bind(this)}/>
-                {qualityControlMenu && <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)} qualityContent={qualityContent}/>
+                {!showControls && <TouchableOpacity style={{ zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}} onPress={() => this.setState({showControls: true})}/>}
+                <ScreenButtons togglePlay={() => this.togglePlay.bind(this)} loading={loading} paused={paused} showControls={showControls} forward ={() => this.forward.bind(this)} rewind ={() => this.rewind.bind(this)}/>
+                {qualityControlMenu && <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)}
+                                                              qualityContent={qualityContent}/>
                 }
-                <View style={{color: 'red', zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
+                {showControls && <View style={{zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
                     <ControlBar
                         toggleFS={() => this.toggleFS()}
                         toggleMute={() => this.toggleMute()}
@@ -302,7 +321,7 @@ class BCPlayer extends Component {
                         inlineOnly={false}
                         toggleQuality={() => this.toggleQuality()}
                     />
-                </View>
+                </View>}
                 <Animated.View
                     style={[
                         styles.background,
@@ -323,8 +342,10 @@ class BCPlayer extends Component {
                         disableDefaultControl={true}
                         onChangeDuration={(duration) => this.setDuration(duration)}
                         onProgress={e => this.progress(e)}
-                        volume={muted ? 0: 10}
+                        volume={muted ? 0 : 10}
                         bitRate={this.state.bitRate}
+                        onBufferingStarted={() => this.setState({loading: true})}
+                        onBufferingCompleted={() => this.setState({loading: false})}
                     />
                 </Animated.View>
             </View>

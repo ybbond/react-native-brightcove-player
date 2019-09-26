@@ -256,7 +256,7 @@ function withEvents(BCPlayerComponent) {
 				 * Error Code that indicates there was an error returned by the API. It could be any error from the API.
 				 */
 				if (error_code === '3') {
-					return { errorCode = 'PLAYER_ERROR', errorMessage: 'There was an error with the server. Please try again.' + ((errorMessage) ? `(${errorMessage})` : '') };
+					return { errorCode: 'PLAYER_ERROR', errorMessage: 'There was an error with the server. Please try again.' + ((errorMessage) ? `(${errorMessage})` : '') };
 				}
 			}
 

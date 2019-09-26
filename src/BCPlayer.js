@@ -64,6 +64,7 @@ class BCPlayer extends Component {
             seeking: false,
             renderError: false,
             qualityControlMenu: false,
+            bitRate: 120
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -219,10 +220,10 @@ class BCPlayer extends Component {
     }
 
     toggleQuality(value) {
-        const quality = [120, 250, 750]
+        const quality = [449000, 1199000, 2001000]
         this.setState({qualityControlMenu: !this.state.qualityControlMenu})
-        console.log(value)
-        value && this.player.setBitRate(quality[value])
+        console.log(quality[value]);
+        quality[value] ? this.setState({bitRate: quality[value]}) : null
     }
 
     togglePlay() {
@@ -322,6 +323,8 @@ class BCPlayer extends Component {
                         disableDefaultControl={true}
                         onChangeDuration={(duration) => this.setDuration(duration)}
                         onProgress={e => this.progress(e)}
+                        volume={muted ? 0: 10}
+                        bitRate={this.state.bitRate}
                     />
                 </Animated.View>
             </View>

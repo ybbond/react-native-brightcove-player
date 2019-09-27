@@ -1,7 +1,7 @@
 #import "BrightcovePlayer.h"
 #import "BrightcovePlayerOfflineVideoManager.h"
 
-@interface BrightcovePlayer () <BCOVPlaybackControllerDelegate, BCOVPUIPlayerViewDelegate>
+@interface BrightcovePlayer () <BCOVPlaybackControllerDelegate, BCOVPUIPlayerViewDelegate, AkamaiPlayerDataProtocol>
 
 #pragma mark - Properties
 
@@ -12,6 +12,8 @@
 @property (nonatomic) int watchedTime;
 @property (nonatomic, strong) NSTimer *countTimer;
 @property (nonatomic, strong) NSTimer *sendTimer;
+@property (nonatomic) long currentBytesLoaded;
+@property (nonatomic) NSInteger currentDroppedFrames;
 
 #pragma mark - Constants
 
@@ -131,11 +133,13 @@
 #pragma mark - Akamai Analytics
 
 - (void)setupAnalytics {
-    _analytics = [[AV_AkamaiMediaAnalytics alloc] initWithBeaconXML:@"http://media-analytics.akamaized.net/analyticsplugin/configuration/SampleBeacon.xml"];
-    [_analytics enableDebugLogging];
+    _analytics = [[AkamaiMediaAnalytics alloc] initWithConfigurationUrl:@"http://media-analytics.akamaized.net/analyticsplugin/configuration/SampleBeacon.xml"];
+    
+    [_analytics setDebugLogging:YES];
     [_analytics enableServerIpLookup];
-    [_analytics enableLocationSupport];
-    [_analytics setMediaPlayer:playbackSession.player];
+    [_analytics enableLocation];
+    [_analytics handleSessionInit:self withStreamUrl:@""];
+
     [self setupAnalyticsData];
 }
 
@@ -149,7 +153,7 @@
     NSString *uuid = [[NSUUID UUID] UUIDString];
     
     [_analytics setViewerId:uuid];
-    [_analytics setViewerDiagnosticsId:uuid];
+    [_analytics setViewerId:uuid];
 }
 
 #pragma mark - Notifications
@@ -161,15 +165,15 @@
 #pragma mark - Device Information
 
 - (void)didJumpBack {
-    if (self.onRewind) {
-        self.onRewind(@{ });
-    }
+    [_playbackController seekToTime:CMTimeMakeWithSeconds(CMTimeGetSeconds(playbackSession.player.currentTime) - 15, NSEC_PER_SEC) completionHandler:^(BOOL finished) {
+        if (self.onRewind) {
+            self.onRewind(@{ });
+        }
+    }];
 }
 
 - (void)didPressLive {
-    if (self.onLiveSelection) {
-        self.onLiveSelection(@{ });
-    }
+    [self seekToLive];
 }
 
 NSString *deviceName() {
@@ -336,7 +340,7 @@ NSString *deviceName() {
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didReceiveLifecycleEvent:(BCOVPlaybackSessionLifecycleEvent *)lifecycleEvent {
 
     [self createAirplayIconOverlay];
-
+    
     if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventReady) {
         
         if ([[_playerType uppercaseString] isEqualToString:@"LIVE"]) {
@@ -346,13 +350,16 @@ NSString *deviceName() {
         } else {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicVODControlLayout];
         }
+        
         // Once the controls are set to the layout, define the controls to the state sent to the player
         _playerView.controlsView.hidden = _disableDefaultControl;
-
-        // Add Jump back button action to track event
+        
+        // Override Jump back button action to track event
+        
         [_playerView.controlsView.jumpBackButton addTarget:self action:@selector(didJumpBack) forControlEvents:UIControlEventTouchUpInside];
         
         // Add Live button action to track event
+        
         [_playerView.controlsView.liveButton addTarget:self action:@selector(didPressLive) forControlEvents:UIControlEventTouchUpInside];
         
         UITapGestureRecognizer *seekToTimeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSeekToTimeTap:)];
@@ -383,6 +390,8 @@ NSString *deviceName() {
         
         [self startSendTimer];
         [self startCountTimer];
+        
+        [_analytics handlePlaying];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPause) {
         if (_playing) {
             _playing = false;
@@ -394,6 +403,8 @@ NSString *deviceName() {
             
             // Hide controls view after pause a video
             [self refreshControlsView];
+            
+            [_analytics handlePause];
         }
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventEnd) {
         if (self.onEnd) {
@@ -404,7 +415,7 @@ NSString *deviceName() {
         [self stopSendTimer];
         [self resetWatchedTime];
         
-        [_analytics handlePlayEnd:endReasonCodePlay_End_Detected];
+        [_analytics handlePlayEnd:@"Playback session lifecycle event end"];
     }
 
      /**
@@ -468,8 +479,6 @@ NSString *deviceName() {
         NSLog(@"Lifecycle Event Fail error: %@", error);
         [self emitError:error];
     }
-    
-    [_analytics setMediaPlayer:self.playbackSession.player];
 }
 
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didChangeDuration:(NSTimeInterval)duration {
@@ -548,6 +557,24 @@ NSString *deviceName() {
         CMTime newTime = CMTimeMake(percentage * _segmentDuration, 1);
 
         [_playbackController seekToTime:CMTimeMakeWithSeconds(CMTimeGetSeconds(newTime), NSEC_PER_SEC) completionHandler:^(BOOL finished) {
+            [_analytics handleSeek];
+        }];
+    }
+}
+
+- (void)seekToLive {
+    NSArray *seekableTimeRanges = playbackSession.player.currentItem.seekableTimeRanges;
+    
+    if (seekableTimeRanges.count > 0) {
+        NSValue *range = seekableTimeRanges[seekableTimeRanges.count - 1];
+        CMTimeRange timeRange = range.CMTimeRangeValue;
+        Float64 startSeconds = CMTimeGetSeconds(timeRange.start);
+        Float64 durationSeconds = CMTimeGetSeconds(timeRange.duration);
+        
+        [_playbackController seekToTime:CMTimeMakeWithSeconds(startSeconds + durationSeconds, 1) completionHandler:^(BOOL finished) {
+            if (self.onLiveSelection) {
+                self.onLiveSelection(@{ });
+            }
         }];
     }
 }
@@ -671,4 +698,38 @@ NSString *deviceName() {
     });
 }
 
+#pragma mark - AkamaiPlayerDataProtocol
+
+- (double)streamHeadPosition {
+    return CMTimeGetSeconds(playbackSession.player.currentTime) * 1000;
+}
+
+- (int64_t)bytesLoaded {
+    long bytes = 0;
+    AVPlayerItemAccessLog *accessLog = [playbackSession.player.currentItem accessLog];
+    
+    if (accessLog != nil) {
+        if (accessLog.events.count > 0) {
+            if (accessLog.events[accessLog.events.count-1].numberOfBytesTransferred > _currentBytesLoaded) {
+                bytes = accessLog.events[accessLog.events.count-1].numberOfBytesTransferred - _currentBytesLoaded;
+            }
+            _currentBytesLoaded = accessLog.events[accessLog.events.count-1].numberOfBytesTransferred;
+        }
+    }
+    
+    return bytes;
+}
+
+- (NSInteger)droppedFrames {
+    NSInteger df = 0;
+    AVPlayerItemAccessLog *accessLog = [playbackSession.player.currentItem accessLog];
+    
+    if (accessLog != nil) {
+        if (accessLog.events.count > 0) {
+            df = accessLog.events[accessLog.events.count-1].numberOfDroppedVideoFrames - _currentDroppedFrames;
+            _currentDroppedFrames = accessLog.events[accessLog.events.count-1].numberOfDroppedVideoFrames;
+        }
+    }
+    return df;
+}
 @end

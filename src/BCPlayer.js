@@ -264,6 +264,12 @@ class BCPlayer extends Component {
         })
     }
 
+    seekToLive() {
+        this.setState({progress: 1, seeking: false}, () => {
+            this.player.seekTo(this.state.duration)
+        })
+    }
+
 
     render() {
         const qualityContent = ['Low', 'Medium', 'High']
@@ -296,7 +302,6 @@ class BCPlayer extends Component {
             style
         } = this.props
 
-        console.log({showControls})
 
         return (
             <View>
@@ -320,6 +325,7 @@ class BCPlayer extends Component {
                         duration={duration.duration || duration}
                         inlineOnly={false}
                         toggleQuality={() => this.toggleQuality()}
+                        seekToLive={() => this.seekToLive()}
                     />
                 </View>}
                 <Animated.View

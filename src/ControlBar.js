@@ -6,6 +6,7 @@ import { ToggleIcon} from './ToggleIcon'
 import {Time } from './Time'
 import {Scrubber} from './Scrubber'
 import {QualityControl} from "./qualityControl";
+import {GoLive} from "./GoLive";
 
 const styles = StyleSheet.create({
     container: {
@@ -27,7 +28,7 @@ const ControlBar = (props) => {
         fullscreen,
         theme,
         inlineOnly,
-        qualityControlMenu
+        qualityControlMenu,
     } = props
 
     return (
@@ -58,7 +59,8 @@ const ControlBar = (props) => {
                 toggleQuality = {() => props.toggleQuality()}
 
             />
-            <Time time={duration} theme={theme.duration} />
+            <GoLive theme={theme.seconds} seekToLive = {() => props.seekToLive()}/>
+            {/*<Time time={duration} theme={theme.duration} />*/}
             { !inlineOnly &&
             <ToggleIcon
                 paddingRight
@@ -83,7 +85,8 @@ ControlBar.propTypes = {
     progress: PropTypes.number.isRequired,
     currentTime: PropTypes.number.isRequired,
     duration: PropTypes.number.isRequired,
-    theme: PropTypes.object.isRequired
+    theme: PropTypes.object.isRequired,
+    seekToLive: PropTypes.func.isRequired,
 }
 
 export { ControlBar }

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import {View, StyleSheet, TouchableOpacity, Text, ActivityIndicator} from 'react-native'
+import {View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Animated} from 'react-native'
 import Icons from "react-native-vector-icons/MaterialIcons";
+import {FadeAnim} from './fade-anim'
 
 const styles = StyleSheet.create({
     btnContainer: {
@@ -19,23 +20,23 @@ const styles = StyleSheet.create({
 })
 
 const ScreenButtons = (props) => (<View style={styles.btnContainer}>
-    <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress = {props.rewind()}>
-        {props.showControls && <Icons
+    <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress={props.rewind()}>
+        {<Icons
             name={'fast-rewind'}
             color={'#ff5000'}
             size={40}
         />}
     </TouchableOpacity>
-    <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress = {props.togglePlay()}>
+    <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress={props.togglePlay()}>
         {props.loading && <ActivityIndicator size="large" color="#ff5000"/>}
-        {props.showControls && !props.loading && <Icons
+        {!props.loading && <Icons
             name={!props.paused ? 'play-arrow' : 'pause'}
             color={'#ff5000'}
             size={40}
         />}
     </TouchableOpacity>
-    <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress = {props.forward()}>
-        {props.showControls && <Icons
+    <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress={props.forward()}>
+        {<Icons
             name={'fast-forward'}
             color={'#ff5000'}
             size={40}

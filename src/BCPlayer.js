@@ -19,6 +19,7 @@ import withEvents from './Events'
 import {ControlBar} from "./ControlBar"
 import {ScreenButtons} from "./screenButtons"
 import {QualityOverlayButtons} from "./qualityOverlayButtons"
+import {FadeInAnim, FadeOutAnim} from "react-native-brightcove-player/src/fade-anim";
 
 
 // Wraps the Brightcove player with special Events
@@ -65,13 +66,17 @@ class BCPlayer extends Component {
             renderError: false,
             qualityControlMenu: false,
             bitRate: 120000,
-            showControls: false
+            showControls: true,
+            showClickOverlay: false,
+            seconds: 0,
+            controlsOverlayClicked: false
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
         this.BackHandler = this.BackHandler.bind(this)
         this.orientationDidChange = this.orientationDidChange.bind(this)
         this._handleAppStateChange = this._handleAppStateChange.bind(this)
+        this.onAnimEnd = this.onAnimEnd.bind(this)
     }
 
     componentWillMount() {
@@ -87,6 +92,29 @@ class BCPlayer extends Component {
         Orientation.addOrientationListener(this.orientationDidChange)
         BackHandler.addEventListener('hardwareBackPress', this.BackHandler)
         AppState.addEventListener('change', this._handleAppStateChange)
+        this.setTimer()
+    }
+
+    setTimer() {
+        console.log('setTimer')
+        this.timer = setInterval(() => {
+            switch (true) {
+                case this.state.controlsOverlayClicked:
+                    if (this.state.seconds > 0) this.setState({seconds: 0, controlsOverlayClicked: false})
+                    break
+                case this.state.showClickOverlay:
+                    break
+                case this.state.seconds > 3:
+                    console.log('YAHA')
+                    this.setState({
+                        showControls: false,
+                        seconds: 0
+                    })
+                    break
+                default:
+                    this.setState({seconds: this.state.seconds + 1})
+            }
+        }, 1000)
     }
 
     _handleAppStateChange(nextAppState: AppStateStatus) {
@@ -182,12 +210,19 @@ class BCPlayer extends Component {
     }
 
     toggleMute() {
-        this.setState({muted: !this.state.muted})
+        this.setState({
+            muted: !this.state.muted,
+            controlOverlayClicked: true
+        })
     }
 
     seek(percent) {
         const currentTime = percent * this.state.duration
-        this.setState({seeking: true, currentTime})
+        this.setState({
+            seeking: true,
+            currentTime,
+            controlOverlayClicked: true
+        })
     }
 
     seekTo(seconds) {
@@ -216,52 +251,42 @@ class BCPlayer extends Component {
         }
     }
 
-    toggleMute() {
-        this.setState({muted: !this.state.muted})
-    }
-
     toggleQuality(value) {
         const quality = [449000, 1199000, 2001000]
-        this.setState({qualityControlMenu: !this.state.qualityControlMenu})
-        console.log(quality[value]);
-        quality[value] ? this.setState({bitRate: quality[value]}) : null
-
+        this.setState({
+            qualityControlMenu: !this.state.qualityControlMenu,
+            controlOverlayClicked: true,
+            bitRate: quality[value]
+        })
     }
 
     togglePlay() {
-        this.setState({paused: !this.state.paused, showControls: false}, () => this.player.playVideo(this.state.paused))
-        // this.setState({ paused: !this.state.paused }, () => {
-        //     this.props.onPlay(!this.state.paused)
-        //     Orientation.getOrientation((e, orientation) => {
-        //         if (this.props.inlineOnly) return
-        //         if (!this.state.paused) {
-        //             if (this.props.fullScreenOnly && !this.state.fullScreen) {
-        //                 this.setState({ fullScreen: true }, () => {
-        //                     this.props.onFullScreen(this.state.fullScreen)
-        //                     const initialOrient = Orientation.getInitialOrientation()
-        //                     const height = orientation !== initialOrient ?
-        //                         Win.width : Win.height
-        //                     this.animToFullscreen(height)
-        //                     if (this.props.rotateToFullScreen) Orientation.lockToLandscape()
-        //                 })
-        //             }
-        //             KeepAwake.activate()
-        //         } else {
-        //             KeepAwake.deactivate()
-        //         }
-        //     })
-        // })
+        this.setState({
+            paused: !this.state.paused,
+            controlOverlayClicked: true
+        }, () => this.player.playVideo(this.state.paused))
     }
 
     forward() {
-        this.setState({progress: (this.state.currentTime + 10) / this.state.duration, seeking: false}, () => {
+        this.setState({
+            progress: (this.state.currentTime + 10) / this.state.duration, seeking: false,
+            controlOverlayClicked: true
+        }, () => {
             this.player.seekTo(this.state.currentTime + 10)
         })
     }
+
     rewind() {
-        this.setState({progress: (this.state.currentTime - 10) / this.state.duration, seeking: false}, () => {
+        this.setState({
+            progress: (this.state.currentTime - 10) / this.state.duration, seeking: false,
+            controlOverlayClicked: true
+        }, () => {
             this.player.seekTo(this.state.currentTime - 10)
         })
+    }
+
+    onAnimEnd() {
+        this.setState({showClickOverlay: !this.state.showControls})
     }
 
     seekToLive() {
@@ -269,7 +294,6 @@ class BCPlayer extends Component {
             this.player.seekTo(this.state.duration)
         })
     }
-
 
     render() {
         const qualityContent = ['Low', 'Medium', 'High']
@@ -295,39 +319,49 @@ class BCPlayer extends Component {
             currentTime,
             qualityControlMenu,
             loading,
-            showControls
+            showControls,
+            showClickOverlay
         } = this.state
 
         const {
             style
         } = this.props
-
-
+        const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
             <View>
-                {!showControls && <TouchableOpacity style={{ zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}} onPress={() => this.setState({showControls: true})}/>}
-                <ScreenButtons togglePlay={() => this.togglePlay.bind(this)} loading={loading} paused={paused} showControls={showControls} forward ={() => this.forward.bind(this)} rewind ={() => this.rewind.bind(this)}/>
-                {qualityControlMenu && <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)}
-                                                              qualityContent={qualityContent}/>
-                }
-                {showControls && <View style={{zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
-                    <ControlBar
-                        toggleFS={() => this.toggleFS()}
-                        toggleMute={() => this.toggleMute()}
-                        togglePlay={() => this.playVideo()}
-                        muted={muted}
-                        fullscreen={fullScreen}
-                        onSeek={pos => this.seek(pos)}
-                        onSeekRelease={pos => this.onSeekRelease(pos)}
-                        progress={progress}
-                        currentTime={currentTime}
-                        theme={theme}
-                        duration={duration.duration || duration}
-                        inlineOnly={false}
-                        toggleQuality={() => this.toggleQuality()}
-                        seekToLive={() => this.seekToLive()}
-                    />
-                </View>}
+                <AnimView style={{zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}}
+                          onEnd={this.onAnimEnd}
+                          onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
+                    <ScreenButtons togglePlay={() => this.togglePlay.bind(this)}
+                                   loading={loading} paused={paused}
+                                   forward={() => this.forward.bind(this)}
+                                   rewind={() => this.rewind.bind(this)}/>
+                    {qualityControlMenu &&
+                    <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)}
+                                           qualityContent={qualityContent}/>
+                    }
+                    {<View style={{zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
+                        <ControlBar
+                            toggleFS={() => this.toggleFS()}
+                            toggleMute={() => this.toggleMute()}
+                            togglePlay={() => this.playVideo()}
+                            muted={muted}
+                            fullscreen={fullScreen}
+                            onSeek={pos => this.seek(pos)}
+                            onSeekRelease={pos => this.onSeekRelease(pos)}
+                            progress={progress}
+                            currentTime={currentTime}
+                            theme={theme}
+                            duration={duration.duration || duration}
+                            inlineOnly={false}
+                            toggleQuality={() => this.toggleQuality()}
+                            seekToLive={() => this.seekToLive()}
+                        />
+                    </View>}
+                </AnimView>
+                {showClickOverlay &&
+                <TouchableOpacity style={{zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}}
+                                  onPress={() => this.setState({showControls: true})}/>}
                 <Animated.View
                     style={[
                         styles.background,

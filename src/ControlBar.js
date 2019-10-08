@@ -28,7 +28,7 @@ const ControlBar = (props) => {
         fullscreen,
         theme,
         inlineOnly,
-        qualityControlMenu,
+        qualityControlMenu
     } = props
 
     return (
@@ -86,7 +86,7 @@ ControlBar.propTypes = {
     currentTime: PropTypes.number.isRequired,
     duration: PropTypes.number.isRequired,
     theme: PropTypes.object.isRequired,
-    seekToLive: PropTypes.func.isRequired,
+    seekToLive: PropTypes.func.isRequired
 }
 
 export { ControlBar }

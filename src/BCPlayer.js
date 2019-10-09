@@ -96,16 +96,17 @@ class BCPlayer extends Component {
     }
 
     setTimer() {
-        console.log('setTimer')
         this.timer = setInterval(() => {
             switch (true) {
+                case this.state.seeking:
+                    // do nothing
+                    break
                 case this.state.controlsOverlayClicked:
                     if (this.state.seconds > 0) this.setState({seconds: 0, controlsOverlayClicked: false})
                     break
                 case this.state.showClickOverlay:
                     break
                 case this.state.seconds > 3:
-                    console.log('YAHA')
                     this.setState({
                         showControls: false,
                         seconds: 0
@@ -132,6 +133,7 @@ class BCPlayer extends Component {
         BackHandler.removeEventListener('hardwareBackPress', this.BackHandler)
         Orientation.removeOrientationListener(this.orientationDidChange)
         AppState.removeEventListener('change', this._handleAppStateChange)
+        clearInterval(this.timer)
     }
 
     orientationDidChange(orientation) {

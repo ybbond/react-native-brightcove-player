@@ -165,6 +165,11 @@ class BCPlayer extends Component {
         this.player.playVideo(true)
     }
 
+    seekToLive() {
+        console.log('reach')
+        this.player.seekToLive()
+    }
+
     setBitRate() {
         this.player.setBitRate(240)
     }
@@ -208,6 +213,7 @@ class BCPlayer extends Component {
     }
 
     setDuration(duration) {
+        console.log(duration)
         this.setState({duration: duration.duration})
     }
 
@@ -289,12 +295,6 @@ class BCPlayer extends Component {
 
     onAnimEnd() {
         this.setState({showClickOverlay: !this.state.showControls})
-    }
-
-    seekToLive() {
-        this.setState({progress: 1, seeking: false}, () => {
-            this.player.seekTo(this.state.duration)
-        })
     }
 
     render() {

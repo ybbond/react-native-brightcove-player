@@ -377,6 +377,9 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     public void seekTo(int time) {
         this.playerVideoView.seekTo(time);
     }
+    public void seekToLive() {
+             this.playerVideoView.seekToLive();
+         }
 
     private void updateBitRate() {
         if (this.bitRate == 0) return;

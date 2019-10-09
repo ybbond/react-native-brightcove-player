@@ -10,7 +10,7 @@ import android.view.View;
 
 public class LinearGradientManager extends SimpleViewManager<LinearGradientView> {
 
-    public static final String REACT_CLASS = "BVLinearGradient";
+    public static final String REACT_CLASS = "BVLiveLinearGradient";
     public static final String PROP_COLORS = "colors";
     public static final String PROP_LOCATIONS = "locations";
     public static final String PROP_START_POS = "startPoint";

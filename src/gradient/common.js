@@ -3,7 +3,7 @@
 import type { ElementProps } from 'react';
 import { requireNativeComponent, View } from 'react-native';
 
-export const NativeLinearGradient = requireNativeComponent('BVLinearGradient');
+export const NativeLinearGradient = requireNativeComponent('BVLiveLinearGradient');
 
 export type Point = $Exact<{x: number, y: number}>;
 type LinearGradientProps = {

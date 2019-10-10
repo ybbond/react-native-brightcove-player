@@ -71,7 +71,9 @@ class BCPlayer extends Component {
             showControls: true,
             showClickOverlay: false,
             seconds: 0,
-            controlsOverlayClicked: false
+            controlsOverlayClicked: false,
+            isInLiveEdge: true,
+            liveEdge: 0
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -104,7 +106,7 @@ class BCPlayer extends Component {
                     // do nothing
                     break
                 case this.state.controlsOverlayClicked:
-                    if (this.state.seconds > 0) this.setState({seconds: 0, controlsOverlayClicked: false})
+                    this.setState({seconds: 0, controlsOverlayClicked: false})
                     break
                 case this.state.showClickOverlay:
                     break
@@ -214,7 +216,6 @@ class BCPlayer extends Component {
     }
 
     setDuration(duration) {
-        console.log(duration)
         this.setState({duration: duration.duration})
     }
 
@@ -244,19 +245,17 @@ class BCPlayer extends Component {
     }
 
     onSeekRelease(percent) {
-        const seconds = percent * this.state.duration
+        const seconds = this.state.duration > 0 ? percent * this.state.duration : percent * this.state.liveEdge
         this.setState({progress: percent, seeking: false}, () => {
             this.player.seekTo(seconds)
         })
     }
 
     progress(time) {
-        const {currentTime, duration} = time
-        const progress = currentTime / duration
+        const {currentTime, duration, isInLiveEdge, liveEdge} = time
+        const progress = duration > 0 ? currentTime / duration : currentTime / liveEdge
         if (!this.state.seeking) {
-            this.setState({progress, currentTime}, () => {
-                // this.props.onProgress(time)
-            })
+            this.setState({progress, currentTime, isInLiveEdge, liveEdge})
         }
     }
 

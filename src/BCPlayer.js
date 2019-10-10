@@ -265,7 +265,8 @@ class BCPlayer extends Component {
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlOverlayClicked: true,
-            bitRate: quality[value]
+            bitRate: quality[value],
+            selectedQualityIndex: value
         })
     }
 

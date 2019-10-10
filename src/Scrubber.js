@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
     },
     slider: {
         marginHorizontal: -15,
-        marginBottom:-8
     },
     trackStyle: {
         borderRadius: 1

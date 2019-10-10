@@ -336,7 +336,8 @@ class BCPlayer extends Component {
         } = this.props
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
-            <View style={!fullScreen ? {height:  '41%', backgroundColor: '#008c6e'} : {}}>
+            <View >
+                {/*<View>*/}
                 <AnimView
                     style={{zIndex: 100, position: 'absolute', width: '100%', height: '100%', backgroundColor: '#00000080'}}
                     onEnd={this.onAnimEnd}
@@ -412,6 +413,8 @@ class BCPlayer extends Component {
                         onBufferingCompleted={() => this.setState({loading: false})}
                     />
                 </Animated.View>
+                {/*</View>*/}
+                {/*<View style={{height: 6, backgroundColor: '#e8e8e8', width: '100%'}}></View>*/}
             </View>
         )
     }

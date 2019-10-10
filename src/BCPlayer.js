@@ -16,12 +16,12 @@ import {
 import BrightcovePlayer from './BrightcovePlayer'
 import Orientation from 'react-native-orientation'
 import withEvents from './Events'
-import {ControlBar} from "./ControlBar"
-import {ScreenButtons} from "./screenButtons"
-import {QualityOverlayButtons} from "./qualityOverlayButtons"
-import {FadeInAnim, FadeOutAnim} from "react-native-brightcove-player/src/fade-anim";
-import {ToggleIcon} from "react-native-brightcove-player/src/ToggleIcon";
-import {QualityControl} from "react-native-brightcove-player/src/qualityControl";
+import {ControlBar} from './ControlBar'
+import {ScreenButtons} from './screenButtons'
+import {QualityOverlayButtons} from './qualityOverlayButtons'
+import {FadeInAnim, FadeOutAnim} from 'react-native-brightcove-player/src/fade-anim'
+import {ToggleIcon} from 'react-native-brightcove-player/src/ToggleIcon'
+import {QualityControl} from 'react-native-brightcove-player/src/qualityControl'
 
 
 // Wraps the Brightcove player with special Events
@@ -74,7 +74,7 @@ class BCPlayer extends Component {
             controlsOverlayClicked: false,
             isInLiveEdge: true,
             liveEdge: 0,
-            selectedQualityIndex: 1,
+            selectedQualityIndex: 1
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -262,12 +262,12 @@ class BCPlayer extends Component {
 
     toggleQuality(value) {
 
-        const quality = [ 2001000, -1, 1199000, 449000]
+        const quality = [2001000, -1, 1199000, 449000]
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlOverlayClicked: true,
             bitRate: (value >= 0 && value !== null) ? quality[value] : this.state.bitRate,
-            selectedQualityIndex: (value >= 0 && value !== null)? value : this.state.selectedQualityIndex
+            selectedQualityIndex: (value >= 0 && value !== null) ? value : this.state.selectedQualityIndex
         })
     }
 
@@ -301,7 +301,7 @@ class BCPlayer extends Component {
     }
 
     render() {
-        const qualityContent = [ 'High', 'Auto', 'Medium', 'Data Saver']
+        const qualityContent = ['High', 'Auto', 'Medium', 'Data Saver']
 
         const theme = {
             title: '#fff',
@@ -329,17 +329,18 @@ class BCPlayer extends Component {
             selectedQualityIndex
         } = this.state
 
-        console.log(selectedQualityIndex);
+        console.log(selectedQualityIndex)
 
         const {
             style
         } = this.props
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
-            <View>
-                <AnimView style={{zIndex: 100, position: 'absolute', width: '100%', height: '100%', backgroundColor: '#00000080'}}
-                          onEnd={this.onAnimEnd}
-                          onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
+            <View style={!fullScreen ? {height:  '41%', backgroundColor: '#008c6e'} : {}}>
+                <AnimView
+                    style={{zIndex: 100, position: 'absolute', width: '100%', height: '100%', backgroundColor: '#00000080'}}
+                    onEnd={this.onAnimEnd}
+                    onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
                     <View style={{display: 'flex', flexDirection: 'row-reverse'}}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}
@@ -351,12 +352,12 @@ class BCPlayer extends Component {
                         <QualityControl
                             theme={theme.qualityControl}
                             size={20}
-                            toggleQuality = {() => this.toggleQuality()}
+                            toggleQuality={() => this.toggleQuality()}
                         />
                     </View>
                     {qualityControlMenu &&
                     <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)}
-                                           qualityContent={qualityContent} selectedQualityIndex = {selectedQualityIndex}/>
+                                           qualityContent={qualityContent} selectedQualityIndex={selectedQualityIndex}/>
                     }
                     <ScreenButtons togglePlay={() => this.togglePlay.bind(this)}
                                    loading={loading} paused={paused}

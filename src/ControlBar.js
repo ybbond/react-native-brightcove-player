@@ -9,8 +9,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignSelf: 'stretch',
-        justifyContent: 'flex-end',
-        bottom: -10
+        justifyContent: 'flex-end'
     }
 })
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import LinearGradient from './gradient/index'
 import { ToggleIcon} from './ToggleIcon'
 import {Time } from './Time'
@@ -11,9 +11,9 @@ import {GoLive} from "./GoLive";
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        height: 35,
         alignSelf: 'stretch',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        bottom: -10
     }
 })
 
@@ -32,45 +32,25 @@ const ControlBar = (props) => {
     } = props
 
     return (
-        <LinearGradient colors={['rgba(0,0,0,0.5)', 'rgba(0,0,0,1)']} style={styles.container}>
-            <Time time={currentTime} theme={theme.seconds} />
+        <View>
+            <View style={{display: 'flex', flexDirection: 'row', width:'100%'}}>
+                <View style={{display: 'flex',width: '50%', alignItems : 'flex-start'}}>
+                    <Time time={currentTime} theme={theme.seconds} />
+                </View>
+                <View style={{display: 'flex', width: '50%', alignItems : 'flex-end'}}>
+                    <GoLive theme={theme.seconds} seekToLive = {() => props.seekToLive()}/>
+                </View>
+            </View>
+
+
             <Scrubber
                 onSeek={pos => onSeek(pos)}
                 onSeekRelease={pos => onSeekRelease(pos)}
                 progress={progress}
-                theme={{ scrubberThumb: theme.scrubberThumb, scrubberBar: theme.scrubberBar }}
+                theme={{scrubberThumb: theme.scrubberThumb, scrubberBar: theme.scrubberBar}}
+                fullScreen = {props.fullScreen}
             />
-            <ToggleIcon
-                paddingLeft
-                theme={theme.volume}
-                onPress={() => props.toggleMute()}
-                isOn={muted}
-                iconOff="volume-up"
-                iconOn="volume-mute"
-                size={20}
-            />
-            <QualityControl
-                paddingLeft
-                theme={theme.volume}
-                isOn={muted}
-                iconOff="volume-up"
-                iconOn="volume-mute"
-                size={20}
-                toggleQuality = {() => props.toggleQuality()}
-
-            />
-            <GoLive theme={theme.seconds} seekToLive = {() => props.seekToLive()}/>
-            {/*<Time time={duration} theme={theme.duration} />*/}
-            { !inlineOnly &&
-            <ToggleIcon
-                paddingRight
-                onPress={() => props.toggleFS()}
-                iconOff="fullscreen"
-                iconOn="fullscreen-exit"
-                isOn={fullscreen}
-                theme={theme.fullscreen}
-            />}
-        </LinearGradient>
+        </View>
     )
 }
 

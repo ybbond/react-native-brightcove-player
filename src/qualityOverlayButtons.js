@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     btnContainer: {
         zIndex: 1100,
         position: 'absolute',
-        bottom: 0,
-        right: '20%',
+        top: 20,
+        right: 50,
         borderWidth: 1,
         borderColor: 'white'
     }

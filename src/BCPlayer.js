@@ -20,6 +20,8 @@ import {ControlBar} from "./ControlBar"
 import {ScreenButtons} from "./screenButtons"
 import {QualityOverlayButtons} from "./qualityOverlayButtons"
 import {FadeInAnim, FadeOutAnim} from "react-native-brightcove-player/src/fade-anim";
+import {ToggleIcon} from "react-native-brightcove-player/src/ToggleIcon";
+import {QualityControl} from "react-native-brightcove-player/src/qualityControl";
 
 
 // Wraps the Brightcove player with special Events
@@ -303,14 +305,16 @@ class BCPlayer extends Component {
             title: '#ff5000',
             more: '#ff5000',
             center: '#ff5000',
-            fullscreen: '#ff5000',
+            fullscreen: '#fff',
             volume: '#ff5000',
             scrubberThumb: '#ff5000',
             scrubberBar: '#ff5000',
-            seconds: '#ff5000',
+            seconds: '#fff',
             duration: '#ff5000',
             progress: '#ff5000',
-            loading: '#ff5000'
+            loading: '#ff5000',
+            screenButtons: '#fff',
+            qualityControl: '#fff'
         }
         const {
             fullScreen,
@@ -331,17 +335,40 @@ class BCPlayer extends Component {
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
             <View>
-                <AnimView style={{zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}}
+                <AnimView style={{zIndex: 100, position: 'absolute', width: '100%', height: '100%'}}
                           onEnd={this.onAnimEnd}
                           onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
-                    <ScreenButtons togglePlay={() => this.togglePlay.bind(this)}
-                                   loading={loading} paused={paused}
-                                   forward={() => this.forward.bind(this)}
-                                   rewind={() => this.rewind.bind(this)}/>
+                    <View style={{
+                        zIndex: 99,
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'black',
+                        opacity: 0.5
+                    }}></View>
+                    <View style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                        <ToggleIcon
+                            onPress={() => this.toggleFS()}
+                            iconOff="fullscreen"
+                            iconOn="fullscreen-exit"
+                            isOn={fullScreen}
+                            theme={theme.fullscreen}
+                        />
+                        <QualityControl
+                            theme={theme.qualityControl}
+                            size={20}
+                            toggleQuality = {() => this.toggleQuality()}
+                        />
+                    </View>
                     {qualityControlMenu &&
                     <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)}
                                            qualityContent={qualityContent}/>
                     }
+                    <ScreenButtons togglePlay={() => this.togglePlay.bind(this)}
+                                   loading={loading} paused={paused}
+                                   forward={() => this.forward.bind(this)}
+                                   rewind={() => this.rewind.bind(this)} theme={theme}/>
+
                     {<View style={{zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
                         <ControlBar
                             toggleFS={() => this.toggleFS()}
@@ -355,9 +382,9 @@ class BCPlayer extends Component {
                             currentTime={currentTime}
                             theme={theme}
                             duration={duration.duration || duration}
-                            inlineOnly={false}
                             toggleQuality={() => this.toggleQuality()}
                             seekToLive={() => this.seekToLive()}
+                            fullScreen={this.state.fullScreen}
                         />
                     </View>}
                 </AnimView>

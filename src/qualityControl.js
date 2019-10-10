@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import Icons from 'react-native-vector-icons/MaterialIcons'
+import {QualityOverlayButtons} from "react-native-brightcove-player/src/qualityOverlayButtons";
 
 const backgroundColor = 'transparent'
 
@@ -9,7 +10,10 @@ const styles = StyleSheet.create({
     btnContainer: {
         alignItems: 'center',
         backgroundColor,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        zIndex: 101,
+        paddingRight: 10
+
     }
 })
 
@@ -31,12 +35,13 @@ const QualityControl = (props) => {
 
     return (
         <View style={styles.btnContainer}>
+
             <TouchableOpacity
                 onPress={() => props.toggleQuality()}
             >
                 <Icons
                     style={padding}
-                    name={"high-quality"}
+                    name={"settings-applications"}
                     color={theme}
                     size={size}
                 />

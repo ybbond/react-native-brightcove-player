@@ -9,7 +9,8 @@ const styles = StyleSheet.create({
     btnContainer: {
         alignItems: 'center',
         backgroundColor,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        zIndex: 101
     }
 })
 

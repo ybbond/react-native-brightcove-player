@@ -14,14 +14,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     slider: {
-        marginHorizontal: -10
-    },
-    thumbStyle: {
-        width: 15,
-        height: 15
+        marginHorizontal: -15,
+        marginBottom:-8
     },
     trackStyle: {
         borderRadius: 1
+    },
+    sliderFullScreen: {
+        marginHorizontal: -15,
+        marginBottom:0
     }
 })
 
@@ -36,7 +37,6 @@ const Scrubber = (props) => {
                     onSlidingComplete={val => onSeekRelease(val)}
                     value={progress === Number.POSITIVE_INFINITY ? 0 : progress}
                     thumbTintColor={theme.scrubberThumb}
-                    thumbStyle={styles.thumbStyle}
                     trackStyle={styles.trackStyle}
                     minimumTrackTintColor={theme.scrubberBar}
                     maximumTrackTintColor={trackColor}
@@ -44,7 +44,7 @@ const Scrubber = (props) => {
                 />
                 :
                 <RNSlider
-                    style={styles.slider}
+                    style={props.fullScreen ? styles.sliderFullScreen : styles.slider}
                     onValueChange={val => onSeek(val)}
                     onSlidingComplete={val => onSeekRelease(val)}
                     value={progress}

@@ -9,8 +9,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor,
         justifyContent: 'center',
-        padding: 10,
-        minWidth: 60
     }
 })
 

@@ -53,7 +53,7 @@ const QualityOverlayButtons = (props) => (<TouchableOpacity style={styles.ovlyCo
         {
             props.qualityContent.map((data, index) => <TouchableOpacity style={[styles.individualButton, !(props.qualityContent.length - 1 === index) ? styles.borderAttribute : null]}
                                                                         onPress={props.onPress(index)} key={index}>
-                <Text style={{color: '#9b9b9b'}}>{data}</Text></TouchableOpacity>)
+                <Text style={{color: props.selectedQualityIndex === index ? '#ff5000' :'#9b9b9b'}}>{data}</Text></TouchableOpacity>)
         }
     </View>
 </TouchableOpacity>)

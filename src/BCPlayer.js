@@ -261,12 +261,13 @@ class BCPlayer extends Component {
     }
 
     toggleQuality(value) {
+
         const quality = [ 2001000, -1, 1199000, 449000]
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlOverlayClicked: true,
-            bitRate: quality[value],
-            selectedQualityIndex: value
+            bitRate: (value >= 0 && value !== null) ? quality[value] : this.state.bitRate,
+            selectedQualityIndex: (value >= 0 && value !== null)? value : this.state.selectedQualityIndex
         })
     }
 
@@ -328,6 +329,8 @@ class BCPlayer extends Component {
             selectedQualityIndex
         } = this.state
 
+        console.log(selectedQualityIndex);
+
         const {
             style
         } = this.props
@@ -360,7 +363,7 @@ class BCPlayer extends Component {
                                    forward={() => this.forward.bind(this)}
                                    rewind={() => this.rewind.bind(this)} theme={theme}/>
 
-                    {<View style={{zIndex: 1000, position: 'absolute', width: '100%', bottom: 0}}>
+                    {<View style={{zIndex: 2000, position: 'absolute', width: '100%', bottom: 0}}>
                         <ControlBar
                             toggleFS={() => this.toggleFS()}
                             toggleMute={() => this.toggleMute()}

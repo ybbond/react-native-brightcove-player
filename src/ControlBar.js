@@ -1,11 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View } from 'react-native'
-import LinearGradient from './gradient/index'
-import { ToggleIcon} from './ToggleIcon'
 import {Time } from './Time'
 import {Scrubber} from './Scrubber'
-import {QualityControl} from "./qualityControl";
 import {GoLive} from "./GoLive";
 
 const styles = StyleSheet.create({
@@ -24,11 +21,7 @@ const ControlBar = (props) => {
         progress,
         currentTime,
         duration,
-        muted,
-        fullscreen,
         theme,
-        inlineOnly,
-        qualityControlMenu
     } = props
 
     return (

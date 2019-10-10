@@ -24,25 +24,15 @@ const ControlBar = (props) => {
         progress,
         currentTime,
         duration,
-        muted,
-        fullscreen,
-        theme,
-        inlineOnly,
-        qualityControlMenu
+        theme
     } = props
 
     return (
         <View>
-            <View style={{display: 'flex', flexDirection: 'row', width:'100%'}}>
-                <View style={{display: 'flex',width: '50%', alignItems : 'flex-start'}}>
-                    <Time time={currentTime} theme={theme.seconds} />
-                </View>
-                {!duration && <View style={{display: 'flex', width: '50%', alignItems : 'flex-end'}}>
-                    <GoLive theme={theme.seconds} seekToLive = {() => props.seekToLive()}/>
-                </View>}
+            <View style={{display: 'flex', flexDirection: 'row', flex: 1, justifyContent: 'space-between', marginHorizontal: 8}}>
+                <Time time={currentTime} theme={theme.seconds} />
+                {duration <= 0 && <GoLive theme={theme.seconds} seekToLive = {() => props.seekToLive()}/>}
             </View>
-
-
             <Scrubber
                 onSeek={pos => onSeek(pos)}
                 onSeekRelease={pos => onSeekRelease(pos)}

@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 
-const backgroundColor = 'transparent'
 
 const styles = StyleSheet.create({
     container: {
@@ -18,10 +17,8 @@ class GoLive extends Component {
 
     render() {
         return (
-            <TouchableOpacity style={styles.container} onPress={() => this.props.seekToLive()}>
-                <View style={{borderRadius: 5,borderWidth: 1, borderColor:this.props.theme, paddingLeft: 4}}>
-                    <Text style={{color: 'white', display: 'flex', fontSize: 10, paddingRight: 5}}>Go Live</Text>
-                </View>
+            <TouchableOpacity style={{borderRadius: 5,borderWidth: 1, borderColor:'#fff'}} onPress={() => this.props.seekToLive()}>
+                <Text style={{color: 'white', fontSize: 10, textAlign: 'center', paddingVertical: 4, paddingHorizontal: 8}}>Go Live</Text>
             </TouchableOpacity>
         )
     }

@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Animated} from 'react-native'
 import Icons from "react-native-vector-icons/MaterialIcons";
-import {FadeAnim} from './fade-anim'
 
 const styles = StyleSheet.create({
     btnContainer: {
@@ -35,42 +34,44 @@ const styles = StyleSheet.create({
     }
 })
 
-const ScreenButtons = (props) => (<View style={styles.btnContainer}>
-    <TouchableOpacity style={[styles.individualButton, styles.rewindButton]} onPress={props.rewind()}>
-        <Icons
-            name={'chevron-left'}
-            color={props.theme.screenButtons}
-            size={40}
-            style={{ marginRight: -30}}
-        />
-        <Icons
-            name={'chevron-left'}
-            color={props.theme.screenButtons}
-            size={40}
-        />
-    </TouchableOpacity>
-    <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress={props.togglePlay()}>
-        {props.loading && <ActivityIndicator size="large" color="#ff5000"/>}
-        {!props.loading && <Icons
-            name={!props.paused ? 'play-arrow' : 'pause'}
-            color={props.theme.screenButtons}
-            size={40}
-        />}
-    </TouchableOpacity>
-    <TouchableOpacity style={[styles.individualButton, styles.forwardButton]} onPress={props.forward()}>
-        <Icons
+const ScreenButtons = (props) => {
+    return ( <View style={styles.btnContainer}>
+        <TouchableOpacity style={[styles.individualButton, styles.rewindButton]} onPress={() => props.rewind()}>
+            <Icons
+                name={'chevron-left'}
+                color={props.theme.screenButtons}
+                size={40}
+                style={{ marginRight: -30}}
+            />
+            <Icons
+                name={'chevron-left'}
+                color={props.theme.screenButtons}
+                size={40}
+            />
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress={() => props.togglePlay()}>
+            {props.loading && <ActivityIndicator size="large" color="#ff5000"/>}
+            {!props.loading && <Icons
+                name={props.paused ? 'play-arrow' : 'pause'}
+                color={props.theme.screenButtons}
+                size={40}
+            />}
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.individualButton, styles.forwardButton]} onPress={() => props.forward()}>
+            <Icons
+                name={'chevron-right'}
+                color={props.theme.screenButtons}
+                size={40}
+            /><Icons
             name={'chevron-right'}
             color={props.theme.screenButtons}
             size={40}
-        /><Icons
-        name={'chevron-right'}
-        color={props.theme.screenButtons}
-        size={40}
-        style={{ marginLeft: -30}}
-    />
-    </TouchableOpacity>
+            style={{ marginLeft: -30}}
+        />
+        </TouchableOpacity>
 
-</View>)
+    </View>)
+}
 
 ScreenButtons.propTypes = {
     onPress: PropTypes.func,

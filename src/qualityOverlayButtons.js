@@ -4,35 +4,56 @@ import {View, StyleSheet, TouchableOpacity, Text} from 'react-native'
 
 const styles = StyleSheet.create({
     ovlyContainer: {
-        zIndex: 1100,
+        zIndex: 1000,
         position: 'absolute',
         width: '100%',
         height: '85%'
     },
     individualButton: {
         padding: 2,
+        paddingBottom: 10,
+        paddingTop: 10
+
+    },
+    borderAttribute: {
         borderBottomWidth: 1,
-        borderColor: 'white',
-        backgroundColor: 'grey'
+        borderColor: '#e8e8e8'
     },
     btnContainer: {
-        zIndex: 1100,
+        zIndex: 2100,
         position: 'absolute',
-        top: 20,
-        right: 50,
+        top: 5,
+        right: 60,
         borderWidth: 1,
-        borderColor: 'white'
+        borderColor: 'white',
+        paddingLeft: 10,
+        paddingRight: 10,
+        backgroundColor: 'white',
+        borderRadius: 5,
+    },
+    arrowIcon:{
+        zIndex: 2100,
+        width: 8,
+        height: 8,
+        right: 58,
+        top: 10,
+        backgroundColor: 'white',
+        position: 'absolute',
+        transform: [{rotate : '45deg'}]
+
     }
 })
 
 const QualityOverlayButtons = (props) => (<TouchableOpacity style={styles.ovlyContainer}
                                                             onPress={props.onPress(null)}>
+    <View style={styles.arrowIcon}>
+    </View>
 
     <View style={styles.btnContainer}>
         {
-            props.qualityContent.map((data, index) => <TouchableOpacity color={'grey'} style={styles.individualButton}
+            props.qualityContent.map((data, index) => <TouchableOpacity style={[styles.individualButton, !(props.qualityContent.length - 1 === index) ? styles.borderAttribute : null]}
                                                                         onPress={props.onPress(index)} key={index}>
-                <Text style={{color: 'white'}}>{data}</Text></TouchableOpacity>)
+                <Text style={{color: '#9b9b9b'}}>{data}</Text></TouchableOpacity>)
         }
     </View>
 </TouchableOpacity>)

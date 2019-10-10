@@ -37,9 +37,9 @@ const ControlBar = (props) => {
                 <View style={{display: 'flex',width: '50%', alignItems : 'flex-start'}}>
                     <Time time={currentTime} theme={theme.seconds} />
                 </View>
-                <View style={{display: 'flex', width: '50%', alignItems : 'flex-end'}}>
+                {!duration && <View style={{display: 'flex', width: '50%', alignItems : 'flex-end'}}>
                     <GoLive theme={theme.seconds} seekToLive = {() => props.seekToLive()}/>
-                </View>
+                </View>}
             </View>
 
 

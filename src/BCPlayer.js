@@ -168,7 +168,6 @@ class BCPlayer extends Component {
     }
 
     seekToLive() {
-        console.log('reach')
         this.player.seekToLive()
     }
 
@@ -262,7 +261,7 @@ class BCPlayer extends Component {
     }
 
     toggleQuality(value) {
-        const quality = [449000, 1199000, 2001000]
+        const quality = [449000, 1199000, 2001000, -1]
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlOverlayClicked: true,
@@ -300,7 +299,8 @@ class BCPlayer extends Component {
     }
 
     render() {
-        const qualityContent = ['Low', 'Medium', 'High']
+        const qualityContent = ['Data Saver', 'Medium', 'High', 'Auto']
+
         const theme = {
             title: '#ff5000',
             more: '#ff5000',
@@ -335,17 +335,9 @@ class BCPlayer extends Component {
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
             <View>
-                <AnimView style={{zIndex: 100, position: 'absolute', width: '100%', height: '100%'}}
+                <AnimView style={{zIndex: 100, position: 'absolute', width: '100%', height: '100%', backgroundColor: '#00000080'}}
                           onEnd={this.onAnimEnd}
                           onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
-                    <View style={{
-                        zIndex: 99,
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: 'black',
-                        opacity: 0.5
-                    }}></View>
                     <View style={{display: 'flex', flexDirection: 'row-reverse'}}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}

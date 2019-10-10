@@ -73,7 +73,8 @@ class BCPlayer extends Component {
             seconds: 0,
             controlsOverlayClicked: false,
             isInLiveEdge: true,
-            liveEdge: 0
+            liveEdge: 0,
+            selectedQualityIndex: 1,
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -260,7 +261,7 @@ class BCPlayer extends Component {
     }
 
     toggleQuality(value) {
-        const quality = [449000, 1199000, 2001000, -1]
+        const quality = [ 2001000, -1, 1199000, 449000]
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlOverlayClicked: true,
@@ -298,20 +299,17 @@ class BCPlayer extends Component {
     }
 
     render() {
-        const qualityContent = ['Data Saver', 'Medium', 'High', 'Auto']
+        const qualityContent = [ 'High', 'Auto', 'Medium', 'Data Saver']
 
         const theme = {
-            title: '#ff5000',
-            more: '#ff5000',
-            center: '#ff5000',
+            title: '#fff',
             fullscreen: '#fff',
-            volume: '#ff5000',
             scrubberThumb: '#ff5000',
             scrubberBar: '#ff5000',
             seconds: '#fff',
             duration: '#ff5000',
             progress: '#ff5000',
-            loading: '#ff5000',
+            loading: '#fff',
             screenButtons: '#fff',
             qualityControl: '#fff'
         }
@@ -325,7 +323,8 @@ class BCPlayer extends Component {
             qualityControlMenu,
             loading,
             showControls,
-            showClickOverlay
+            showClickOverlay,
+            selectedQualityIndex
         } = this.state
 
         const {
@@ -353,7 +352,7 @@ class BCPlayer extends Component {
                     </View>
                     {qualityControlMenu &&
                     <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)}
-                                           qualityContent={qualityContent}/>
+                                           qualityContent={qualityContent} selectedQualityIndex = {selectedQualityIndex}/>
                     }
                     <ScreenButtons togglePlay={() => this.togglePlay.bind(this)}
                                    loading={loading} paused={paused}

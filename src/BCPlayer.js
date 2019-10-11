@@ -91,7 +91,8 @@ class BCPlayer extends Component {
             controlsOverlayClicked: false,
             isInLiveEdge: true,
             liveEdge: 0,
-            selectedQualityIndex: 1
+            selectedQualityIndex: 1,
+            completed: false
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -189,7 +190,6 @@ class BCPlayer extends Component {
     }
 
     toggleFS() {
-        console.log('reached')
         this.setState({fullScreen: !this.state.fullScreen}, () => {
             if (this.state.fullScreen) {
                 const initialOrient = Orientation.getInitialOrientation()
@@ -316,6 +316,14 @@ class BCPlayer extends Component {
     onAnimEnd() {
         this.setState({showClickOverlay: !this.state.showControls})
     }
+    //TO DO : TESTING REQIRED
+    replay() {
+        this.player.seekTo(0);
+        this.player.playVideo(true)
+        this.setState( {currentTime: 0, paused: false, completed: false},  () => {
+            this.progress({currentTime : this.state.currentTime, duration : this.state.duration})
+        })
+    }
 
     render() {
         const qualityContent = ['High', 'Auto', 'Medium', 'Data Saver']
@@ -345,7 +353,8 @@ class BCPlayer extends Component {
             showClickOverlay,
             selectedQualityIndex,
             isInLiveEdge,
-            muted
+            muted,
+            completed
         } = this.state
 
         const {
@@ -367,7 +376,7 @@ class BCPlayer extends Component {
                         />
                         <QualityControl
                             theme={theme.qualityControl}
-                            size={20}
+                            size={40}
                             toggleQuality={() => this.toggleQualityOverlay()}
                             paddingRight={10}
 
@@ -382,7 +391,9 @@ class BCPlayer extends Component {
                                    forward={this.forward.bind(this)}
                                    rewind={this.rewind.bind(this)}
                                    theme={theme}
-                                   paused={paused}/>
+                                   paused={paused}
+                                   completed={completed}
+                                   replay={this.replay.bind(this)}/>
 
                     {<View style={styles.bottomBar}>
                         <ControlBar
@@ -424,6 +435,7 @@ class BCPlayer extends Component {
                         bitRate={bitRate}
                         onBufferingStarted={() => this.setState({loading: true})}
                         onBufferingCompleted={() => this.setState({loading: false})}
+                        onEnd={() => this.setState({completed : true})}
                     />
                 </Animated.View>
             </View>

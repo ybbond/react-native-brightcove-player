@@ -7,7 +7,7 @@ import FICons from "react-native-vector-icons/FontAwesome";
 const styles = StyleSheet.create({
     btnContainer: {
         color: 'red',
-        zIndex: 100,
+        zIndex: 1,
         position: 'absolute',
         width: '100%',
         display: 'flex',
@@ -36,6 +36,11 @@ const styles = StyleSheet.create({
 })
 
 const ScreenButtons = (props) => {
+    const onPress = () => {
+        !props.completed ? null : props.seekTo(0);
+        props.togglePlay(true)
+
+    }
     return (<View style={styles.btnContainer}>
         <View style={[styles.individualButton, styles.rewindButton]}>
             <TouchableOpacity onPress={() => props.rewind()}>
@@ -48,10 +53,10 @@ const ScreenButtons = (props) => {
         </View>
         <View style={[styles.individualButton, styles.centerButton]}>
             {props.loading && <ActivityIndicator size="large" color="#fff"/>}
-            {!props.loading && <TouchableOpacity onPress={() => props.togglePlay()}><Icons
-                name={props.paused ? 'play-arrow' : 'pause'}
+            {!props.loading && <TouchableOpacity onPress={() => onPress()}><Icons
+                name={props.completed ? 'replay' : props.paused ? 'play-arrow' : 'pause'}
                 color={props.theme.screenButtons}
-                size={40}
+                size={props.completed ? 32 : 40}
             /></TouchableOpacity>}
         </View>
         <View style={[styles.individualButton, styles.forwardButton]} >

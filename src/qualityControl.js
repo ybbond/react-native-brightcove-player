@@ -46,13 +46,10 @@ const QualityControl = (props) => {
 
 QualityControl.propTypes = {
     onPress: PropTypes.func,
-    isOn: PropTypes.bool,
-    iconOff: PropTypes.string.isRequired,
-    iconOn: PropTypes.string.isRequired,
     theme: PropTypes.string.isRequired,
     size: PropTypes.number,
-    paddingRight: PropTypes.bool,
-    paddingLeft: PropTypes.bool
+    paddingRight: PropTypes.number,
+    paddingLeft: PropTypes.number
 }
 
 QualityControl.defaultProps = {

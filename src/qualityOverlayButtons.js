@@ -1,13 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native'
+import {View, StyleSheet, TouchableOpacity, Text, SafeAreaView} from 'react-native'
 
 const styles = StyleSheet.create({
-    ovlyContainer: {
+    ovlySafeContainer: {
         zIndex: 1000,
         position: 'absolute',
         width: '100%',
-        height: '85%'
+        height: '85%',
+    },
+    ovlyContainer: {
+        zIndex: 1000,
+        width: '100%',
+        height: '85%',
     },
     individualButton: {
         padding: 2,
@@ -20,7 +25,7 @@ const styles = StyleSheet.create({
         borderColor: '#e8e8e8'
     },
     btnContainer: {
-        zIndex: 2100,
+        zIndex: 1000,
         position: 'absolute',
         top: 5,
         right: 60,
@@ -32,7 +37,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     arrowIcon:{
-        zIndex: 2100,
+        zIndex: 1000,
         width: 8,
         height: 8,
         right: 58,
@@ -44,8 +49,8 @@ const styles = StyleSheet.create({
     }
 })
 
-const QualityOverlayButtons = (props) => (<TouchableOpacity style={styles.ovlyContainer}
-                                                            onPress={props.onPress(null)}>
+const QualityOverlayButtons = (props) => (<SafeAreaView style={styles.ovlySafeContainer}><TouchableOpacity style={styles.ovlyContainer}
+                                                                                                           onPress={props.onPress(null)}>
     <View style={styles.arrowIcon}>
     </View>
 
@@ -56,7 +61,7 @@ const QualityOverlayButtons = (props) => (<TouchableOpacity style={styles.ovlyCo
                 <Text style={{color: props.selectedQualityIndex === index ? '#ff5000' :'#9b9b9b'}}>{data}</Text></TouchableOpacity>)
         }
     </View>
-</TouchableOpacity>)
+</TouchableOpacity></SafeAreaView>)
 
 
 QualityOverlayButtons.propTypes = {

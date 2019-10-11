@@ -10,6 +10,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignSelf: 'stretch',
         justifyContent: 'flex-end'
+    },
+    timerSpace: {
+        display: 'flex',
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'space-between',
+        marginHorizontal: 8
     }
 })
 
@@ -25,7 +32,7 @@ const ControlBar = (props) => {
 
     return (
         <View>
-            <View style={{display: 'flex', flexDirection: 'row', flex: 1, justifyContent: 'space-between', marginHorizontal: 8}}>
+            <View style={styles.timerSpace}>
                 <Time time={currentTime} theme={theme.seconds} />
                 {duration <= 0 && <GoLive theme={theme.seconds} seekToLive = {() => props.seekToLive()}/>}
             </View>

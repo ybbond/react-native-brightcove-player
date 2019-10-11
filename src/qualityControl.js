@@ -11,9 +11,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor,
         justifyContent: 'center',
-        zIndex: 101,
-        paddingRight: 10
-
+        zIndex: 101
     }
 })
 
@@ -29,8 +27,8 @@ const QualityControl = (props) => {
     } = props
 
     const padding = {
-        paddingLeft: paddingLeft ? 10 : 0,
-        paddingRight: paddingRight ? 5 : 0
+        paddingLeft: paddingLeft ? paddingLeft : 0,
+        paddingRight: paddingRight ? paddingRight : 0
     }
 
     return (

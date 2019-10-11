@@ -38,19 +38,13 @@ const ScreenButtons = (props) => {
     return ( <View style={styles.btnContainer}>
         <TouchableOpacity style={[styles.individualButton, styles.rewindButton]} onPress={() => props.rewind()}>
             <Icons
-                name={'chevron-left'}
-                color={props.theme.screenButtons}
-                size={40}
-                style={{ marginRight: -30}}
-            />
-            <Icons
-                name={'chevron-left'}
+                name={'double-arrow'}
                 color={props.theme.screenButtons}
                 size={40}
             />
         </TouchableOpacity>
         <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress={() => props.togglePlay()}>
-            {props.loading && <ActivityIndicator size="large" color="#ff5000"/>}
+            {props.loading && <ActivityIndicator size="large" color="#fff"/>}
             {!props.loading && <Icons
                 name={props.paused ? 'play-arrow' : 'pause'}
                 color={props.theme.screenButtons}
@@ -59,15 +53,10 @@ const ScreenButtons = (props) => {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.individualButton, styles.forwardButton]} onPress={() => props.forward()}>
             <Icons
-                name={'chevron-right'}
+                name={'double-arrow'}
                 color={props.theme.screenButtons}
                 size={40}
-            /><Icons
-            name={'chevron-right'}
-            color={props.theme.screenButtons}
-            size={40}
-            style={{ marginLeft: -30}}
-        />
+            />
         </TouchableOpacity>
 
     </View>)

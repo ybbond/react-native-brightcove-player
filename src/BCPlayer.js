@@ -43,6 +43,23 @@ const styles = StyleSheet.create({
         width: undefined,
         height: undefined,
         zIndex: 99
+    },
+    topMenu: {
+        zIndex: 100,
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#00000080'
+    },
+    topSubMenu : {
+        display: 'flex',
+        flexDirection: 'row-reverse'
+    },
+    bottomBar: {
+        zIndex: 2000,
+        position: 'absolute',
+        width: '100%',
+        bottom: 0
     }
 })
 
@@ -269,7 +286,9 @@ class BCPlayer extends Component {
         this.setState({
             paused: !this.state.paused,
             controlsOverlayClicked: true
-        }, () => {this.player.playVideo(!this.state.paused)})
+        }, () => {
+            this.player.playVideo(!this.state.paused)
+        })
     }
 
     forward() {
@@ -327,10 +346,10 @@ class BCPlayer extends Component {
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
             <View>
-                <AnimView style={{zIndex: 100, position: 'absolute', width: '100%', height: '100%', backgroundColor: '#00000080'}}
+                <AnimView style={styles.topMenu}
                           onEnd={this.onAnimEnd}
                           onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
-                    <View style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                    <View style={styles.topSubMenu}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}
                             iconOff="fullscreen"
@@ -342,6 +361,7 @@ class BCPlayer extends Component {
                             theme={theme.qualityControl}
                             size={20}
                             toggleQuality={() => this.toggleQuality()}
+                            paddingRight={10}
                         />
                     </View>
                     {qualityControlMenu &&
@@ -354,7 +374,7 @@ class BCPlayer extends Component {
                                    rewind={this.rewind.bind(this)}
                                    theme={theme}/>
 
-                    {<View style={{zIndex: 2000, position: 'absolute', width: '100%', bottom: 0}}>
+                    {<View style={styles.bottomBar}>
                         <ControlBar
                             onSeek={pos => this.seek(pos)}
                             onSeekRelease={pos => this.onSeekRelease(pos)}

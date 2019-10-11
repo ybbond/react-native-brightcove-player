@@ -13,24 +13,27 @@ const styles = StyleSheet.create({
     goLiveBorderDesign: {
         borderRadius: 5,
         borderWidth: 1,
-        borderColor:'#fff'
+        borderColor:'#9b9b9b'
     },
     goLiveTextDesign: {
-        color: 'white',
+        color: '#9b9b9b',
         fontSize: 10,
         textAlign: 'center',
         paddingVertical: 4,
         paddingHorizontal: 8
+    },
+    enableGoLive: {
+        borderRadius: 5,
+        backgroundColor:'green'
     }
 })
 
 class GoLive extends Component {
 
-
     render() {
         return (
-            <TouchableOpacity style={styles.goLiveBorderDesign} onPress={() => this.props.seekToLive()}>
-                <Text style={styles.goLiveTextDesign}>Go Live</Text>
+            <TouchableOpacity style={[!this.props.disabled ? styles.enableGoLive : styles.goLiveBorderDesign]} onPress={() => this.props.seekToLive()}>
+                <Text style={[styles.goLiveTextDesign, !this.props.disabled && {color: '#fff'}]}>Go Live</Text>
             </TouchableOpacity>
         )
     }

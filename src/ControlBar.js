@@ -16,6 +16,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         justifyContent: 'space-between',
+    },
+    controlBarContainer: {
         marginHorizontal: 8
     }
 })
@@ -27,14 +29,15 @@ const ControlBar = (props) => {
         progress,
         currentTime,
         duration,
-        theme
+        theme,
+        isInLiveEdge
     } = props
 
     return (
-        <View>
+        <View style={styles.controlBarContainer}>
             <View style={styles.timerSpace}>
                 <Time time={currentTime} theme={theme.seconds} />
-                {duration <= 0 && <GoLive theme={theme.seconds} seekToLive = {() => props.seekToLive()}/>}
+                {duration <= 0 && <GoLive theme={theme.seconds} disabled={isInLiveEdge} seekToLive = {() => props.seekToLive()}/>}
             </View>
             <Scrubber
                 onSeek={pos => onSeek(pos)}

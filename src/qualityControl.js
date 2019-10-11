@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import Icons from 'react-native-vector-icons/MaterialIcons'
-import {QualityOverlayButtons} from "react-native-brightcove-player/src/qualityOverlayButtons";
 
 const backgroundColor = 'transparent'
 
@@ -19,9 +18,6 @@ const QualityControl = (props) => {
     const {
         paddingLeft,
         paddingRight,
-        isOn,
-        iconOn,
-        iconOff,
         theme,
         size
     } = props
@@ -39,7 +35,7 @@ const QualityControl = (props) => {
             >
                 <Icons
                     style={padding}
-                    name={"settings-applications"}
+                    name={"hd"}
                     color={theme}
                     size={size}
                 />

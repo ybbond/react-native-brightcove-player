@@ -9,7 +9,8 @@ import {
     StatusBar,
     StyleSheet,
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    SafeAreaView
 } from 'react-native'
 import BrightcovePlayer from './BrightcovePlayer'
 import Orientation from 'react-native-orientation'
@@ -110,7 +111,7 @@ class BCPlayer extends Component {
     }
 
     componentDidMount() {
-        this.setState({paused: !this.props.autoPlay})
+        this.setState({paused: false})
         Orientation.addOrientationListener(this.orientationDidChange)
         BackHandler.addEventListener('hardwareBackPress', this.BackHandler)
         AppState.addEventListener('change', this._handleAppStateChange)
@@ -192,6 +193,7 @@ class BCPlayer extends Component {
     }
 
     toggleFS() {
+        console.log('reached')
         this.setState({fullScreen: !this.state.fullScreen}, () => {
             if (this.state.fullScreen) {
                 const initialOrient = Orientation.getInitialOrientation()
@@ -363,6 +365,7 @@ class BCPlayer extends Component {
                             size={20}
                             toggleQuality={() => this.toggleQuality()}
                             paddingRight={10}
+
                         />
                     </SafeAreaView>
                     {qualityControlMenu &&
@@ -373,7 +376,8 @@ class BCPlayer extends Component {
                                    loading={loading} paused={paused}
                                    forward={this.forward.bind(this)}
                                    rewind={this.rewind.bind(this)}
-                                   theme={theme}/>
+                                   theme={theme}
+                                   paused={paused}/>
 
                     {<View style={styles.bottomBar}>
                         <ControlBar

@@ -1,7 +1,5 @@
 package jp.manse;
 
-import jp.manse.LinearGradient.*;
-
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -13,15 +11,14 @@ import java.util.List;
 public class BrightcovePlayerPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactApplicationContext) {
-        return Arrays.<NativeModule>asList(new BrightcovePlayerUtil(reactApplicationContext), new BrightcovePlayerManager(reactApplicationContext), new LinearGradientManager());
+        return Arrays.<NativeModule>asList(new BrightcovePlayerUtil(reactApplicationContext), new BrightcovePlayerManager(reactApplicationContext));
     }
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         return Arrays.<ViewManager>asList(
                 new BrightcovePlayerManager(reactContext),
-                new BrightcovePlayerPosterManager(reactContext),
-                new LinearGradientManager()
+                new BrightcovePlayerPosterManager(reactContext)
         );
     }
 }

@@ -5,6 +5,5 @@ use_frameworks!
 
 target 'example' do
   pod 'Brightcove-Player-Core'
-  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
 end

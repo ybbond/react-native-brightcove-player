@@ -376,7 +376,7 @@ class BCPlayer extends Component {
                         />
                         <QualityControl
                             theme={theme.qualityControl}
-                            size={40}
+                            size={30}
                             toggleQuality={() => this.toggleQualityOverlay()}
                             paddingRight={10}
 

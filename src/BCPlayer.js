@@ -82,7 +82,7 @@ class BCPlayer extends Component {
             seeking: false,
             renderError: false,
             qualityControlMenu: false,
-            bitRate: 120000,
+            bitRate: 0,
             showControls: true,
             showClickOverlay: false,
             seconds: 0,
@@ -186,10 +186,6 @@ class BCPlayer extends Component {
         this.player.seekToLive()
     }
 
-    setBitRate() {
-        this.player.setBitRate(240)
-    }
-
     toggleFS() {
         this.setState({fullScreen: !this.state.fullScreen}, () => {
             if (this.state.fullScreen) {
@@ -272,8 +268,15 @@ class BCPlayer extends Component {
         }
     }
 
+    toggleQualityOverlay() {
+        this.setState({
+            qualityControlMenu: !this.state.qualityControlMenu,
+            controlsOverlayClicked: true
+        })
+    }
+
     toggleQuality(value) {
-        const quality = [2001000, -1, 1199000, 449000]
+        const quality = [2001000, 0, 1199000, 449000]
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlsOverlayClicked: true,
@@ -329,7 +332,7 @@ class BCPlayer extends Component {
         const {
             fullScreen,
             paused,
-            muted,
+            bitRate,
             progress,
             duration,
             currentTime,
@@ -337,7 +340,9 @@ class BCPlayer extends Component {
             loading,
             showControls,
             showClickOverlay,
-            selectedQualityIndex
+            selectedQualityIndex,
+            isInLiveEdge,
+            muted
         } = this.state
 
         const {
@@ -360,7 +365,7 @@ class BCPlayer extends Component {
                         <QualityControl
                             theme={theme.qualityControl}
                             size={20}
-                            toggleQuality={() => this.toggleQuality()}
+                            toggleQuality={() => this.toggleQualityOverlay()}
                             paddingRight={10}
                         />
                     </View>
@@ -382,6 +387,7 @@ class BCPlayer extends Component {
                             currentTime={currentTime}
                             theme={theme}
                             duration={duration.duration || duration}
+                            isInLiveEdge={isInLiveEdge}
                             seekToLive={() => this.seekToLive()}
                         />
                     </View>}
@@ -410,7 +416,7 @@ class BCPlayer extends Component {
                         onChangeDuration={(duration) => this.setDuration(duration)}
                         onProgress={e => this.progress(e)}
                         volume={muted ? 0 : 10}
-                        bitRate={this.state.bitRate}
+                        bitRate={bitRate}
                         onBufferingStarted={() => this.setState({loading: true})}
                         onBufferingCompleted={() => this.setState({loading: false})}
                     />

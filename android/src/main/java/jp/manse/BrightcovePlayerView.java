@@ -386,7 +386,6 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     }
 
     private void updateBitRate() {
-        if (this.bitRate == 0) return;
         ExoPlayerVideoDisplayComponent videoDisplay = ((ExoPlayerVideoDisplayComponent) this.playerVideoView.getVideoDisplay());
         ExoPlayer player = videoDisplay.getExoPlayer();
         DefaultTrackSelector trackSelector = videoDisplay.getTrackSelector();

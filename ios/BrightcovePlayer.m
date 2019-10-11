@@ -133,7 +133,7 @@
 #pragma mark - Akamai Analytics
 
 - (void)setupAnalytics {
-    _analytics = [[AkamaiMediaAnalytics alloc] initWithConfigurationUrl:@"http://media-analytics.akamaized.net/analyticsplugin/configuration/SampleBeacon.xml"];
+    _analytics = [[AkamaiMediaAnalytics alloc] initWithConfigurationUrl:@"https://ma1442-r.analytics.edgekey.net/config/beacon-25672.xml"];
     
     [_analytics setDebugLogging:YES];
     [_analytics enableServerIpLookup];

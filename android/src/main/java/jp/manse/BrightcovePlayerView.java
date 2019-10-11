@@ -89,8 +89,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     private boolean isNetworkForcedPause = false;
     private boolean isRegisteredConnectivityChanged = false;
     private AkamaiExoPlayerLoader akamaiExoPlayerLoader;
-    private String akamaiConfigURL = "http://media-analytics.akamaized.net/analyticsplugin/configuration/SampleBeacon"
-        + ".xml";
+    private String akamaiConfigURL = "https://ma1442-r.analytics.edgekey.net/config/beacon-25672.xml";
     private String currentStreamURL;
     private String uuid;
     private PlayTimer playTimer;

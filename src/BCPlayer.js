@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
     },
     topSubMenu : {
         display: 'flex',
-        flexDirection: 'row-reverse'
+        flexDirection: 'row-reverse',
+        zIndex:1000
     },
     bottomBar: {
         zIndex: 2000,
@@ -354,7 +355,7 @@ class BCPlayer extends Component {
                 <AnimView style={styles.topMenu}
                           onEnd={this.onAnimEnd}
                           onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
-                    <View style={styles.topSubMenu}>
+                    <SafeAreaView style={styles.topSubMenu}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}
                             iconOff="fullscreen"
@@ -368,7 +369,7 @@ class BCPlayer extends Component {
                             toggleQuality={() => this.toggleQualityOverlay()}
                             paddingRight={10}
                         />
-                    </View>
+                    </SafeAreaView>
                     {qualityControlMenu &&
                     <QualityOverlayButtons onPress={(value) => this.toggleQuality.bind(this, value)}
                                            qualityContent={qualityContent} selectedQualityIndex={selectedQualityIndex}/>

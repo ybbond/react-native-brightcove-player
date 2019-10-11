@@ -56,6 +56,15 @@ RCT_EXPORT_METHOD(seekTo:(nonnull NSNumber *)reactTag seconds:(nonnull NSNumber 
     }];
 }
 
+RCT_EXPORT_METHOD(playVideo:(nonnull NSNumber *)reactTag value:(BOOL *)value) {
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        BrightcovePlayer *player = (BrightcovePlayer*)viewRegistry[reactTag];
+        if ([player isKindOfClass:[BrightcovePlayer class]]) {
+            [player setPlay:value];
+        }
+    }];
+}
+
 RCT_EXPORT_METHOD(setFullscreen:(nonnull NSNumber *)reactTag fullscreen:(BOOL)fullscreen) {
     [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
         BrightcovePlayer *player = (BrightcovePlayer*)viewRegistry[reactTag];

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Animated} from 'react-native'
 import Icons from "react-native-vector-icons/MaterialIcons";
+import FICons from "react-native-vector-icons/FontAwesome";
 
 const styles = StyleSheet.create({
     btnContainer: {
@@ -28,36 +29,39 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-end'
     },
-    forwardButton : {
+    forwardButton: {
         flexDirection: 'row',
         alignItems: 'center',
     }
 })
 
 const ScreenButtons = (props) => {
-    return ( <View style={styles.btnContainer}>
-        <TouchableOpacity style={[styles.individualButton, styles.rewindButton]} onPress={() => props.rewind()}>
-            <Icons
-                name={'double-arrow'}
-                color={props.theme.screenButtons}
-                size={40}
-            />
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.individualButton, styles.centerButton]} onPress={() => props.togglePlay()}>
+    return (<View style={styles.btnContainer}>
+        <View style={[styles.individualButton, styles.rewindButton]}>
+            <TouchableOpacity onPress={() => props.rewind()}>
+                <FICons
+                    name={'angle-double-left'}
+                    color={props.theme.screenButtons}
+                    size={40}
+                />
+            </TouchableOpacity>
+        </View>
+        <View style={[styles.individualButton, styles.centerButton]}>
             {props.loading && <ActivityIndicator size="large" color="#fff"/>}
-            {!props.loading && <Icons
+            {!props.loading && <TouchableOpacity onPress={() => props.togglePlay()}><Icons
                 name={props.paused ? 'play-arrow' : 'pause'}
                 color={props.theme.screenButtons}
                 size={40}
-            />}
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.individualButton, styles.forwardButton]} onPress={() => props.forward()}>
-            <Icons
-                name={'double-arrow'}
+            /></TouchableOpacity>}
+        </View>
+        <View style={[styles.individualButton, styles.forwardButton]} >
+            <TouchableOpacity onPress={() => props.forward()}><FICons
+                name={'angle-double-right'}
                 color={props.theme.screenButtons}
                 size={40}
             />
-        </TouchableOpacity>
+            </TouchableOpacity>
+        </View>
 
     </View>)
 }

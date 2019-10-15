@@ -5009,7 +5009,7 @@ react-native-animatable@^1.3.1:
 
 "react-native-brightcove-player@git://github.com/pankaj-pp/react-native-brightcove-player.git#custom-controls":
   version "1.6.5"
-  resolved "git://github.com/pankaj-pp/react-native-brightcove-player.git#6567ffbf0b4c3c82bfccd0df6a26f1b09beab933"
+  resolved "git://github.com/pankaj-pp/react-native-brightcove-player.git#a40432d8911f40dafe3ccd8b8a8e5e0a02567221"
   dependencies:
     prop-types "^15.5.10"
     react-native-orientation "^3.1.3"

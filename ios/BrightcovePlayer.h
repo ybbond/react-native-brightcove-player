@@ -54,10 +54,12 @@
 @property (nonatomic, copy) RCTDirectEventBlock onError;
 @property (nonatomic, copy) RCTDirectEventBlock onNetworkConnectivityChange;
 
--(void)setPlay:(BOOL)play;
+-(void) setPlay:(BOOL)play;
 -(void) seekTo:(NSNumber *)time;
+-(void) seekToLive;
+-(void) setBitRate:(NSNumber *)bitRate;
 -(void) setFullscreen:(BOOL *)fullscreen;
--(void)dispose;
+-(void) dispose;
 
 
 @end

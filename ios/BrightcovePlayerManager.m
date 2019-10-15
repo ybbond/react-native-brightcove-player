@@ -56,6 +56,15 @@ RCT_EXPORT_METHOD(seekTo:(nonnull NSNumber *)reactTag seconds:(nonnull NSNumber 
     }];
 }
 
+RCT_EXPORT_METHOD(setBitRate:(nonnull NSNumber *)reactTag bitRate:(nonnull NSNumber *)bitRate) {
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        BrightcovePlayer *player = (BrightcovePlayer*)viewRegistry[reactTag];
+        if ([player isKindOfClass:[BrightcovePlayer class]]) {
+            [player setBitRate:bitRate];
+        }
+    }];
+}
+
 RCT_EXPORT_METHOD(playVideo:(nonnull NSNumber *)reactTag value:(BOOL *)value) {
     [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
         BrightcovePlayer *player = (BrightcovePlayer*)viewRegistry[reactTag];
@@ -64,6 +73,16 @@ RCT_EXPORT_METHOD(playVideo:(nonnull NSNumber *)reactTag value:(BOOL *)value) {
         }
     }];
 }
+
+RCT_EXPORT_METHOD(seekToLive:(nonnull NSNumber *)reactTag) {
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        BrightcovePlayer *player = (BrightcovePlayer*)viewRegistry[reactTag];
+        if ([player isKindOfClass:[BrightcovePlayer class]]) {
+            [player seekToLive];
+        }
+    }];
+}
+
 
 RCT_EXPORT_METHOD(setFullscreen:(nonnull NSNumber *)reactTag fullscreen:(BOOL)fullscreen) {
     [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {

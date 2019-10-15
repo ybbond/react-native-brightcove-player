@@ -191,6 +191,18 @@
     }];
 }
 
+- (NSNumber *)liveEdge {
+    CMTimeRange seekableRange = [_playbackSession.player.currentItem.seekableTimeRanges.lastObject CMTimeRangeValue];
+    CGFloat seekableStart = CMTimeGetSeconds(seekableRange.start);
+    CGFloat seekableDuration = CMTimeGetSeconds(seekableRange.duration);
+    CGFloat livePosition = seekableStart + seekableDuration;
+    return @(livePosition);
+}
+
+- (void)seekToLive {
+    [self seekTo:[self liveEdge]];
+}
+
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didReceiveLifecycleEvent:(BCOVPlaybackSessionLifecycleEvent *)lifecycleEvent {
 
     [self createAirplayIconOverlay];
@@ -327,7 +339,9 @@
     if (self.onProgress && progress > 0 && progress != INFINITY) {
         self.onProgress(@{
                           @"currentTime": @(progress),
-                          @"duration": @(!isnan(duration) ? duration : -1)
+                          @"duration": @(!isnan(duration) ? duration : -1),
+                          @"liveEdge": [self liveEdge],
+                          @"isInLiveEdge": @(abs((int)(progress - [[self liveEdge] doubleValue])) < 5)
                           });
     }
     float bufferProgress = _playerView.controlsView.progressSlider.bufferProgress;

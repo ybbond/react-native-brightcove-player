@@ -39,7 +39,7 @@ export const FadeOutAnim = (props) => {
             fadeAnim,
             {
                 toValue: 0,
-                duration: 1000,
+                duration: 500,
                 useNativeDriver: true
             }
         ).start(props.onEnd);

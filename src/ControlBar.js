@@ -51,8 +51,6 @@ const ControlBar = (props) => {
 }
 
 ControlBar.propTypes = {
-    toggleFS: PropTypes.func.isRequired,
-    toggleMute: PropTypes.func.isRequired,
     onSeek: PropTypes.func.isRequired,
     onSeekRelease: PropTypes.func.isRequired,
     progress: PropTypes.number.isRequired,

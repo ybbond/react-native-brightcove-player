@@ -48,8 +48,8 @@ QualityControl.propTypes = {
     onPress: PropTypes.func,
     theme: PropTypes.string.isRequired,
     size: PropTypes.number,
-    paddingRight: PropTypes.number,
-    paddingLeft: PropTypes.number
+    paddingRight: PropTypes.bool,
+    paddingLeft: PropTypes.bool
 }
 
 QualityControl.defaultProps = {

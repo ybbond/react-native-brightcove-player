@@ -196,7 +196,7 @@
     CGFloat seekableStart = CMTimeGetSeconds(seekableRange.start);
     CGFloat seekableDuration = CMTimeGetSeconds(seekableRange.duration);
     CGFloat livePosition = seekableStart + seekableDuration;
-    return @(livePosition);
+    return @(!isnan(livePosition) ? livePosition : 0);
 }
 
 - (void)seekToLive {

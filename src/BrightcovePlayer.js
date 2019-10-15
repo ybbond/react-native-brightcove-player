@@ -125,8 +125,7 @@ BrightcovePlayer.prototype.setBitRate = Platform.select({
 BrightcovePlayer.prototype.seekToLive = Platform.select({
   ios: function (prop) {
     NativeModules.BrightcovePlayerManager.seekToLive(
-        ReactNative.findNodeHandle(this),
-        prop
+        ReactNative.findNodeHandle(this)
     );
   },
   android: function (prop) {

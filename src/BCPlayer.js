@@ -65,13 +65,18 @@ const styles = StyleSheet.create({
         bottom: 0
     },
     loader: {
-        zIndex: 100,
+        zIndex: 1000,
         position: 'absolute',
         width: '100%',
         height: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    loaderContainer: {
+        width: 40,
+        height: 40,
+        backgroundColor: 'red'
     }
 })
 
@@ -310,7 +315,7 @@ class BCPlayer extends Component {
     forward() {
         this.setState({
             controlsOverlayClicked: true,
-            curreentTime: ((this.state.currentTime + 10) <= this.state.duration) ? this.state.currentTime + 10 : (this.state.duration > 0) ? this.state.duration : this.state.currentTime
+            currentTime: (Math.floor(this.state.currentTime) <= Math.floor(this.state.liveEdge) || Math.floor(this.state.currentTime) <= Math.floor(this.state.duration))  ? (this.state.currentTime + 10) :  this.state.currentTime
         }, () => {
             this.player.seekTo(this.state.currentTime + 10)
         })
@@ -376,12 +381,10 @@ class BCPlayer extends Component {
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
             <View>
-                {loading && <View style={styles.loader}>
-                    <ActivityIndicator size="large" color="#fff" />
-                </View>}
-                {!loading && <AnimView style={styles.topMenu}
-                                       onEnd={this.onAnimEnd}
-                                       onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
+                {loading && <View style={styles.loader}><View><ActivityIndicator size="large" color="#fff" /></View></View>}
+                <AnimView style={styles.topMenu}
+                          onEnd={this.onAnimEnd}
+                          onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
                     <SafeAreaView style={styles.topSubMenu}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}
@@ -423,7 +426,7 @@ class BCPlayer extends Component {
                             seekToLive={() => this.seekToLive()}
                         />
                     </View>}
-                </AnimView>}
+                </AnimView>
                 {showClickOverlay &&
                 <TouchableOpacity style={{zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}}
                                   onPress={() => this.setState({showControls: true})}/>}

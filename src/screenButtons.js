@@ -17,7 +17,8 @@ const styles = StyleSheet.create({
     },
     individualButton: {
         display: 'flex',
-        flexGrow: 1
+        flex: 1,
+        flexBasis : 40
     },
     centerButton: {
         flexDirection: 'row',

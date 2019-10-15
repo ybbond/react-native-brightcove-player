@@ -9,7 +9,7 @@ export const FadeInAnim = (props) => {
             fadeAnim,
             {
                 toValue: 1,
-                duration: 1000,
+                duration: 500,
                 useNativeDriver: true
             }
         ).start(props.onEnd);

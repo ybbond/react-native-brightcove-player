@@ -30,7 +30,7 @@ class Time extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={{ color: this.props.theme }}>{this.getTime(parseInt(this.props.time, 10))}</Text>
+                <Text style={{ color: this.props.theme }}>{this.props.time > 0? this.getTime(parseInt(this.props.time, 10)) : ''}</Text>
             </View>
         )
     }

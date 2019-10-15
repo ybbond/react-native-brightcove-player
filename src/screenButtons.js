@@ -52,7 +52,7 @@ const ScreenButtons = (props) => {
             </TouchableOpacity>
         </View>
         <View style={[styles.individualButton, styles.centerButton]}>
-            {props.loading && <ActivityIndicator size="large" color="#fff"/>}
+
             {!props.loading && <TouchableOpacity onPress={() => onPress()}><Icons
                 name={props.completed ? 'replay' : props.paused ? 'play-arrow' : 'pause'}
                 color={props.theme.screenButtons}

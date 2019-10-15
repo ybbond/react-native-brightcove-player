@@ -10,7 +10,8 @@ import {
     StyleSheet,
     View,
     TouchableOpacity,
-    SafeAreaView
+    SafeAreaView,
+    ActivityIndicator
 } from 'react-native'
 import BrightcovePlayer from './BrightcovePlayer'
 import Orientation from 'react-native-orientation'
@@ -62,6 +63,15 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: '100%',
         bottom: 0
+    },
+    loader: {
+        zIndex: 100,
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 
@@ -363,9 +373,12 @@ class BCPlayer extends Component {
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
             <View>
-                <AnimView style={styles.topMenu}
-                          onEnd={this.onAnimEnd}
-                          onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
+                {loading && <View style={styles.loader}>
+                    <ActivityIndicator size="large" color="#fff" />
+                </View>}
+                {!loading && <AnimView style={styles.topMenu}
+                                       onEnd={this.onAnimEnd}
+                                       onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
                     <SafeAreaView style={styles.topSubMenu}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}
@@ -407,7 +420,7 @@ class BCPlayer extends Component {
                             seekToLive={() => this.seekToLive()}
                         />
                     </View>}
-                </AnimView>
+                </AnimView>}
                 {showClickOverlay &&
                 <TouchableOpacity style={{zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}}
                                   onPress={() => this.setState({showControls: true})}/>}

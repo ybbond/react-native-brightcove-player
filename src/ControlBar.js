@@ -36,7 +36,7 @@ const ControlBar = (props) => {
     return (
         <View style={styles.controlBarContainer}>
             <View style={styles.timerSpace}>
-                <Time time={currentTime} theme={theme.seconds} />
+                {currentTime && <Time time={currentTime} theme={theme.seconds} />}
                 {duration <= 0 && <GoLive theme={theme.seconds} disabled={isInLiveEdge} seekToLive = {() => props.seekToLive()}/>}
             </View>
             <Scrubber

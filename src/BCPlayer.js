@@ -309,7 +309,8 @@ class BCPlayer extends Component {
 
     forward() {
         this.setState({
-            controlsOverlayClicked: true
+            controlsOverlayClicked: true,
+            curreentTime: ((this.state.currentTime + 10) <= this.state.duration) ? this.state.currentTime + 10 : (this.state.duration > 0) ? this.state.duration : this.state.currentTime
         }, () => {
             this.player.seekTo(this.state.currentTime + 10)
         })
@@ -317,9 +318,11 @@ class BCPlayer extends Component {
 
     rewind() {
         this.setState({
-            controlsOverlayClicked: true
+            controlsOverlayClicked: true,
+            currentTime : ((this.state.currentTime - 10) >= 0 ) ? this.state.currentTime - 10 : this.state.currentTime
         }, () => {
-            this.player.seekTo(this.state.currentTime - 10)
+            if ((this.state.currentTime - 10) >= 0 )
+                this.player.seekTo(this.state.currentTime - 10)
         })
     }
 

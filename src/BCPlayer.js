@@ -108,14 +108,15 @@ class BCPlayer extends Component {
             isInLiveEdge: true,
             liveEdge: 0,
             selectedQualityIndex: 0,
-            completed: false
+            completed: false,
+            invoked: false
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
         this.BackHandler = this.BackHandler.bind(this)
-        this.orientationDidChange = this.orientationDidChange.bind(this)
         this._handleAppStateChange = this._handleAppStateChange.bind(this)
         this.onAnimEnd = this.onAnimEnd.bind(this)
+        this.onRotated = this.onRotated.bind(this)
     }
 
     componentWillMount() {
@@ -124,12 +125,11 @@ class BCPlayer extends Component {
         // `getInitialOrientation` returns directly because its a constant set at the
         // beginning of the JS runtime.
         // Remember to remove listener
-        Orientation.removeOrientationListener(this.orientationDidChange)
     }
 
     componentDidMount() {
         this.setState({paused: false})
-        Orientation.addOrientationListener(this.orientationDidChange)
+        Dimensions.addEventListener('change', this.onRotated)
         BackHandler.addEventListener('hardwareBackPress', this.BackHandler)
         AppState.addEventListener('change', this._handleAppStateChange)
         this.setTimer()
@@ -172,26 +172,39 @@ class BCPlayer extends Component {
 
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.BackHandler)
-        Orientation.removeOrientationListener(this.orientationDidChange)
+        Dimensions.removeEventListener('change', this.onRotated)
         AppState.removeEventListener('change', this._handleAppStateChange)
         clearInterval(this.timer)
     }
 
-    orientationDidChange(orientation) {
+
+    onRotated({ window: { width, height } }) {
+        // Add this condition incase if inline and fullscreen options are turned on
+        if (this.props.inlineOnly) return
+        const orientation = width > height ? 'LANDSCAPE' : 'PORTRAIT'
         if (this.props.rotateToFullScreen) {
-            if (orientation === 'LANDSCAPE' && !this.state.fullScreen) {
-                this.setState({onRotate: true}, () => {
-                    this.player.setFullscreen && this.player.setFullscreen(true)
+            if (orientation === 'LANDSCAPE') {
+                this.setState({ fullScreen: true }, () => {
+                    this.animToFullscreen(height)
+                    this.props.onFullScreen(this.state.fullScreen)
                 })
                 return
             }
-            if (orientation === 'PORTRAIT' && this.state.fullScreen) {
-                this.setState({onRotate: true}, () => {
-                    this.player.setFullscreen && this.player.setFullscreen(false)
+            if (orientation === 'PORTRAIT') {
+                this.setState({
+                    fullScreen: false,
+                    paused: this.props.fullScreenOnly || this.state.paused
+                }, () => {
+                    this.animToInline()
+                    if (this.props.fullScreenOnly) this.props.onPlay(!this.state.paused)
+                    this.props.onFullScreen(this.state.fullScreen)
                 })
                 return
             }
+        } else {
+            this.animToInline()
         }
+        if (this.state.fullScreen) this.animToFullscreen(height)
     }
 
     BackHandler() {
@@ -210,7 +223,7 @@ class BCPlayer extends Component {
     }
 
     toggleFS() {
-        this.setState({fullScreen: !this.state.fullScreen}, () => {
+        this.setState({fullScreen: !this.state.fullScreen, invoked: true}, () => {
             if (this.state.fullScreen) {
                 const initialOrient = Orientation.getInitialOrientation()
                 const height = this.state.onRotate ? Dimensions.get('window').height : Dimensions.get('window').width

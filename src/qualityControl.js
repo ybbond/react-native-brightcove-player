@@ -12,6 +12,15 @@ const styles = StyleSheet.create({
         backgroundColor,
         justifyContent: 'center',
         zIndex: 101
+    },
+    textStyle : {
+        backgroundColor: '#ff5000',
+        color: 'white',
+        fontSize: 9,
+        position: 'absolute',
+        zIndex: 102,
+        borderRadius:2,
+        left: 15
     }
 })
 
@@ -24,10 +33,10 @@ const QualityControl = (props) => {
     } = props
 
     const padding = {
-        height: 18,
+        height: 23,
         paddingLeft: paddingLeft ? paddingLeft : 0,
         paddingRight: paddingRight ? paddingRight : 0,
-        width: 18,
+        width: 23,
         marginRight:17
     }
     const contolArray = ['Auto', 'High', 'Medm', 'Data']
@@ -37,7 +46,7 @@ const QualityControl = (props) => {
             <TouchableOpacity
                 onPress={() => props.toggleQuality()}
             >
-                <Text style={{backgroundColor: '#ff5000', color: 'white', fontSize: 8, position: 'absolute', zIndex: 102, borderRadius:2, left: 8}}>{contolArray[props.selectedOption]}</Text>
+                <Text style={styles.textStyle}>{contolArray[props.selectedOption]}</Text>
                 <Image
                     style={padding}
                     source={settings}

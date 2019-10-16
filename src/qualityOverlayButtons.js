@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
     btnContainer: {
         zIndex: 1000,
         position: 'absolute',
-        top: 5,
-        right: 65,
+        top: 10,
+        right: 78,
         borderWidth: 1,
         borderColor: 'white',
         paddingLeft: 10,
@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
         zIndex: 1000,
         width: 8,
         height: 8,
-        right: 63,
-        top: 10,
+        right: 76,
+        top: 15,
         backgroundColor: 'white',
         position: 'absolute',
         transform: [{rotate : '45deg'}]

@@ -430,10 +430,10 @@ class BCPlayer extends Component {
                             iconOn="fullscreen-exit"
                             isOn={fullScreen}
                             theme={theme.fullscreen}
+                            size={35}
                         />
                         <QualityControl
                             theme={theme.qualityControl}
-                            size={30}
                             toggleQuality={() => this.toggleQualityOverlay()}
                             paddingRight={10}
                             selectedOption={selectedQualityIndex}

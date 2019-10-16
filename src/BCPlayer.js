@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         bottom: 0
     },
     loader: {
-        zIndex: 10,
+        zIndex: 1000,
         position: 'absolute',
         width: '100%',
         height: '100%',
@@ -278,8 +278,10 @@ class BCPlayer extends Component {
 
     onSeekRelease(percent) {
         const seconds = this.state.duration > 0 ? percent * this.state.duration : percent * this.state.liveEdge
-        this.setState({progress: percent, seeking: false, currentTime: !this.state.liveEdge && (this.state.duration < seconds) ? this.state.duration - 1 :  seconds}, () => {
-            this.player.seekTo(!this.state.liveEdge && (this.state.duration < seconds) ? this.state.duration - 1 :  seconds)
+        this.setState({progress: percent, seeking: false, currentTime: (this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds}, () => {
+
+            this.player.seekTo((this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds)
+            this.forcePlay()
         })
     }
 

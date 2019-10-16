@@ -65,6 +65,17 @@ RCT_EXPORT_METHOD(setBitRate:(nonnull NSNumber *)reactTag bitRate:(nonnull NSNum
     }];
 }
 
+
+RCT_EXPORT_METHOD(createAirplayIconOverlay:(nonnull NSNumber *)reactTag) {
+    [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        BrightcovePlayer *player = (BrightcovePlayer*)viewRegistry[reactTag];
+        if ([player isKindOfClass:[BrightcovePlayer class]]) {
+            [player createAirplayIconOverlay];
+        }
+    }];
+}
+
+
 RCT_EXPORT_METHOD(playVideo:(nonnull NSNumber *)reactTag value:(BOOL *)value) {
     [self.bridge.uiManager addUIBlock:^(__unused RCTUIManager *uiManager, NSDictionary<NSNumber *, UIView *> *viewRegistry) {
         BrightcovePlayer *player = (BrightcovePlayer*)viewRegistry[reactTag];

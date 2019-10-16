@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         bottom: 0
     },
     loader: {
-        zIndex: 1000,
+        zIndex: 10,
         position: 'absolute',
         width: '100%',
         height: '100%',
@@ -161,6 +161,7 @@ class BCPlayer extends Component {
         if (
             this.state.appState.match(/inactive|background/) &&
             nextAppState === 'active') {
+            this.player.playVideo(true)
             if (this.state.fullScreen) {
                 this.player.setFullscreen(false)
             }
@@ -201,7 +202,10 @@ class BCPlayer extends Component {
     }
 
     seekToLive() {
-        this.player.seekToLive()
+        this.setState({currentTime : this.state.liveEdge}, () => {
+            this.progress({currentTime: this.state.currentTime, liveEdge: this.state.liveEdge});
+            this.player.seekToLive()})
+
     }
 
     toggleFS() {
@@ -273,7 +277,7 @@ class BCPlayer extends Component {
 
     onSeekRelease(percent) {
         const seconds = this.state.duration > 0 ? percent * this.state.duration : percent * this.state.liveEdge
-        this.setState({progress: percent, seeking: false}, () => {
+        this.setState({progress: percent, seeking: false, currentTime: seconds}, () => {
             this.player.seekTo(seconds)
         })
     }
@@ -310,6 +314,10 @@ class BCPlayer extends Component {
         }, () => {
             this.player.playVideo(!this.state.paused)
         })
+    }
+
+    openAirplay() {
+        this.player.createAirplayIconOverlay();
     }
 
     forward() {
@@ -382,9 +390,9 @@ class BCPlayer extends Component {
         return (
             <View>
                 {loading && <View style={styles.loader}><View><ActivityIndicator size="large" color="#fff" /></View></View>}
-                <AnimView style={styles.topMenu}
-                          onEnd={this.onAnimEnd}
-                          onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
+                {true && <AnimView style={styles.topMenu}
+                                   onEnd={this.onAnimEnd}
+                                   onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
                     <SafeAreaView style={styles.topSubMenu}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}
@@ -426,7 +434,7 @@ class BCPlayer extends Component {
                             seekToLive={() => this.seekToLive()}
                         />
                     </View>}
-                </AnimView>
+                </AnimView>}
                 {showClickOverlay &&
                 <TouchableOpacity style={{zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}}
                                   onPress={() => this.setState({showControls: true})}/>}
@@ -455,6 +463,7 @@ class BCPlayer extends Component {
                         onBufferingStarted={() => this.setState({loading: true})}
                         onBufferingCompleted={() => this.setState({loading: false})}
                         onEnd={() => this.setState({completed : true})}
+                        autoPlay={true}
                     />
                 </Animated.View>
             </View>

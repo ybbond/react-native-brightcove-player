@@ -59,6 +59,7 @@
 -(void) seekToLive;
 -(void) setBitRate:(NSNumber *)bitRate;
 -(void) setFullscreen:(BOOL *)fullscreen;
+-(void) createAirplayIconOverlay;
 -(void) dispose;
 
 

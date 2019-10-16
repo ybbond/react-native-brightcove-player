@@ -107,6 +107,16 @@ class BrightcovePlayer extends Component {
   }
 }
 
+// createAirplayIconOverlay
+BrightcovePlayer.prototype.createAirplayIconOverlay = Platform.select({
+  ios: function (prop) {
+    console.log('reached');
+    NativeModules.BrightcovePlayerManager.createAirplayIconOverlay(
+        ReactNative.findNodeHandle(this)
+    );
+  }
+});
+
 BrightcovePlayer.prototype.setBitRate = Platform.select({
   ios: function (prop) {
     NativeModules.BrightcovePlayerManager.setBitRate(

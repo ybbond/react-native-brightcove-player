@@ -23,6 +23,7 @@ import {FadeInAnim, FadeOutAnim} from "./fade-anim";
 import {ToggleIcon} from "./ToggleIcon";
 import {QualityControl} from "./qualityControl";
 
+const FORWARD_CONTROL = Platform.OS === 'ios' ? 5 : 10;
 
 // Wraps the Brightcove player with special Events
 const BrightcovePlayerWithEvents = withEvents(BrightcovePlayer)
@@ -323,19 +324,19 @@ class BCPlayer extends Component {
     forward() {
         this.setState({
             controlsOverlayClicked: true,
-            currentTime: (Math.floor(this.state.currentTime) <= Math.floor(this.state.liveEdge) || Math.floor(this.state.currentTime) <= Math.floor(this.state.duration))  ? (this.state.currentTime + 10) :  this.state.currentTime
+            currentTime: (Math.floor(this.state.currentTime) <= Math.floor(this.state.liveEdge) || Math.floor(this.state.currentTime) <= Math.floor(this.state.duration))  ? (this.state.currentTime + FORWARD_CONTROL) :  this.state.currentTime
         }, () => {
-            this.player.seekTo(this.state.currentTime + 10)
+            this.player.seekTo(this.state.currentTime + FORWARD_CONTROL)
         })
     }
 
     rewind() {
         this.setState({
             controlsOverlayClicked: true,
-            currentTime : ((this.state.currentTime - 10) >= 0 ) ? this.state.currentTime - 10 : this.state.currentTime
+            currentTime : ((this.state.currentTime - FORWARD_CONTROL) >= 0 ) ? this.state.currentTime - FORWARD_CONTROL : this.state.currentTime
         }, () => {
-            if ((this.state.currentTime - 10) >= 0 )
-                this.player.seekTo(this.state.currentTime - 10)
+            if ((this.state.currentTime - FORWARD_CONTROL) >= 0 )
+                this.player.seekTo(this.state.currentTime - FORWARD_CONTROL)
         })
     }
 

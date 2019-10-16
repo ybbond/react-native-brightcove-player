@@ -38,8 +38,15 @@ const styles = StyleSheet.create({
 
 const ScreenButtons = (props) => {
     const onPress = () => {
-        !props.completed ? null : props.seekTo(0);
-        props.togglePlay(true)
+        if(props.completed) {
+            props.replay();
+            props.forcePlay();
+
+        }
+        else {
+            props.togglePlay()
+
+        }
 
     }
     return (<View style={styles.btnContainer}>

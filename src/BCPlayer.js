@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         bottom: 0
     },
     loader: {
-        zIndex: 1000,
+        zIndex: 10,
         position: 'absolute',
         width: '100%',
         height: '100%',
@@ -278,8 +278,8 @@ class BCPlayer extends Component {
 
     onSeekRelease(percent) {
         const seconds = this.state.duration > 0 ? percent * this.state.duration : percent * this.state.liveEdge
-        this.setState({progress: percent, seeking: false, currentTime: seconds}, () => {
-            this.player.seekTo(seconds)
+        this.setState({progress: percent, seeking: false, currentTime: !this.state.liveEdge && (this.state.duration < seconds) ? this.state.duration - 1 :  seconds}, () => {
+            this.player.seekTo(!this.state.liveEdge && (this.state.duration < seconds) ? this.state.duration - 1 :  seconds)
         })
     }
 
@@ -314,6 +314,15 @@ class BCPlayer extends Component {
             controlsOverlayClicked: true
         }, () => {
             this.player.playVideo(!this.state.paused)
+        })
+    }
+
+    forcePlay() {
+        this.setState({
+            paused: false,
+            controlsOverlayClicked: true
+        }, () => {
+            this.player.playVideo(true)
         })
     }
 
@@ -415,6 +424,7 @@ class BCPlayer extends Component {
                                            qualityContent={qualityContent} selectedQualityIndex={selectedQualityIndex}/>
                     }
                     <ScreenButtons togglePlay={this.togglePlay.bind(this)}
+                                   forcePlay={this.forcePlay.bind(this)}
                                    loading={loading} paused={paused}
                                    forward={this.forward.bind(this)}
                                    rewind={this.rewind.bind(this)}

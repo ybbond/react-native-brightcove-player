@@ -7,6 +7,7 @@ import {
     Slider as RNSlider
 } from 'react-native'
 import Slider from 'react-native-slider'
+const ThumbTracker = require('../Resources/controller.png')
 
 const styles = StyleSheet.create({
     container: {
@@ -31,15 +32,15 @@ const Scrubber = (props) => {
     return (
         <View style={styles.container}>
             { Platform.OS === 'ios' ?
-                <Slider
+                <RNSlider
                     onValueChange={val => onSeek(val)}
                     onSlidingComplete={val => onSeekRelease(val)}
                     value={progress === Number.POSITIVE_INFINITY ? 0 : progress}
-                    thumbTintColor={theme.scrubberThumb}
                     trackStyle={styles.trackStyle}
                     minimumTrackTintColor={theme.scrubberBar}
                     maximumTrackTintColor={trackColor}
                     trackClickable
+                    thumbImage={ThumbTracker}
                 />
                 :
                 <RNSlider
@@ -47,7 +48,7 @@ const Scrubber = (props) => {
                     onValueChange={val => onSeek(val)}
                     onSlidingComplete={val => onSeekRelease(val)}
                     value={progress}
-                    thumbTintColor={theme.scrubberThumb}
+                    thumbTintColor={"#e8e8e8"}
                     minimumTrackTintColor={theme.scrubberBar}
                     maximumTrackTintColor={trackColor}
                 />

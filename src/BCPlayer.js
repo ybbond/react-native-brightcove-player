@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         bottom: 0
     },
     loader: {
-        zIndex: 10,
+        zIndex: 1000,
         position: 'absolute',
         width: '100%',
         height: '100%',

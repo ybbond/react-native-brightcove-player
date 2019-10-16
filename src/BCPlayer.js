@@ -361,6 +361,11 @@ class BCPlayer extends Component {
         })
     }
 
+    overlayClick() {
+        console.log('reach')
+        this.setState({showControls: false})
+    }
+
     render() {
         const qualityContent = ['High', 'Auto', 'Medium', 'Data Saver']
 
@@ -402,7 +407,7 @@ class BCPlayer extends Component {
                 {loading && <View style={styles.loader}><View><ActivityIndicator size="large" color="#fff" /></View></View>}
                 {true && <AnimView style={styles.topMenu}
                                    onEnd={this.onAnimEnd}
-                                   onOverlayClick={() => this.setState({controlsOverlayClicked: true})}>
+                                   onOverlayClick={() => this.setState({controlsOverlayClicked: !this.state.controlsOverlayClicked})}>
                     <SafeAreaView style={styles.topSubMenu}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}
@@ -431,7 +436,8 @@ class BCPlayer extends Component {
                                    theme={theme}
                                    paused={paused}
                                    completed={completed}
-                                   replay={this.replay.bind(this)}/>
+                                   replay={this.replay.bind(this)}
+                                   onOverlayClick={() => this.overlayClick.bind(this)}/>
 
                     {<View style={styles.bottomBar}>
                         <ControlBar

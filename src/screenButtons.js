@@ -49,7 +49,7 @@ const ScreenButtons = (props) => {
         }
 
     }
-    return (<View style={styles.btnContainer}>
+    return (<TouchableOpacity style={styles.btnContainer} onPress ={props.onOverlayClick()}>
         <View style={[styles.individualButton, styles.rewindButton]}>
             <TouchableOpacity onPress={() => props.rewind()}>
                 <FICons
@@ -76,7 +76,7 @@ const ScreenButtons = (props) => {
             </TouchableOpacity>
         </View>
 
-    </View>)
+    </TouchableOpacity>)
 }
 
 ScreenButtons.propTypes = {

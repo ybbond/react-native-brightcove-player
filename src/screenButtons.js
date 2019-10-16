@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import {View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Animated} from 'react-native'
-import Icons from "react-native-vector-icons/MaterialIcons";
-import FICons from "react-native-vector-icons/FontAwesome";
+import Icons from 'react-native-vector-icons/MaterialIcons'
+import FICons from 'react-native-vector-icons/FontAwesome'
 
 const styles = StyleSheet.create({
     btnContainer: {
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     individualButton: {
         display: 'flex',
         flex: 1,
-        flexBasis : 40
+        flexBasis: 40
     },
     centerButton: {
         flexDirection: 'row',
@@ -32,31 +32,51 @@ const styles = StyleSheet.create({
     },
     forwardButton: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'center'
+    },
+    buttonContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    buttonContentTxt: {
+        color: 'white',
+        display: 'flex',
+        fontWeight: 'bold',
+        fontSize: 18,
+        paddingTop: 3
+    },
+    buttonContentIcon: {
+        color: 'white',
+        display: 'flex'
     }
 })
 
 const ScreenButtons = (props) => {
     const onPress = () => {
-        if(props.completed) {
-            props.replay();
-            props.forcePlay();
+        if (props.completed) {
+            props.replay()
+            props.forcePlay()
 
-        }
-        else {
+        } else {
             props.togglePlay()
 
         }
 
     }
-    return (<TouchableOpacity style={styles.btnContainer} onPress ={props.onOverlayClick()}>
+    return (<TouchableOpacity style={styles.btnContainer} onPress={props.onOverlayClick()}>
         <View style={[styles.individualButton, styles.rewindButton]}>
             <TouchableOpacity onPress={() => props.rewind()}>
-                <FICons
-                    name={'angle-double-left'}
-                    color={props.theme.screenButtons}
-                    size={40}
-                />
+                <View style={styles.buttonContainer}>
+                    <View style={styles.buttonContentIcon}>
+                        <FICons
+                            name={'angle-double-left'}
+                            color={props.theme.screenButtons}
+                            size={40}
+                        />
+                    </View><Text
+                    style={styles.buttonContentTxt}>10</Text>
+                </View>
             </TouchableOpacity>
         </View>
         <View style={[styles.individualButton, styles.centerButton]}>
@@ -67,12 +87,18 @@ const ScreenButtons = (props) => {
                 size={props.completed ? 32 : 40}
             /></TouchableOpacity>}
         </View>
-        <View style={[styles.individualButton, styles.forwardButton]} >
-            <TouchableOpacity onPress={() => props.forward()}><FICons
-                name={'angle-double-right'}
-                color={props.theme.screenButtons}
-                size={40}
-            />
+        <View style={[styles.individualButton, styles.forwardButton]}>
+            <TouchableOpacity onPress={() => props.forward()}>
+                <View style={styles.buttonContainer}>
+                    <Text style={styles.buttonContentTxt}>10</Text>
+                    <View style={styles.buttonContentIcon}>
+                        <FICons
+                            name={'angle-double-right'}
+                            color={props.theme.screenButtons}
+                            size={40}
+                        />
+                    </View>
+                </View>
             </TouchableOpacity>
         </View>
 

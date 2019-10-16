@@ -107,7 +107,7 @@ class BCPlayer extends Component {
             controlsOverlayClicked: false,
             isInLiveEdge: true,
             liveEdge: 0,
-            selectedQualityIndex: 1,
+            selectedQualityIndex: 0,
             completed: false
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
@@ -301,7 +301,7 @@ class BCPlayer extends Component {
     }
 
     toggleQuality(value) {
-        const quality = [2001000, 0, 1199000, 449000]
+        const quality = [0, 2001000, 1199000, 449000]
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlsOverlayClicked: true,
@@ -369,7 +369,7 @@ class BCPlayer extends Component {
     }
 
     render() {
-        const qualityContent = ['High', 'Auto', 'Medium', 'Data Saver']
+        const qualityContent = ['Auto', 'High', 'Medium', 'Data Saver']
 
         const theme = {
             title: '#fff',
@@ -423,6 +423,7 @@ class BCPlayer extends Component {
                             size={30}
                             toggleQuality={() => this.toggleQualityOverlay()}
                             paddingRight={10}
+                            selectedOption={selectedQualityIndex}
 
                         />
                     </SafeAreaView>

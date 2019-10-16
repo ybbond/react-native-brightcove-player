@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native'
 import Icons from 'react-native-vector-icons/MaterialIcons'
+const settings = require('../Resources/settings_icon.png')
 
 const backgroundColor = 'transparent'
 
@@ -23,21 +24,23 @@ const QualityControl = (props) => {
     } = props
 
     const padding = {
+        height: 18,
         paddingLeft: paddingLeft ? paddingLeft : 0,
-        paddingRight: paddingRight ? paddingRight : 0
+        paddingRight: paddingRight ? paddingRight : 0,
+        width: 18,
+        marginRight:17
     }
-
+    const contolArray = ['Auto', 'High', 'Medm', 'Data']
     return (
         <View style={styles.btnContainer}>
 
             <TouchableOpacity
                 onPress={() => props.toggleQuality()}
             >
-                <Icons
+                <Text style={{backgroundColor: '#ff5000', color: 'white', fontSize: 8, position: 'absolute', zIndex: 102, borderRadius:2, left: 8}}>{contolArray[props.selectedOption]}</Text>
+                <Image
                     style={padding}
-                    name={"hd"}
-                    color={theme}
-                    size={size}
+                    source={settings}
                 />
             </TouchableOpacity>
         </View>

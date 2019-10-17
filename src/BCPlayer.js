@@ -22,8 +22,11 @@ import {QualityOverlayButtons} from "./qualityOverlayButtons"
 import {FadeInAnim, FadeOutAnim} from "./fade-anim";
 import {ToggleIcon} from "./ToggleIcon";
 import {QualityControl} from "./qualityControl";
+import PlayerEventTypes from "./PlayerEventTypes";
 
 const FORWARD_CONTROL = Platform.OS === 'ios' ? 5 : 10;
+const qualityContent = ['Auto', 'High', 'Medium', 'Data Saver'];
+const quality = [0, 2001000, 1199000, 449000];
 
 // Wraps the Brightcove player with special Events
 const BrightcovePlayerWithEvents = withEvents(BrightcovePlayer)
@@ -78,6 +81,12 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         backgroundColor: 'red'
+    },
+    controlsVisibility: {
+        zIndex: 10000,
+        position: 'absolute',
+        width: '100%',
+        height: '100%'
     }
 })
 
@@ -217,7 +226,10 @@ class BCPlayer extends Component {
     seekToLive() {
         this.setState({currentTime : this.state.liveEdge}, () => {
             this.progress({currentTime: this.state.currentTime, liveEdge: this.state.liveEdge});
-            this.player && this.player.seekToLive()})
+            this.player && this.player.seekToLive()
+            if(this.state.paused)
+                this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.SEEK_TO_LIVE})
+        })
 
     }
 
@@ -313,12 +325,14 @@ class BCPlayer extends Component {
     }
 
     toggleQuality(value) {
-        const quality = [0, 2001000, 1199000, 449000]
+
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlsOverlayClicked: true,
             bitRate: (value >= 0 && value !== null) ? quality[value] : this.state.bitRate,
             selectedQualityIndex: (value >= 0 && value !== null) ? value : this.state.selectedQualityIndex
+        }, () => {
+            this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.QUALITY_SELECTED, bitRate : quality[value]})
         })
     }
 
@@ -328,6 +342,8 @@ class BCPlayer extends Component {
             controlsOverlayClicked: true
         }, () => {
             this.player && this.player.playVideo(!this.state.paused)
+            if(this.state.paused)
+                this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.PAUSE})
         })
     }
 
@@ -372,6 +388,7 @@ class BCPlayer extends Component {
         this.player && this.player.playVideo(true)
         this.setState( {currentTime: 0, paused: false, completed: false},  () => {
             this.progress({currentTime : this.state.currentTime, duration : this.state.duration})
+            this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.REPLAY})
         })
     }
 
@@ -380,7 +397,7 @@ class BCPlayer extends Component {
     }
 
     render() {
-        const qualityContent = ['Auto', 'High', 'Medium', 'Data Saver']
+
 
         const theme = {
             title: '#fff',
@@ -472,7 +489,7 @@ class BCPlayer extends Component {
                     </View>}
                 </AnimView>
                 {showClickOverlay &&
-                <TouchableOpacity style={{zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}}
+                <TouchableOpacity style={styles.controlsVisibility}
                                   onPress={() => this.setState({showControls: true})}/>}
                 <Animated.View
                     style={[

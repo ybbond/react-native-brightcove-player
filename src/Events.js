@@ -11,7 +11,8 @@ function withEvents(BCPlayerComponent) {
 			this.state = {
 				percentageTracked: {Q1: false, Q2: false, Q3: false, Q4: false},
 				mediainfo: null,
-				firstPlayed: false
+				firstPlayed: false,
+				quality: 'Auto'
 			}
 		}
 

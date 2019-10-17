@@ -303,7 +303,8 @@ class BCPlayer extends Component {
         const seconds = this.state.duration > 0 ? percent * this.state.duration : percent * this.state.liveEdge
         this.setState({progress: percent, completed: false, seeking: false, currentTime: (this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds}, () => {
 
-            this.player && this.player.seekTo((this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds)
+            this.player && this.player.seekTo((this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - 0.01 :  seconds)
+            this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.SEEK_TO, time: seconds})
             this.forcePlay()
         })
     }

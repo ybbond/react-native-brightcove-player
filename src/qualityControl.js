@@ -39,7 +39,7 @@ const QualityControl = (props) => {
         width: 23,
         marginRight:17
     }
-    const contolArray = ['Auto', 'High', 'Medm', 'Data']
+    const contolArray = ['Auto', 'High', 'Med', 'Data']
     return (
         <View style={styles.btnContainer}>
 

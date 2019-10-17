@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { View, StyleSheet, TouchableOpacity, Image, Text } from 'react-native'
-import Icons from 'react-native-vector-icons/MaterialIcons'
 const settings = require('../Resources/settings_icon.png')
 
 const backgroundColor = 'transparent'

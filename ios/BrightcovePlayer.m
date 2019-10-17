@@ -341,7 +341,7 @@
                           @"currentTime": @(progress),
                           @"duration": @(!isnan(duration) ? duration : -1),
                           @"liveEdge": [self liveEdge],
-                          @"isInLiveEdge": @(abs((int)(progress - [[self liveEdge] doubleValue])) < 5)
+                          @"isInLiveEdge": @(abs((int)(progress - [[self liveEdge] doubleValue])) < 7)
                           });
     }
     float bufferProgress = _playerView.controlsView.progressSlider.bufferProgress;

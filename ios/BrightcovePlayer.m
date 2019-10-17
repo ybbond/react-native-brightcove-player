@@ -14,6 +14,8 @@
 @property (nonatomic, strong) NSTimer *sendTimer;
 @property (nonatomic) long currentBytesLoaded;
 @property (nonatomic) NSInteger currentDroppedFrames;
+@property (nonatomic) float lastBitRate;
+@property (nonatomic) NSString *streamUrl;
 
 #pragma mark - Constants
 
@@ -31,6 +33,8 @@
 #define kBufferProgressKey @"bufferProgress"
 #define kErrorCodeKey @"error_code"
 #define kMessageKey @"message"
+#define kPlaybackEnd @"Playback session lifecycle event end"
+#define kPlaybackExit @"Playback exit"
 
 @end
 
@@ -43,8 +47,17 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self setup];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterForeground:)
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationEnterForeground:)
                                                      name:UIApplicationWillEnterForegroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleAVPlayerAccess:)
+                                                     name:AVPlayerItemNewAccessLogEntryNotification
+                                                   object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(handleApplicationWillTerminate:)
+                                                     name:UIApplicationWillTerminateNotification
+                                                   object:nil];
     }
     return self;
 }
@@ -56,6 +69,7 @@
 }
 
 - (void)dispose {
+    [_analytics handlePlayEnd:kPlaybackExit];
     [self.playbackController setVideos:@[]];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -138,7 +152,7 @@
     [_analytics setDebugLogging:YES];
     [_analytics enableServerIpLookup];
     [_analytics enableLocation];
-    [_analytics handleSessionInit:self withStreamUrl:@""];
+    [_analytics handleSessionInit:self withStreamUrl:_streamUrl];
 
     [self setupAnalyticsData];
 }
@@ -158,8 +172,24 @@
 
 #pragma mark - Notifications
 
-- (void)applicationEnterForeground:(NSNotification *)notification {
+- (void)handleApplicationEnterForeground:(NSNotification *)notification {
     [self setupAnalytics];
+}
+
+- (void)handleAVPlayerAccess:(NSNotification *)notification {
+    AVPlayerItemAccessLog *accessLog = [((AVPlayerItem *)notification.object) accessLog];
+    AVPlayerItemAccessLogEvent *lastEvent = accessLog.events.lastObject;
+    float lastEventNumber = lastEvent.indicatedBitrate;
+    if (lastEventNumber != self.lastBitRate) {
+        NSLog(@"Switch indicatedBitrate from: %f to: %f", self.lastBitRate, lastEventNumber);
+        self.lastBitRate = lastEventNumber;
+        
+        [_analytics handleBitrateChange:self.lastBitRate];
+    }
+}
+
+- (void)handleApplicationWillTerminate:(NSNotification *)notification {
+    [_analytics handleApplicationExit];
 }
 
 #pragma mark - Device Information
@@ -200,6 +230,7 @@ NSString *deviceName() {
         [_playbackService findVideoWithVideoID:_videoId parameters:nil completion:^(BCOVVideo *video, NSDictionary *jsonResponse, NSError *error) {
             if (video) {
                 _mediaInfo = jsonResponse;
+                _streamUrl = [self getStreamUrlFor:video videoId:_videoId];
                 [self.playbackController setVideos: @[ video ]];
             } else {
                 [self emitError:error];
@@ -209,12 +240,23 @@ NSString *deviceName() {
         [_playbackService findVideoWithReferenceID:_referenceId parameters:nil completion:^(BCOVVideo *video, NSDictionary *jsonResponse, NSError *error) {
             if (video) {
                 _mediaInfo = jsonResponse;
+                _streamUrl = [self getStreamUrlFor:video videoId:_referenceId];
                 [self.playbackController setVideos: @[ video ]];
             } else {
                 [self emitError:error];
             }
         }];
     }
+}
+
+- (NSString *)getStreamUrlFor:(BCOVVideo *)video videoId:(NSString *)vId {
+    for (BCOVSource *source in video.sources) {
+        if ([source.url.absoluteString containsString:vId]) {
+            return source.url.absoluteString;
+        }
+    }
+    
+    return nil;
 }
 
 #pragma mark - Setters
@@ -415,7 +457,7 @@ NSString *deviceName() {
         [self stopSendTimer];
         [self resetWatchedTime];
         
-        [_analytics handlePlayEnd:@"Playback session lifecycle event end"];
+        [_analytics handlePlayEnd:kPlaybackEnd];
     }
 
      /**
@@ -428,6 +470,10 @@ NSString *deviceName() {
         if (self.onBufferingStarted) {
             self.onBufferingStarted(@{});
         }
+        
+         if (_playing) {
+             [_analytics handleBufferStart];
+         }
      }
      /**
       * After becoming empty, this event is sent when the playback buffer has filled
@@ -438,6 +484,10 @@ NSString *deviceName() {
         if (self.onBufferingCompleted) {
             self.onBufferingCompleted(@{});
         }
+        
+         if (_playing) {
+             [_analytics handleBufferEnd];
+         }
      }
      /**
       * Playback of the video has stalled. When the video recovers,

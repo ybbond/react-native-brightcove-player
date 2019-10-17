@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     buttonContentTxt: {
         display: 'flex',
         fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: 14,
         paddingTop: 3
     },
     buttonContentIcon: {
@@ -77,7 +77,7 @@ const ScreenButtons = (props) => {
                         <FICons
                             name={'angle-double-left'}
                             color={props.showBackward ? props.theme.screenButtons : 'grey'}
-                            size={40}
+                            size={36}
                         />
                     </View><Text
                     style={[styles.buttonContentTxt, props.showBackward ? styles.colorWhite : styles.colorGrey]}>10</Text>
@@ -89,7 +89,7 @@ const ScreenButtons = (props) => {
             {!props.loading && <TouchableOpacity onPress={() => onPress()}><Icons
                 name={props.completed ? 'replay' : props.paused ? 'play-arrow' : 'pause'}
                 color={props.theme.screenButtons}
-                size={props.completed ? 32 : 40}
+                size={props.completed ? 28 : 36}
             /></TouchableOpacity>}
         </View>
         <View style={[styles.individualButton, styles.forwardButton]}>
@@ -100,7 +100,7 @@ const ScreenButtons = (props) => {
                         <FICons
                             name={'angle-double-right'}
                             color={props.showForward ? props.theme.screenButtons : 'grey'}
-                            size={40}
+                            size={36}
                         />
                     </View>
                 </View>

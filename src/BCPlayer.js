@@ -366,6 +366,7 @@ class BCPlayer extends Component {
             currentTime: (Math.floor(this.state.currentTime) <= Math.floor(this.state.liveEdge) || Math.floor(this.state.currentTime) <= Math.floor(this.state.duration))  ? (this.state.currentTime + FORWARD_CONTROL) :  this.state.currentTime
         }, () => {
             this.player && this.player.seekTo(this.state.currentTime + FORWARD_CONTROL)
+            this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.FORWARD})
         })
     }
 
@@ -375,15 +376,16 @@ class BCPlayer extends Component {
             currentTime : ((this.state.currentTime - FORWARD_CONTROL) >= 0 ) ? this.state.currentTime - FORWARD_CONTROL : this.state.currentTime,
             completed: false
         }, () => {
-            if ((this.state.currentTime - FORWARD_CONTROL) >= 0 )
+            if ((this.state.currentTime - FORWARD_CONTROL) >= 0 ){
                 this.player && this.player.seekTo(this.state.currentTime - FORWARD_CONTROL)
+                this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.REWIND})
+            }
         })
     }
 
     onAnimEnd() {
         this.setState({showClickOverlay: !this.state.showControls})
     }
-    //TO DO : TESTING REQIRED
     replay() {
         this.player && this.player.seekTo(0);
         this.player && this.player.playVideo(true)

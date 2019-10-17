@@ -180,10 +180,10 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
                 event.putDouble("currentTime", playhead / 1000d);
                 Integer duration = (Integer) e.properties.get(Event.VIDEO_DURATION);
                 event.putDouble("duration", duration / 1000d);
-                Boolean isInLiveEdge = BrightcovePlayerView.this.playerVideoView.getVideoDisplay().isInLiveEdge();
-                event.putBoolean("isInLiveEdge", isInLiveEdge);
                 Integer liveEdge = BrightcovePlayerView.this.playerVideoView.getVideoDisplay().getLiveEdge();
                 event.putDouble("liveEdge", liveEdge / 1000d);
+                event.putBoolean("isInLiveEdge", (liveEdge / 1000d) - (playhead / 1000d) > 3 ? false : true);
+
                 ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_PROGRESS, event);
             }

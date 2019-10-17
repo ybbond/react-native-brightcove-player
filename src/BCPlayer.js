@@ -302,7 +302,7 @@ class BCPlayer extends Component {
 
     onSeekRelease(percent) {
         const seconds = this.state.duration > 0 ? percent * this.state.duration : percent * this.state.liveEdge
-        this.setState({progress: percent, seeking: false, currentTime: (this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds}, () => {
+        this.setState({progress: percent, completed: false, seeking: false, currentTime: (this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds}, () => {
 
             this.player && this.player.seekTo((this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds)
             this.forcePlay()
@@ -372,7 +372,8 @@ class BCPlayer extends Component {
     rewind() {
         this.setState({
             controlsOverlayClicked: true,
-            currentTime : ((this.state.currentTime - FORWARD_CONTROL) >= 0 ) ? this.state.currentTime - FORWARD_CONTROL : this.state.currentTime
+            currentTime : ((this.state.currentTime - FORWARD_CONTROL) >= 0 ) ? this.state.currentTime - FORWARD_CONTROL : this.state.currentTime,
+            completed: false
         }, () => {
             if ((this.state.currentTime - FORWARD_CONTROL) >= 0 )
                 this.player && this.player.seekTo(this.state.currentTime - FORWARD_CONTROL)
@@ -437,8 +438,8 @@ class BCPlayer extends Component {
             <View>
                 {loading && <View style={styles.loader}><View><ActivityIndicator size="large" color="#fff" /></View></View>}
                 <AnimView style={styles.topMenu}
-                                   onEnd={this.onAnimEnd}
-                                   onOverlayClick={() => this.setState({controlsOverlayClicked: !this.state.controlsOverlayClicked})}>
+                          onEnd={this.onAnimEnd}
+                          onOverlayClick={() => this.setState({controlsOverlayClicked: !this.state.controlsOverlayClicked})}>
                     <SafeAreaView style={styles.topSubMenu}>
                         <ToggleIcon
                             onPress={() => this.toggleFS()}

@@ -26,7 +26,7 @@ import PlayerEventTypes from "./PlayerEventTypes";
 
 const FORWARD_CONTROL = Platform.OS === 'ios' ? 5 : 10;
 const qualityContent = ['Auto', 'High', 'Medium', 'Data Saver'];
-const quality = [0, 2001000, 1199000, 449000];
+const quality = [0, 750000, 500000, 120000];
 
 // Wraps the Brightcove player with special Events
 const BrightcovePlayerWithEvents = withEvents(BrightcovePlayer)
@@ -332,7 +332,7 @@ class BCPlayer extends Component {
             bitRate: (value >= 0 && value !== null) ? quality[value] : this.state.bitRate,
             selectedQualityIndex: (value >= 0 && value !== null) ? value : this.state.selectedQualityIndex
         }, () => {
-            this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.QUALITY_SELECTED, bitRate : quality[value]})
+            this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.QUALITY_SELECTED, bitRate : qualityContent[value]})
         })
     }
 

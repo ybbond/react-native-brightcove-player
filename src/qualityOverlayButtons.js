@@ -4,13 +4,13 @@ import {View, StyleSheet, TouchableOpacity, Text, SafeAreaView} from 'react-nati
 
 const styles = StyleSheet.create({
     ovlySafeContainer: {
-        zIndex: 1000,
+        zIndex: 2000,
         position: 'absolute',
         width: '100%',
         height: '85%',
     },
     ovlyContainer: {
-        zIndex: 1000,
+        zIndex: 2000,
         width: '100%',
         height: '85%',
     },
@@ -22,10 +22,12 @@ const styles = StyleSheet.create({
     },
     borderAttribute: {
         borderBottomWidth: 1,
-        borderColor: '#e8e8e8'
+        borderColor: '#e8e8e8',
+        width:'100%'
+
     },
     btnContainer: {
-        zIndex: 1000,
+        zIndex: 2000,
         position: 'absolute',
         top: 10,
         right: 78,
@@ -35,6 +37,7 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         backgroundColor: 'white',
         borderRadius: 5,
+
     },
     arrowIcon:{
         zIndex: 1000,
@@ -56,9 +59,9 @@ const QualityOverlayButtons = (props) => (<SafeAreaView style={styles.ovlySafeCo
 
     <View style={styles.btnContainer}>
         {
-            props.qualityContent.map((data, index) => <TouchableOpacity style={[styles.individualButton, !(props.qualityContent.length - 1 === index) ? styles.borderAttribute : null]}
-                                                                        onPress={props.onPress(index)} key={index}>
-                <Text style={{color: props.selectedQualityIndex === index ? '#ff5000' :'#9b9b9b'}}>{data}</Text></TouchableOpacity>)
+            props.qualityContent.map((data, index) => <TouchableOpacity onPress={props.onPress(index)} key={index}>
+                <View style={[{flex:1}, !(props.qualityContent.length - 1 === index) ? styles.borderAttribute : null]}>
+                    <Text style={[styles.individualButton, {color: props.selectedQualityIndex === index ? '#ff5000' :'#9b9b9b'}]}>{data}</Text></View></TouchableOpacity>)
         }
     </View>
 </TouchableOpacity></SafeAreaView>)

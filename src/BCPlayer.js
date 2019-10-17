@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         zIndex:1000
     },
     bottomBar: {
-        zIndex: 2000,
+        zIndex: 1900,
         position: 'absolute',
         width: '100%',
         bottom: 0
@@ -469,6 +469,7 @@ class BCPlayer extends Component {
                             duration={duration.duration || duration}
                             isInLiveEdge={isInLiveEdge}
                             seekToLive={() => this.seekToLive()}
+                            liveEdge={liveEdge}
                         />
                     </View>}
                 </AnimView>}

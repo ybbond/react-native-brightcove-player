@@ -28,16 +28,16 @@ const ControlBar = (props) => {
         onSeekRelease,
         progress,
         currentTime,
-        duration,
         theme,
-        isInLiveEdge
+        isInLiveEdge,
+        liveEdge
     } = props
 
     return (
         <View style={styles.controlBarContainer}>
             <View style={styles.timerSpace}>
                 <Time time={currentTime} theme={theme.seconds} />
-                {duration <= 0 && <GoLive theme={theme.seconds} disabled={isInLiveEdge} seekToLive = {() => props.seekToLive()}/>}
+                {liveEdge >= 0 && <GoLive theme={theme.seconds} disabled={isInLiveEdge} seekToLive = {() => props.seekToLive()}/>}
             </View>
             <Scrubber
                 onSeek={pos => onSeek(pos)}

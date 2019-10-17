@@ -40,15 +40,20 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     buttonContentTxt: {
-        color: 'white',
         display: 'flex',
         fontWeight: 'bold',
         fontSize: 18,
         paddingTop: 3
     },
     buttonContentIcon: {
-        color: 'white',
         display: 'flex'
+    },
+    colorGrey: {
+        color:'grey',
+
+    },
+    colorWhite: {
+        color: 'white'
     }
 })
 
@@ -66,16 +71,16 @@ const ScreenButtons = (props) => {
     }
     return (<TouchableOpacity style={styles.btnContainer} onPress={props.onOverlayClick()}>
         <View style={[styles.individualButton, styles.rewindButton]}>
-            <TouchableOpacity onPress={() => props.rewind()}>
+            <TouchableOpacity onPress={() => props.showBackward && props.rewind()}>
                 <View style={styles.buttonContainer}>
                     <View style={styles.buttonContentIcon}>
                         <FICons
                             name={'angle-double-left'}
-                            color={props.theme.screenButtons}
+                            color={props.showBackward ? props.theme.screenButtons : 'grey'}
                             size={40}
                         />
                     </View><Text
-                    style={styles.buttonContentTxt}>10</Text>
+                    style={[styles.buttonContentTxt, props.showBackward ? styles.colorWhite : styles.colorGrey]}>10</Text>
                 </View>
             </TouchableOpacity>
         </View>
@@ -88,13 +93,13 @@ const ScreenButtons = (props) => {
             /></TouchableOpacity>}
         </View>
         <View style={[styles.individualButton, styles.forwardButton]}>
-            <TouchableOpacity onPress={() => props.forward()}>
+            <TouchableOpacity onPress={() => props.showForward && props.forward()}>
                 <View style={styles.buttonContainer}>
-                    <Text style={styles.buttonContentTxt}>10</Text>
+                    <Text style={[styles.buttonContentTxt, props.showForward ?  styles.colorWhite : styles.colorGrey]}>10</Text>
                     <View style={styles.buttonContentIcon}>
                         <FICons
                             name={'angle-double-right'}
-                            color={props.theme.screenButtons}
+                            color={props.showForward ? props.theme.screenButtons : 'grey'}
                             size={40}
                         />
                     </View>

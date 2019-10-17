@@ -410,7 +410,8 @@ class BCPlayer extends Component {
             selectedQualityIndex,
             isInLiveEdge,
             muted,
-            completed
+            completed,
+            liveEdge
         } = this.state
 
         const {
@@ -453,7 +454,10 @@ class BCPlayer extends Component {
                                    paused={paused}
                                    completed={completed}
                                    replay={this.replay.bind(this)}
-                                   onOverlayClick={() => this.overlayClick.bind(this)}/>
+                                   onOverlayClick={() => this.overlayClick.bind(this)}
+                                   showForward={liveEdge > 0 ? (liveEdge - currentTime) > 10   : (duration - currentTime) > 10}
+                                   showBackward={currentTime > 10}
+                    />
 
                     {<View style={styles.bottomBar}>
                         <ControlBar

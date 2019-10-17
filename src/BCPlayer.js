@@ -85,7 +85,7 @@ class BCPlayer extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            paused: false,
+            paused: !props.autoPlay,
             fullScreen: false,
             inlineHeight: Win.width * 0.5625,
             percentageTracked: {Q1: false, Q2: false, Q3: false, Q4: false},
@@ -109,7 +109,6 @@ class BCPlayer extends Component {
             liveEdge: 0,
             selectedQualityIndex: 0,
             completed: false,
-            invoked: false
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -162,9 +161,9 @@ class BCPlayer extends Component {
         if (
             this.state.appState.match(/inactive|background/) &&
             nextAppState === 'active') {
-            this.player.playVideo(true)
+            this.player && this.player.playVideo(true)
             if (this.state.fullScreen) {
-                this.player.setFullscreen(false)
+                this.player && this.player.setFullscreen(false)
             }
         }
         this.setState({appState: nextAppState})
@@ -209,7 +208,7 @@ class BCPlayer extends Component {
 
     BackHandler() {
         if (this.state.fullScreen) {
-            this.player.setFullscreen(false)
+            this.player && this.player.setFullscreen(false)
             return true
         }
         return false
@@ -218,12 +217,12 @@ class BCPlayer extends Component {
     seekToLive() {
         this.setState({currentTime : this.state.liveEdge}, () => {
             this.progress({currentTime: this.state.currentTime, liveEdge: this.state.liveEdge});
-            this.player.seekToLive()})
+            this.player && this.player.seekToLive()})
 
     }
 
     toggleFS() {
-        this.setState({fullScreen: !this.state.fullScreen, invoked: true}, () => {
+        this.setState({fullScreen: !this.state.fullScreen}, () => {
             if (this.state.fullScreen) {
                 const initialOrient = Orientation.getInitialOrientation()
                 const height = this.state.onRotate ? Dimensions.get('window').height : Dimensions.get('window').width
@@ -283,8 +282,8 @@ class BCPlayer extends Component {
     seekTo(seconds) {
         const percent = seconds / this.state.duration
         if (seconds > this.state.duration) {
-            throw new Error(`Current time (${seconds}) exceeded the duration ${this.state.duration}`)
-            return false
+            // throw new Error(`Current time (${seconds}) exceeded the duration ${this.state.duration}`)
+            return
         }
         return this.onSeekRelease(percent)
     }
@@ -293,14 +292,14 @@ class BCPlayer extends Component {
         const seconds = this.state.duration > 0 ? percent * this.state.duration : percent * this.state.liveEdge
         this.setState({progress: percent, seeking: false, currentTime: (this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds}, () => {
 
-            this.player.seekTo((this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds)
+            this.player && this.player.seekTo((this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds)
             this.forcePlay()
         })
     }
 
     progress(time) {
         const {currentTime, duration, isInLiveEdge, liveEdge} = time
-        const progress = duration > 0 ? currentTime / duration : currentTime / liveEdge
+        const progress = currentTime / (duration > 0 ? duration : liveEdge )
         if (!this.state.seeking) {
             this.setState({progress, currentTime, isInLiveEdge, liveEdge})
         }
@@ -328,7 +327,7 @@ class BCPlayer extends Component {
             paused: !this.state.paused,
             controlsOverlayClicked: true
         }, () => {
-            this.player.playVideo(!this.state.paused)
+            this.player && this.player.playVideo(!this.state.paused)
         })
     }
 
@@ -337,20 +336,20 @@ class BCPlayer extends Component {
             paused: false,
             controlsOverlayClicked: true
         }, () => {
-            this.player.playVideo(true)
+            this.player && this.player.playVideo(true)
         })
     }
 
-    openAirplay() {
-        this.player.createAirplayIconOverlay();
-    }
+    // openAirplay() {
+    //     this.player && this.player.createAirplayIconOverlay();
+    // }
 
     forward() {
         this.setState({
             controlsOverlayClicked: true,
             currentTime: (Math.floor(this.state.currentTime) <= Math.floor(this.state.liveEdge) || Math.floor(this.state.currentTime) <= Math.floor(this.state.duration))  ? (this.state.currentTime + FORWARD_CONTROL) :  this.state.currentTime
         }, () => {
-            this.player.seekTo(this.state.currentTime + FORWARD_CONTROL)
+            this.player && this.player.seekTo(this.state.currentTime + FORWARD_CONTROL)
         })
     }
 
@@ -360,7 +359,7 @@ class BCPlayer extends Component {
             currentTime : ((this.state.currentTime - FORWARD_CONTROL) >= 0 ) ? this.state.currentTime - FORWARD_CONTROL : this.state.currentTime
         }, () => {
             if ((this.state.currentTime - FORWARD_CONTROL) >= 0 )
-                this.player.seekTo(this.state.currentTime - FORWARD_CONTROL)
+                this.player && this.player.seekTo(this.state.currentTime - FORWARD_CONTROL)
         })
     }
 
@@ -369,15 +368,14 @@ class BCPlayer extends Component {
     }
     //TO DO : TESTING REQIRED
     replay() {
-        this.player.seekTo(0);
-        this.player.playVideo(true)
+        this.player && this.player.seekTo(0);
+        this.player && this.player.playVideo(true)
         this.setState( {currentTime: 0, paused: false, completed: false},  () => {
             this.progress({currentTime : this.state.currentTime, duration : this.state.duration})
         })
     }
 
     overlayClick() {
-        console.log('reach')
         this.setState({showControls: false})
     }
 

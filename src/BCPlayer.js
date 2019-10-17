@@ -421,7 +421,7 @@ class BCPlayer extends Component {
         return (
             <View>
                 {loading && <View style={styles.loader}><View><ActivityIndicator size="large" color="#fff" /></View></View>}
-                {true && <AnimView style={styles.topMenu}
+                <AnimView style={styles.topMenu}
                                    onEnd={this.onAnimEnd}
                                    onOverlayClick={() => this.setState({controlsOverlayClicked: !this.state.controlsOverlayClicked})}>
                     <SafeAreaView style={styles.topSubMenu}>
@@ -472,7 +472,7 @@ class BCPlayer extends Component {
                             liveEdge={liveEdge}
                         />
                     </View>}
-                </AnimView>}
+                </AnimView>
                 {showClickOverlay &&
                 <TouchableOpacity style={{zIndex: 10000, position: 'absolute', width: '100%', height: '100%'}}
                                   onPress={() => this.setState({showControls: true})}/>}

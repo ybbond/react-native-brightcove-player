@@ -69,18 +69,17 @@ const styles = StyleSheet.create({
         bottom: 0
     },
     loader: {
-        zIndex: 1000,
+        zIndex: 99,
         position: 'absolute',
         width: '100%',
         height: '100%',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     loaderContainer: {
         width: 40,
         height: 40,
-        backgroundColor: 'red'
     },
     controlsVisibility: {
         zIndex: 10000,
@@ -438,7 +437,7 @@ class BCPlayer extends Component {
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
         return (
             <View>
-                {loading && <View style={styles.loader}><View><ActivityIndicator size="large" color="#fff" /></View></View>}
+                {loading && <View style={styles.loader}><View style={{position:'absolute', left: '45%', top: '43%', zIndex: 4000}}><ActivityIndicator size="large" color="#fff" /></View></View>}
                 <AnimView style={styles.topMenu}
                           onEnd={this.onAnimEnd}
                           onOverlayClick={() => this.setState({controlsOverlayClicked: !this.state.controlsOverlayClicked})}>

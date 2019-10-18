@@ -4,13 +4,13 @@ import {View, StyleSheet, TouchableOpacity, Text, SafeAreaView} from 'react-nati
 
 const styles = StyleSheet.create({
     ovlySafeContainer: {
-        zIndex: 2000,
+        zIndex: 3000,
         position: 'absolute',
         width: '100%',
         height: '85%',
     },
     ovlyContainer: {
-        zIndex: 2000,
+        zIndex: 3000,
         width: '100%',
         height: '85%',
     },
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 
     },
     btnContainer: {
-        zIndex: 2000,
+        zIndex: 3000,
         position: 'absolute',
         top: 10,
         right: 78,

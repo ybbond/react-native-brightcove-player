@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         zIndex: 1900,
         position: 'absolute',
         width: '100%',
-        bottom: 15
+
     },
     loader: {
         zIndex: 99,
@@ -479,7 +479,7 @@ class BCPlayer extends Component {
                                    showBackward={currentTime > 10}
                     />
 
-                    {<View style={styles.bottomBar}>
+                    {<View style={[styles.bottomBar, (Platform.OS === 'ios' && this.state.fullScreen) ? {bottom : 15} : {bottom: 0}]}>
                         <ControlBar
                             onSeek={pos => this.seek(pos)}
                             onSeekRelease={pos => this.onSeekRelease(pos)}

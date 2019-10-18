@@ -15,9 +15,8 @@ const styles = StyleSheet.create({
         height: '85%',
     },
     individualButton: {
-        padding: 2,
-        paddingBottom: 10,
-        paddingTop: 10
+        height: 30,
+        paddingTop: 5
 
     },
     borderAttribute: {

@@ -370,6 +370,8 @@ class BCPlayer extends Component {
     }
 
     rewind() {
+        if(this.state.completed)
+            this.forcePlay()
         this.setState({
             controlsOverlayClicked: true,
             currentTime : ((this.state.currentTime - FORWARD_CONTROL) >= 0 ) ? this.state.currentTime - FORWARD_CONTROL : this.state.currentTime,

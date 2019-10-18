@@ -15,11 +15,12 @@ const styles = StyleSheet.create({
     textStyle : {
         backgroundColor: '#ff5000',
         color: 'white',
-        fontSize: 9,
         position: 'absolute',
         zIndex: 102,
         borderRadius:2,
-        left: 15
+        left: 15,
+        paddingHorizontal:2,
+        paddingBottom: 1
     }
 })
 
@@ -45,7 +46,7 @@ const QualityControl = (props) => {
             <TouchableOpacity
                 onPress={() => props.toggleQuality()}
             >
-                <Text style={styles.textStyle}>{contolArray[props.selectedOption]}</Text>
+                <View style={styles.textStyle}><Text style={{color:'white', fontSize: 9}}>{contolArray[props.selectedOption]}</Text></View>
                 <Image
                     style={padding}
                     source={settings}

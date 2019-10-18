@@ -226,6 +226,7 @@ class BCPlayer extends Component {
         this.setState({currentTime : this.state.liveEdge}, () => {
             this.progress({currentTime: this.state.currentTime, liveEdge: this.state.liveEdge});
             this.player && this.player.seekToLive()
+            this.forcePlay()
             this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.SEEK_TO_LIVE})
         })
 

@@ -1,8 +1,9 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import {View, StyleSheet, TouchableOpacity, Text, SafeAreaView} from 'react-native'
-
-const styles = StyleSheet.create({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const PropTypes = require("prop-types");
+const react_native_1 = require("react-native");
+const styles = react_native_1.StyleSheet.create({
     ovlySafeContainer: {
         zIndex: 3000,
         position: 'absolute',
@@ -17,13 +18,11 @@ const styles = StyleSheet.create({
     individualButton: {
         height: 30,
         paddingTop: 5
-
     },
     borderAttribute: {
         borderBottomWidth: 1,
         borderColor: '#e8e8e8',
-        width:'100%'
-
+        width: '100%'
     },
     btnContainer: {
         zIndex: 3000,
@@ -36,9 +35,8 @@ const styles = StyleSheet.create({
         paddingRight: 10,
         backgroundColor: 'white',
         borderRadius: 5,
-
     },
-    arrowIcon:{
+    arrowIcon: {
         zIndex: 1000,
         width: 8,
         height: 8,
@@ -46,33 +44,21 @@ const styles = StyleSheet.create({
         top: 15,
         backgroundColor: 'white',
         position: 'absolute',
-        transform: [{rotate : '45deg'}]
-
+        transform: [{ rotate: '45deg' }]
     }
-})
-
-const QualityOverlayButtons = (props) => (<SafeAreaView style={styles.ovlySafeContainer}><TouchableOpacity style={styles.ovlyContainer}
-                                                                                                           onPress={props.onPress(null)}>
-    <View style={styles.arrowIcon}>
-    </View>
-
-    <View style={styles.btnContainer}>
-        {
-            props.qualityContent.map((data, index) => <TouchableOpacity onPress={props.onPress(index)} key={index}>
-                <View style={[{flex:1}, !(props.qualityContent.length - 1 === index) ? styles.borderAttribute : null]}>
-                    <Text style={[styles.individualButton, {color: props.selectedQualityIndex === index ? '#ff5000' :'#9b9b9b'}]}>{data}</Text></View></TouchableOpacity>)
-        }
-    </View>
-</TouchableOpacity></SafeAreaView>)
-
-
+});
+const QualityOverlayButtons = (props) => (React.createElement(react_native_1.SafeAreaView, { style: styles.ovlySafeContainer },
+    React.createElement(react_native_1.TouchableOpacity, { style: styles.ovlyContainer, onPress: () => props.onPress(null) },
+        React.createElement(react_native_1.View, { style: styles.arrowIcon }),
+        React.createElement(react_native_1.View, { style: styles.btnContainer }, props.qualityContent.map((data, index) => React.createElement(react_native_1.TouchableOpacity, { onPress: () => props.onPress(index), key: index },
+            React.createElement(react_native_1.View, { style: [{ flex: 1 }, !(props.qualityContent.length - 1 === index) ? styles.borderAttribute : null] },
+                React.createElement(react_native_1.Text, { style: [styles.individualButton, { color: props.selectedQualityIndex === index ? '#ff5000' : '#9b9b9b' }] }, data))))))));
+exports.QualityOverlayButtons = QualityOverlayButtons;
 QualityOverlayButtons.propTypes = {
     onPress: PropTypes.func,
     qualityContent: PropTypes.array
-}
-
+};
 QualityOverlayButtons.defaultProps = {
     onPress: undefined
-}
-
-export {QualityOverlayButtons}
+};
+//# sourceMappingURL=qualityOverlayButtons.js.map

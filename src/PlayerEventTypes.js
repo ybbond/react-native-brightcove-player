@@ -1,25 +1,31 @@
-module.exports = {
-	READY: 'READY',
-	METADATA_LOADED: 'METADATA_LOADED',
-	PLAY: 'PLAY',
-	PAUSE: 'PAUSE',
-	END: 'END',
-	PROGRESS_Q1: 'PROGRESS_Q1',
-	PROGRESS_Q2: 'PROGRESS_Q2',
-	PROGRESS_Q3: 'PROGRESS_Q3',
-	PROGRESS_Q4: 'PROGRESS_Q4',
-	ENTER_FULLSCREEN: 'ENTER_FULLSCREEN',
-	EXIT_FULLSCREEN: 'EXIT_FULLSCREEN',
-	ERROR: 'ERROR',
-	IMPRESSION: 'IMPRESSION',
-	VIEW: 'VIEW',
-	BUFFERING_STARTED: 'BUFFERING_STARTED',
-	BUFFERING_COMPLETED: 'BUFFERING_COMPLETED',
-	NETWORK_CONNECTIVITY_CHANGE: 'NETWORK_CONNECTIVITY_CHANGE',
-	QUALITY_SELECTED: 'QUALITY_SELECTED',
-	SEEK_TO_LIVE: 'SEEK_TO_LIVE',
-	REPLAY: 'REPLAY',
-	REWIND: 'REWIND',
-	FORWARD: 'FORWARD',
-	SEEK_TO: 'SEEK_TO'
-};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var PlayerEventTypes;
+(function (PlayerEventTypes) {
+    PlayerEventTypes["READY"] = "READY";
+    PlayerEventTypes["METADATA_LOADED"] = "METADATA_LOADED";
+    PlayerEventTypes["PLAY"] = "PLAY";
+    PlayerEventTypes["PAUSE"] = "PAUSE";
+    PlayerEventTypes["END"] = "END";
+    PlayerEventTypes["PROGRESS_Q1"] = "PROGRESS_Q1";
+    PlayerEventTypes["PROGRESS_Q2"] = "PROGRESS_Q2";
+    PlayerEventTypes["PROGRESS_Q3"] = "PROGRESS_Q3";
+    PlayerEventTypes["PROGRESS_Q4"] = "PROGRESS_Q4";
+    PlayerEventTypes["ENTER_FULLSCREEN"] = "ENTER_FULLSCREEN";
+    PlayerEventTypes["EXIT_FULLSCREEN"] = "EXIT_FULLSCREEN";
+    PlayerEventTypes["ERROR"] = "ERROR";
+    PlayerEventTypes["IMPRESSION"] = "IMPRESSION";
+    PlayerEventTypes["VIEW"] = "VIEW";
+    PlayerEventTypes["BUFFERING_STARTED"] = "BUFFERING_STARTED";
+    PlayerEventTypes["BUFFERING_COMPLETED"] = "BUFFERING_COMPLETED";
+    PlayerEventTypes["NETWORK_CONNECTIVITY_CHANGE"] = "NETWORK_CONNECTIVITY_CHANGE";
+    PlayerEventTypes["QUALITY_SELECTED"] = "QUALITY_SELECTED";
+    PlayerEventTypes["SEEK_TO_LIVE"] = "SEEK_TO_LIVE";
+    PlayerEventTypes["REPLAY"] = "REPLAY";
+    PlayerEventTypes["REWIND"] = "REWIND";
+    PlayerEventTypes["FORWARD"] = "FORWARD";
+    PlayerEventTypes["SEEK_TO"] = "SEEK_TO";
+})(PlayerEventTypes || (PlayerEventTypes = {}));
+exports.PlayerEventTypes = PlayerEventTypes;
+;
+//# sourceMappingURL=PlayerEventTypes.js.map

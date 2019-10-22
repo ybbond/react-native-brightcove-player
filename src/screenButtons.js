@@ -1,10 +1,11 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import {View, StyleSheet, TouchableOpacity, Text, ActivityIndicator, Animated} from 'react-native'
-import Icons from 'react-native-vector-icons/MaterialIcons'
-import FICons from 'react-native-vector-icons/FontAwesome'
-
-const styles = StyleSheet.create({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+const PropTypes = require("prop-types");
+const react_native_1 = require("react-native");
+const MaterialIcons_1 = require("react-native-vector-icons/MaterialIcons");
+const FontAwesome_1 = require("react-native-vector-icons/FontAwesome");
+const styles = react_native_1.StyleSheet.create({
     btnContainer: {
         color: 'red',
         zIndex: 1,
@@ -49,77 +50,47 @@ const styles = StyleSheet.create({
         display: 'flex'
     },
     colorGrey: {
-        color:'grey',
-
+        color: 'grey',
     },
     colorWhite: {
         color: 'white'
     }
-})
-
+});
 const ScreenButtons = (props) => {
     const onPress = () => {
         if (props.completed) {
-            props.replay()
-            props.forcePlay()
-
-        } else {
-            props.togglePlay()
-
+            props.replay();
+            props.forcePlay();
         }
-
-    }
-    return (<TouchableOpacity style={styles.btnContainer} onPress={props.onOverlayClick()}>
-        <View style={[styles.individualButton, styles.rewindButton]}>
-            <TouchableOpacity onPress={() => props.showBackward && props.rewind()}>
-                <View style={styles.buttonContainer}>
-                    <View style={styles.buttonContentIcon}>
-                        <FICons
-                            name={'angle-double-left'}
-                            color={props.showBackward ? props.theme.screenButtons : 'grey'}
-                            size={36}
-                        />
-                    </View><Text
-                    style={[styles.buttonContentTxt, props.showBackward ? styles.colorWhite : styles.colorGrey]}>10</Text>
-                </View>
-            </TouchableOpacity>
-        </View>
-        <View style={[styles.individualButton, styles.centerButton]}>
-
-            {!props.loading && <TouchableOpacity onPress={() => onPress()}><Icons
-                name={props.completed ? 'replay' : props.paused ? 'play-arrow' : 'pause'}
-                color={props.theme.screenButtons}
-                size={props.completed ? 28 : 36}
-            /></TouchableOpacity>}
-        </View>
-        <View style={[styles.individualButton, styles.forwardButton]}>
-            <TouchableOpacity onPress={() => props.showForward && props.forward()}>
-                <View style={styles.buttonContainer}>
-                    <Text style={[styles.buttonContentTxt, props.showForward ?  styles.colorWhite : styles.colorGrey]}>10</Text>
-                    <View style={styles.buttonContentIcon}>
-                        <FICons
-                            name={'angle-double-right'}
-                            color={props.showForward ? props.theme.screenButtons : 'grey'}
-                            size={36}
-                        />
-                    </View>
-                </View>
-            </TouchableOpacity>
-        </View>
-
-    </TouchableOpacity>)
-}
-
+        else {
+            props.togglePlay();
+        }
+    };
+    return (React.createElement(react_native_1.TouchableOpacity, { style: styles.btnContainer, onPress: () => props.onOverlayClick() },
+        React.createElement(react_native_1.View, { style: [styles.individualButton, styles.rewindButton] },
+            React.createElement(react_native_1.TouchableOpacity, { onPress: () => props.showBackward && props.rewind() },
+                React.createElement(react_native_1.View, { style: styles.buttonContainer },
+                    React.createElement(react_native_1.View, { style: styles.buttonContentIcon },
+                        React.createElement(FontAwesome_1.default, { name: 'angle-double-left', color: props.showBackward ? props.theme.screenButtons : 'grey', size: 36 })),
+                    React.createElement(react_native_1.Text, { style: [styles.buttonContentTxt, props.showBackward ? styles.colorWhite : styles.colorGrey] }, "10")))),
+        React.createElement(react_native_1.View, { style: [styles.individualButton, styles.centerButton] }, !props.loading && React.createElement(react_native_1.TouchableOpacity, { onPress: () => onPress() },
+            React.createElement(MaterialIcons_1.default, { name: props.completed ? 'replay' : props.paused ? 'play-arrow' : 'pause', color: props.theme.screenButtons, size: props.completed ? 28 : 36 }))),
+        React.createElement(react_native_1.View, { style: [styles.individualButton, styles.forwardButton] },
+            React.createElement(react_native_1.TouchableOpacity, { onPress: () => props.showForward && props.forward() },
+                React.createElement(react_native_1.View, { style: styles.buttonContainer },
+                    React.createElement(react_native_1.Text, { style: [styles.buttonContentTxt, props.showForward ? styles.colorWhite : styles.colorGrey] }, "10"),
+                    React.createElement(react_native_1.View, { style: styles.buttonContentIcon },
+                        React.createElement(FontAwesome_1.default, { name: 'angle-double-right', color: props.showForward ? props.theme.screenButtons : 'grey', size: 36 })))))));
+};
+exports.ScreenButtons = ScreenButtons;
 ScreenButtons.propTypes = {
     onPress: PropTypes.func,
     theme: PropTypes.object.isRequired
-}
-
+};
 ScreenButtons.defaultProps = {
     onPress: undefined,
     theme: {
         screenButtons: '#fff'
     }
-}
-
-export {ScreenButtons}
+};
+//# sourceMappingURL=screenButtons.js.map

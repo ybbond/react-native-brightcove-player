@@ -26,7 +26,7 @@ const ControlBar = (props) => {
     return (React.createElement(react_native_1.View, { style: styles.controlBarContainer },
         React.createElement(react_native_1.View, { style: styles.timerSpace },
             React.createElement(Time_1.Time, { time: currentTime, theme: theme.seconds }),
-            duration <= 0 && liveEdge && liveEdge > 0 && React.createElement(GoLive_1.GoLive, { disabled: isInLiveEdge, seekToLive: () => props.seekToLive() })),
+            duration <= 0 && liveEdge && liveEdge > 0 ? React.createElement(GoLive_1.GoLive, { disabled: isInLiveEdge, seekToLive: () => props.seekToLive() }) : null),
         React.createElement(Scrubber_1.Scrubber, { onSeek: (pos) => onSeek(pos), onSeekRelease: (pos) => onSeekRelease(pos), progress: progress, theme: { scrubberThumb: theme.scrubberThumb, scrubberBar: theme.scrubberBar } })));
 };
 exports.ControlBar = ControlBar;

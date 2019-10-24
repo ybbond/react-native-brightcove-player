@@ -459,55 +459,57 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
                           onEnd={this.onAnimEnd}
                           onOverlayClick={() => this.setState({controlsOverlayClicked: !this.state.controlsOverlayClicked})}>
                     <>
-                    <SafeAreaView style={styles.topSubMenu}>
-                        <ToggleIcon
-                            onPress={() => this.toggleFS()}
-                            iconOff="fullscreen"
-                            iconOn="fullscreen-exit"
-                            isOn={fullScreen}
-                            theme={theme.fullscreen}
-                            size={35}
-                        />
-                        <GoogleCastButton/>
-                        <QualityControl
-                            theme={theme.qualityControl}
-                            toggleQuality={() => this.toggleQualityOverlay()}
-                            paddingRight={10}
-                            selectedOption={selectedQualityIndex}
+                        <SafeAreaView style={styles.topSubMenu}>
+                            <ToggleIcon
+                                onPress={() => this.toggleFS()}
+                                iconOff="fullscreen"
+                                iconOn="fullscreen-exit"
+                                isOn={fullScreen}
+                                theme={theme.fullscreen}
+                                size={35}
+                            />
+                            <View style={{height: 40, width: 40}}>
+                                <GoogleCastButton style={{height: 40, width: 40}}/>
+                            </View>
+                            <QualityControl
+                                theme={theme.qualityControl}
+                                toggleQuality={() => this.toggleQualityOverlay()}
+                                paddingRight={10}
+                                selectedOption={selectedQualityIndex}
 
+                            />
+                        </SafeAreaView>
+                        {qualityControlMenu &&
+                        <QualityOverlayButtons onPress={(value: number | null) => this.toggleQuality(value)}
+                                               qualityContent={qualityContent} selectedQualityIndex={selectedQualityIndex}/>
+                        }
+                        <ScreenButtons togglePlay={() => this.togglePlay()}
+                                       forcePlay={() => this.forcePlay()}
+                                       loading={loading}
+                                       forward={() => this.forward()}
+                                       rewind={() => this.rewind()}
+                                       theme={theme}
+                                       paused={paused}
+                                       completed={completed}
+                                       replay={() => this.replay()}
+                                       onOverlayClick={() => this.overlayClick()}
+                                       showForward={(liveEdge && liveEdge > 0) ? (liveEdge - currentTime) > 10   : (duration - currentTime) > 10}
+                                       showBackward={currentTime > 10}
                         />
-                    </SafeAreaView>
-                    {qualityControlMenu &&
-                    <QualityOverlayButtons onPress={(value: number | null) => this.toggleQuality(value)}
-                                           qualityContent={qualityContent} selectedQualityIndex={selectedQualityIndex}/>
-                    }
-                    <ScreenButtons togglePlay={() => this.togglePlay()}
-                                   forcePlay={() => this.forcePlay()}
-                                   loading={loading}
-                                   forward={() => this.forward()}
-                                   rewind={() => this.rewind()}
-                                   theme={theme}
-                                   paused={paused}
-                                   completed={completed}
-                                   replay={() => this.replay()}
-                                   onOverlayClick={() => this.overlayClick()}
-                                   showForward={(liveEdge && liveEdge > 0) ? (liveEdge - currentTime) > 10   : (duration - currentTime) > 10}
-                                   showBackward={currentTime > 10}
-                    />
 
-                    {<View style={[styles.bottomBar, (Platform.OS === 'ios' && this.state.fullScreen) ? {bottom : 15} : {bottom: 0}]}>
-                        <ControlBar
-                            onSeek={(pos: number) => this.seek(pos)}
-                            onSeekRelease={(pos: number) => this.onSeekRelease(pos)}
-                            progress={progress}
-                            currentTime={currentTime}
-                            theme={theme}
-                            duration={duration}
-                            isInLiveEdge={isInLiveEdge}
-                            seekToLive={() => this.seekToLive()}
-                            liveEdge={liveEdge}
-                        />
-                    </View>}
+                        {<View style={[styles.bottomBar, (Platform.OS === 'ios' && this.state.fullScreen) ? {bottom : 15} : {bottom: 0}]}>
+                            <ControlBar
+                                onSeek={(pos: number) => this.seek(pos)}
+                                onSeekRelease={(pos: number) => this.onSeekRelease(pos)}
+                                progress={progress}
+                                currentTime={currentTime}
+                                theme={theme}
+                                duration={duration}
+                                isInLiveEdge={isInLiveEdge}
+                                seekToLive={() => this.seekToLive()}
+                                liveEdge={liveEdge}
+                            />
+                        </View>}
                     </>
                 </AnimView>
                 {showClickOverlay &&

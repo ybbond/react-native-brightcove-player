@@ -379,7 +379,8 @@ class BCPlayer extends react_1.Component {
                 React.createElement(React.Fragment, null,
                     React.createElement(react_native_1.SafeAreaView, { style: styles.topSubMenu },
                         React.createElement(ToggleIcon_1.ToggleIcon, { onPress: () => this.toggleFS(), iconOff: "fullscreen", iconOn: "fullscreen-exit", isOn: fullScreen, theme: theme.fullscreen, size: 35 }),
-                        React.createElement(GoogleCastButton, null),
+                        React.createElement(react_native_1.View, { style: { height: 40, width: 40 } },
+                            React.createElement(GoogleCastButton, { style: { height: 40, width: 40 } })),
                         React.createElement(qualityControl_1.QualityControl, { theme: theme.qualityControl, toggleQuality: () => this.toggleQualityOverlay(), paddingRight: 10, selectedOption: selectedQualityIndex })),
                     qualityControlMenu &&
                         React.createElement(qualityOverlayButtons_1.QualityOverlayButtons, { onPress: (value) => this.toggleQuality(value), qualityContent: qualityContent, selectedQualityIndex: selectedQualityIndex }),

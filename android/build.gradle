@@ -26,7 +26,7 @@ allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion "28.0.3"
 
     defaultConfig {
@@ -46,4 +46,8 @@ android {
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.brightcove.player:exoplayer2:6.8.1'
+    implementation "com.brightcove.player:android-cast-plugin:6.3.0"
+    implementation "com.android.support:appcompat-v7:27.0.0"
+    implementation "com.android.support:mediarouter-v7:27.0.0"
+    implementation "com.google.android.gms:play-services-cast-framework:16.1.2"
 }

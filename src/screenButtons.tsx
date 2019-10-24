@@ -66,12 +66,12 @@ interface ScreenButtonsProps {
     showBackward: boolean
     rewind: () => void
     theme: {
-        [string: string] : string
+        [string: string]: string
     }
     paused: boolean
     loading: boolean
     showForward: boolean
-    forward : () => void
+    forward: () => void
 }
 
 const ScreenButtons = (props: ScreenButtonsProps) => {

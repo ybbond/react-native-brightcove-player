@@ -1,5 +1,6 @@
 package jp.manse;
 
+import android.app.Activity;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -10,6 +11,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.brightcove.cast.GoogleCastComponent;
+import com.brightcove.cast.GoogleCastEventType;
 import com.brightcove.player.display.ExoPlayerVideoDisplayComponent;
 import com.brightcove.player.edge.Catalog;
 import com.brightcove.player.edge.OfflineCatalog;
@@ -84,7 +87,9 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         this.applicationContext.addLifecycleEventListener(this);
         this.setBackgroundColor(Color.BLACK);
 
-        this.playerVideoView = new BrightcoveExoPlayerVideoView(this.context.getCurrentActivity());
+        this.playerVideoView = new BrightcoveExoPlayerVideoView(this.context);
+        GoogleCastComponent googleCastComponent = new GoogleCastComponent(null, context);
+
 
         this.addView(this.playerVideoView);
         this.playerVideoView.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -257,6 +262,19 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
                 emitError(error);
             }
         });
+        eventEmitter.on(GoogleCastEventType.CAST_SESSION_STARTED, new EventListener() {
+            @Override
+            public void processEvent(Event event) {
+                // Session Started
+            }
+        });
+        eventEmitter.on(GoogleCastEventType.CAST_SESSION_ENDED, new EventListener() {
+            @Override
+            public void processEvent(Event event) {
+                // Session Ended
+            }
+        });
+        GoogleCastComponent googleCastComponent = new GoogleCastComponent(eventEmitter, context);
     }
 
 	/**

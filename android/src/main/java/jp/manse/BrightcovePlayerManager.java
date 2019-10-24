@@ -2,6 +2,7 @@ package jp.manse;
 
 import android.support.annotation.Nullable;
 
+import com.brightcove.cast.GoogleCastComponent;
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableArray;
@@ -9,9 +10,9 @@ import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
-import com.facebook.react.bridge.ReactMethod;
 import java.util.HashMap;
 import java.util.Map;
+
 
 
 public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerView> {
@@ -39,6 +40,7 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
     public static final String EVENT_NETWORK_CONNECTIVITY_CHANGED = "event_network_connectivity_changed";
 
     private ReactApplicationContext applicationContext;
+
 
     public BrightcovePlayerManager(ReactApplicationContext context) {
         super();

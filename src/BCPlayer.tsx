@@ -12,7 +12,7 @@ import {
     View,
     TouchableOpacity,
     SafeAreaView,
-    ActivityIndicator
+    ActivityIndicator, requireNativeComponent
 } from 'react-native'
 import BrightcovePlayer from './BrightcovePlayer'
 import * as Orientation from 'react-native-orientation'
@@ -468,6 +468,7 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
                             theme={theme.fullscreen}
                             size={35}
                         />
+                        <GoogleCastButton/>
                         <QualityControl
                             theme={theme.qualityControl}
                             toggleQuality={() => this.toggleQualityOverlay()}
@@ -556,6 +557,7 @@ BCPlayer.defaultProps = {
     lockPortraitOnFsExit: false,
     disableControls: false
 }
+const GoogleCastButton = requireNativeComponent('RNGoogleCastButton')
 
 
 module.exports = BCPlayer

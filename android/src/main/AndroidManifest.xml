@@ -3,8 +3,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <meta-data
-            android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
-            android:value="com.brightcove.cast.DefaultOptionsProvider" />
+        android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
+        android:value="jp.manse.chromecast.GoogleCastOptionsProvider" />
     <meta-data  android:name="com.brightcove.cast.DefaultOptionsProvider.EXPANDED_CONTROLLER_ACTIVITY_CLASS_NAME"
                 android:value="com.brightcove.cast.DefaultExpandedControllerActivity" />
 </manifest>

@@ -79,7 +79,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     private NetworkChangeReceiver networkChangeReceiver;
     private boolean isNetworkForcedPause = false;
     private boolean isRegisteredConnectivityChanged = false;
-
+    private GoogleCastComponent googleCastComponent;
     public BrightcovePlayerView(ThemedReactContext context, ReactApplicationContext applicationContext) {
         super(context);
         this.context = context;
@@ -88,9 +88,6 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
         this.setBackgroundColor(Color.BLACK);
 
         this.playerVideoView = new BrightcoveExoPlayerVideoView(this.context);
-        GoogleCastComponent googleCastComponent = new GoogleCastComponent(null, context);
-
-
         this.addView(this.playerVideoView);
         this.playerVideoView.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         this.playerVideoView.finishInitialization();
@@ -274,7 +271,7 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
                 // Session Ended
             }
         });
-        GoogleCastComponent googleCastComponent = new GoogleCastComponent(eventEmitter, context);
+        googleCastComponent = new GoogleCastComponent(eventEmitter, context);
     }
 
 	/**

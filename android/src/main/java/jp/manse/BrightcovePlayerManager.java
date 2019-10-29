@@ -2,7 +2,6 @@ package jp.manse;
 
 import android.support.annotation.Nullable;
 
-import com.brightcove.cast.GoogleCastComponent;
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableArray;

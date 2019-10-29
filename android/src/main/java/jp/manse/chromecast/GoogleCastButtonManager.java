@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.MediaRouteButton;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import com.facebook.react.uimanager.SimpleViewManager;
@@ -14,6 +15,8 @@ import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
+
+import java.util.logging.Logger;
 
 public class GoogleCastButtonManager
         extends SimpleViewManager<MediaRouteButton> {
@@ -29,15 +32,15 @@ public class GoogleCastButtonManager
     @Override
     public MediaRouteButton createViewInstance(ThemedReactContext context) {
         CastContext castContext = CastContext.getSharedInstance(context);
-
         final MediaRouteButton button = new ColorableMediaRouteButton(context);
         CastButtonFactory.setUpMediaRouteButton(context, button);
 
         updateButtonState(button, castContext.getCastState());
-
+        Log.v("BCast", "createViewInstance ");
         castContext.addCastStateListener(new CastStateListener() {
             @Override
             public void onCastStateChanged(int newState) {
+                Log.v("BCast", "onCastStateChanged " + newState);
                 GoogleCastButtonManager.this.updateButtonState(button, newState);
             }
         });
@@ -57,8 +60,10 @@ public class GoogleCastButtonManager
         // hide the button when no device available (default behavior is show it
         // disabled)
         if (CastState.NO_DEVICES_AVAILABLE == state) {
+            Log.v("BCast", "updateButtonState NO_DEVICES_AVAILABLE HIDE BUTTON");
             button.setVisibility(View.GONE);
         } else {
+            Log.v("BCast", "updateButtonState DEVICES_AVAILABLE SHOW BUTTON");
             button.setVisibility(View.VISIBLE);
         }
     }
@@ -67,7 +72,9 @@ public class GoogleCastButtonManager
     private class ColorableMediaRouteButton extends MediaRouteButton {
         protected Drawable mRemoteIndicatorDrawable;
 
-        public ColorableMediaRouteButton(Context context) { super(context); }
+        public ColorableMediaRouteButton(Context context) {
+            super(context);
+        }
 
         public ColorableMediaRouteButton(Context context, AttributeSet attrs) {
             super(context, attrs);

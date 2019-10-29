@@ -272,6 +272,8 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
             }
         });
         googleCastComponent = new GoogleCastComponent(eventEmitter, context);
+
+
     }
 
 	/**

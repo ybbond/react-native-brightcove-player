@@ -24,7 +24,7 @@ import {ToggleIcon} from "./ToggleIcon";
 import {QualityControl} from "./qualityControl";
 import PlayerEventTypes from "./PlayerEventTypes";
 
-const FORWARD_CONTROL = Platform.OS === 'ios' ? 5 : 10;
+const FORWARD_CONTROL = 5;
 const qualityContent = ['Auto', 'High', 'Medium', 'Data Saver'];
 const quality = [0, 750000, 500000, 120000];
 

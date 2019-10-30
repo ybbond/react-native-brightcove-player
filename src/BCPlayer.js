@@ -13,7 +13,7 @@ const fade_anim_1 = require("./fade-anim");
 const ToggleIcon_1 = require("./ToggleIcon");
 const qualityControl_1 = require("./qualityControl");
 const PlayerEventTypes_1 = require("./PlayerEventTypes");
-const FORWARD_CONTROL = react_native_1.Platform.OS === 'ios' ? 5 : 10;
+const FORWARD_CONTROL = 5;
 const qualityContent = ['Auto', 'High', 'Medium', 'Data Saver'];
 // Wraps the Brightcove player with special Events
 const BrightcovePlayerWithEvents = Events_1.default(BrightcovePlayer_1.default);

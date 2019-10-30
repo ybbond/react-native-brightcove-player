@@ -27,7 +27,7 @@ import {PlayerEventTypes} from './PlayerEventTypes';
 import Value = Animated.Value;
 import {BCPlayerProps, BCPlayerState, DefaultProps, ProgressTime} from "./BCPlayer.types";
 
-const FORWARD_CONTROL = Platform.OS === 'ios' ? 5 : 10;
+const FORWARD_CONTROL = 5;
 const qualityContent = ['Auto', 'High', 'Medium', 'Data Saver'];
 // Wraps the Brightcove player with special Events
 const BrightcovePlayerWithEvents = withEvents(BrightcovePlayer)

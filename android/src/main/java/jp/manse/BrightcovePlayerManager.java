@@ -9,7 +9,7 @@ import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
-
+import com.facebook.react.bridge.ReactMethod;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +18,9 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
     public static final String REACT_CLASS = "BrightcovePlayer";
     public static final int COMMAND_SEEK_TO = 1;
     public static final int COMMAND_SET_FULLSCREEN = 2;
+    public static final int COMMAND_PLAY_VIDEO = 3;
+    public static final int COMMAND_BIT_RATE = 4;
+    public static final int SEEK_TO_LIVE=5;
     public static final String EVENT_READY = "ready";
     public static final String EVENT_METADATA_LOADED = "metadata_loaded";
     public static final String EVENT_PLAY = "play";
@@ -125,11 +128,18 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
         view.setFullscreen(fullscreen);
     }
 
+    public void playVideo(BrightcovePlayerView view, boolean play) {
+           view.setPlay(play);
+       }
+
     @Override
     public Map<String, Integer> getCommandsMap() {
         return MapBuilder.of(
                 "seekTo", COMMAND_SEEK_TO,
-                "setFullscreen", COMMAND_SET_FULLSCREEN
+                "setFullscreen", COMMAND_SET_FULLSCREEN,
+                "playVideo", COMMAND_PLAY_VIDEO,
+                "setBitRate", COMMAND_BIT_RATE,
+                "seekToLive", SEEK_TO_LIVE
         );
     }
 
@@ -138,6 +148,10 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
         Assertions.assertNotNull(view);
         Assertions.assertNotNull(args);
         switch (commandType) {
+            case SEEK_TO_LIVE: {
+                view.seekToLive();
+            return;
+            }
             case COMMAND_SEEK_TO: {
                 view.seekTo((int)(args.getDouble(0) * 1000));
                 return;
@@ -148,6 +162,14 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
                 } else {
                     view.dispatchExitFullScreenClickEvent();
                 }
+                return;
+            }
+            case COMMAND_PLAY_VIDEO:{
+                playVideo(view,args.getBoolean(0));
+                return;
+            }
+            case COMMAND_BIT_RATE: {
+                view.setBitRate((int)args.getDouble(0));
                 return;
             }
         }

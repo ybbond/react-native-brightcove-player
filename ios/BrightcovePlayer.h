@@ -62,9 +62,14 @@
 @property (nonatomic, copy) RCTDirectEventBlock onRewind;
 @property (nonatomic, copy) RCTDirectEventBlock onLiveSelection;
 
+-(void) setPlay:(BOOL)play;
 -(void) seekTo:(NSNumber *)time;
 -(void) setFullscreen:(BOOL)fullscreen;
--(void)dispose;
+-(void) seekToLive;
+-(void) setBitRate:(NSNumber *)bitRate;
+-(void) setFullscreen:(BOOL *)fullscreen;
+-(void) createAirplayIconOverlay;
+-(void) dispose;
 
 typedef enum {
     title = 0,

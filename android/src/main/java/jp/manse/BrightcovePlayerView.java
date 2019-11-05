@@ -247,6 +247,11 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
                 event.putDouble("currentTime", playhead / 1000d);
                 Integer duration = (Integer) e.properties.get(Event.VIDEO_DURATION);
                 event.putDouble("duration", duration / 1000d);
+                Integer liveEdge = BrightcovePlayerView.this.playerVideoView.getVideoDisplay().getLiveEdge();
+                Boolean isInLiveEdge = BrightcovePlayerView.this.playerVideoView.getVideoDisplay().isInLiveEdge();
+                event.putDouble("liveEdge", liveEdge / 1000d);
+                event.putBoolean("isInLiveEdge", isInLiveEdge );
+
                 ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_PROGRESS, event);
             }
@@ -485,9 +490,11 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     public void seekTo(int time) {
         this.playerVideoView.seekTo(time);
     }
+    public void seekToLive() {
+        this.playerVideoView.seekToLive();
+    }
 
     private void updateBitRate() {
-        if (this.bitRate == 0) return;
         ExoPlayerVideoDisplayComponent videoDisplay = ((ExoPlayerVideoDisplayComponent) this.playerVideoView.getVideoDisplay());
         ExoPlayer player = videoDisplay.getExoPlayer();
         DefaultTrackSelector trackSelector = videoDisplay.getTrackSelector();
@@ -603,10 +610,6 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
     }
 
     private void printKeys(Map<String, Object> map) {
-        Log.d("debug", "-----------");
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            Log.d("debug", entry.getKey());
-        }
     }
 
     // Converts MAP into React WritableMap

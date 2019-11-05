@@ -23,7 +23,7 @@ class BrightcovePlayer extends Component {
   componentWillUnmount = Platform.select({
     ios: function() {
       NativeModules.BrightcovePlayerManager.dispose(
-        ReactNative.findNodeHandle(this)
+          ReactNative.findNodeHandle(this)
       );
     },
     android: function() {}
@@ -119,18 +119,74 @@ class BrightcovePlayer extends Component {
   }
 }
 
+// createAirplayIconOverlay
+BrightcovePlayer.prototype.createAirplayIconOverlay = Platform.select({
+  ios: function (prop) {
+    console.log('reached');
+    NativeModules.BrightcovePlayerManager.createAirplayIconOverlay(
+        ReactNative.findNodeHandle(this)
+    );
+  }
+});
+
+BrightcovePlayer.prototype.setBitRate = Platform.select({
+  ios: function (prop) {
+    NativeModules.BrightcovePlayerManager.setBitRate(
+        ReactNative.findNodeHandle(this),
+        prop
+    );
+  },
+  android: function (prop) {
+    UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.setBitRate,
+        [prop]
+    );
+  }
+});
+BrightcovePlayer.prototype.seekToLive = Platform.select({
+  ios: function (prop) {
+    NativeModules.BrightcovePlayerManager.seekToLive(
+        ReactNative.findNodeHandle(this)
+    );
+  },
+  android: function (prop) {
+    UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.seekToLive,
+        [prop]
+    );
+  }
+});
+
+BrightcovePlayer.prototype.playVideo = Platform.select({
+  ios: function (prop) {
+    NativeModules.BrightcovePlayerManager.playVideo(
+        ReactNative.findNodeHandle(this),
+        prop
+    );
+  },
+  android: function (prop) {
+    UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.playVideo,
+        [prop]
+    );
+  }
+});
+
 BrightcovePlayer.prototype.seekTo = Platform.select({
   ios: function(seconds) {
     NativeModules.BrightcovePlayerManager.seekTo(
-      ReactNative.findNodeHandle(this),
-      seconds
+        ReactNative.findNodeHandle(this),
+        seconds
     );
   },
   android: function(seconds) {
     UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this._root),
-      UIManager.getViewManagerConfig('BrightcovePlayer').Commands.seekTo,
-      [seconds]
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.seekTo,
+        [seconds]
     );
   }
 });
@@ -138,15 +194,15 @@ BrightcovePlayer.prototype.seekTo = Platform.select({
 BrightcovePlayer.prototype.setFullscreen = Platform.select({
   ios: function(fullscreen) {
     NativeModules.BrightcovePlayerManager.setFullscreen(
-      ReactNative.findNodeHandle(this),
-      fullscreen
+        ReactNative.findNodeHandle(this),
+        fullscreen
     );
   },
   android: function(fullscreen) {
     UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this._root),
-      UIManager.getViewManagerConfig('BrightcovePlayer').Commands.setFullscreen,
-      [fullscreen]
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.setFullscreen,
+        [fullscreen]
     );
   }
 });
@@ -192,8 +248,8 @@ BrightcovePlayer.propTypes = {
 BrightcovePlayer.defaultProps = {};
 
 const NativeBrightcovePlayer = requireNativeComponent(
-  'BrightcovePlayer',
-  BrightcovePlayer
+    'BrightcovePlayer',
+    BrightcovePlayer
 );
 
 module.exports = BrightcovePlayer;

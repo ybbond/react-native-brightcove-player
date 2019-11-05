@@ -11,7 +11,7 @@ import java.util.List;
 public class BrightcovePlayerPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactApplicationContext) {
-        return Arrays.<NativeModule>asList(new BrightcovePlayerUtil(reactApplicationContext));
+        return Arrays.<NativeModule>asList(new BrightcovePlayerUtil(reactApplicationContext), new BrightcovePlayerManager(reactApplicationContext));
     }
 
     @Override

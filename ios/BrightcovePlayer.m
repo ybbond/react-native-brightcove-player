@@ -53,7 +53,7 @@
                                                  selector:@selector(handleAVPlayerAccess:)
                                                      name:AVPlayerItemNewAccessLogEntryNotification
                                                    object:nil];
-        
+
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(handleApplicationWillTerminate:)
                                                      name:UIApplicationWillTerminateNotification
@@ -133,7 +133,7 @@
     _autoPlay = NO;
 
     [self addSubview:_playerView];
-    
+
     [self resetWatchedTime];
 }
 
@@ -148,7 +148,7 @@
 
 - (void)setupAnalytics {
     _analytics = [[AkamaiMediaAnalytics alloc] initWithConfigurationUrl:@"https://ma1442-r.analytics.edgekey.net/config/beacon-25672.xml"];
-    
+
     [_analytics setDebugLogging:YES];
     [_analytics enableServerIpLookup];
     [_analytics enableLocation];
@@ -163,9 +163,9 @@
     [_analytics setData:[kAnalyticDataType objectAtIndex:device] value:deviceName()];
     [_analytics setData:[kAnalyticDataType objectAtIndex:playerId] value:_playerId];
     [_analytics setData:[kAnalyticDataType objectAtIndex:eventName] value:kAkamaiEventName];
-    
+
     NSString *uuid = [[NSUUID UUID] UUIDString];
-    
+
     [_analytics setViewerId:uuid];
     [_analytics setViewerId:uuid];
 }
@@ -183,7 +183,7 @@
     if (lastEventNumber != self.lastBitRate) {
         NSLog(@"Switch indicatedBitrate from: %f to: %f", self.lastBitRate, lastEventNumber);
         self.lastBitRate = lastEventNumber;
-        
+
         [_analytics handleBitrateChange:self.lastBitRate];
     }
 }
@@ -209,7 +209,7 @@
 NSString *deviceName() {
     struct utsname systemInfo;
     uname(&systemInfo);
-    
+
     return [NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding];
 }
 
@@ -255,7 +255,7 @@ NSString *deviceName() {
             return source.url.absoluteString;
         }
     }
-    
+
     return nil;
 }
 
@@ -379,12 +379,24 @@ NSString *deviceName() {
 
 #pragma mark - BCOVPlaybackControllerDelegate
 
+- (NSNumber *)liveEdge {
+    CMTimeRange seekableRange = [_playbackSession.player.currentItem.seekableTimeRanges.lastObject CMTimeRangeValue];
+    CGFloat seekableStart = CMTimeGetSeconds(seekableRange.start);
+    CGFloat seekableDuration = CMTimeGetSeconds(seekableRange.duration);
+    CGFloat livePosition = seekableStart + seekableDuration;
+    return @(!isnan(livePosition) ? livePosition : 0);
+}
+
+- (void)seekToLive {
+    [self seekTo:[self liveEdge]];
+}
+
 - (void)playbackController:(id<BCOVPlaybackController>)controller playbackSession:(id<BCOVPlaybackSession>)session didReceiveLifecycleEvent:(BCOVPlaybackSessionLifecycleEvent *)lifecycleEvent {
 
     [self createAirplayIconOverlay];
-    
+
     if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventReady) {
-        
+
         if ([[_playerType uppercaseString] isEqualToString:@"LIVE"]) {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicLiveControlLayout];
         } else if ([[_playerType uppercaseString] isEqualToString:@"DVR"]) {
@@ -392,18 +404,18 @@ NSString *deviceName() {
         } else {
             _playerView.controlsView.layout = [BCOVPUIControlLayout basicVODControlLayout];
         }
-        
+
         // Once the controls are set to the layout, define the controls to the state sent to the player
         _playerView.controlsView.hidden = _disableDefaultControl;
-        
+
         // Override Jump back button action to track event
-        
+
         [_playerView.controlsView.jumpBackButton addTarget:self action:@selector(didJumpBack) forControlEvents:UIControlEventTouchUpInside];
-        
+
         // Add Live button action to track event
-        
+
         [_playerView.controlsView.liveButton addTarget:self action:@selector(didPressLive) forControlEvents:UIControlEventTouchUpInside];
-        
+
         UITapGestureRecognizer *seekToTimeTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSeekToTimeTap:)];
         [_playerView.controlsView.progressSlider addGestureRecognizer:seekToTimeTap];
 
@@ -429,10 +441,10 @@ NSString *deviceName() {
         if (self.onPlay) {
             self.onPlay(@{});
         }
-        
+
         [self startSendTimer];
         [self startCountTimer];
-        
+
         [_analytics handlePlaying];
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventPause) {
         if (_playing) {
@@ -442,21 +454,21 @@ NSString *deviceName() {
             }
 
             [self stopCountTimer];
-            
+
             // Hide controls view after pause a video
             [self refreshControlsView];
-            
+
             [_analytics handlePause];
         }
     } else if (lifecycleEvent.eventType == kBCOVPlaybackSessionLifecycleEventEnd) {
         if (self.onEnd) {
             self.onEnd(@{});
         }
-        
+
         [self stopCountTimer];
         [self stopSendTimer];
         [self resetWatchedTime];
-        
+
         [_analytics handlePlayEnd:kPlaybackEnd];
     }
 
@@ -470,7 +482,7 @@ NSString *deviceName() {
         if (self.onBufferingStarted) {
             self.onBufferingStarted(@{});
         }
-        
+
          if (_playing) {
              [_analytics handleBufferStart];
          }
@@ -484,7 +496,7 @@ NSString *deviceName() {
         if (self.onBufferingCompleted) {
             self.onBufferingCompleted(@{});
         }
-        
+
          if (_playing) {
              [_analytics handleBufferEnd];
          }
@@ -546,6 +558,8 @@ NSString *deviceName() {
         self.onProgress(@{
                           kCurrentTimeKey: @(progress),
                           kDurationKey: @(!isnan(duration) ? duration : -1)
+                          @"liveEdge": [self liveEdge],
+                          @"isInLiveEdge": @(abs((int)(progress - [[self liveEdge] doubleValue])) < 7)
                           });
     }
     float bufferProgress = _playerView.controlsView.progressSlider.bufferProgress;
@@ -578,7 +592,7 @@ NSString *deviceName() {
     } else if (screenMode == BCOVPUIScreenModeFull) {
         if (self.onEnterFullscreen) {
             self.onEnterFullscreen(@{});
-            
+
             dispatch_async(dispatch_get_main_queue(), ^(void){
                 [self createAirplayIconOverlay];
             });
@@ -614,13 +628,13 @@ NSString *deviceName() {
 
 - (void)seekToLive {
     NSArray *seekableTimeRanges = playbackSession.player.currentItem.seekableTimeRanges;
-    
+
     if (seekableTimeRanges.count > 0) {
         NSValue *range = seekableTimeRanges[seekableTimeRanges.count - 1];
         CMTimeRange timeRange = range.CMTimeRangeValue;
         Float64 startSeconds = CMTimeGetSeconds(timeRange.start);
         Float64 durationSeconds = CMTimeGetSeconds(timeRange.duration);
-        
+
         [_playbackController seekToTime:CMTimeMakeWithSeconds(startSeconds + durationSeconds, 1) completionHandler:^(BOOL finished) {
             if (self.onLiveSelection) {
                 self.onLiveSelection(@{ });
@@ -644,7 +658,7 @@ NSString *deviceName() {
 
             [_playerView.controlsContainerView addSubview:_route];
             [_playerView.controlsContainerView sendSubviewToBack:_route];
-            
+
             _centreHorizontallyConstraint = [NSLayoutConstraint constraintWithItem:_route
                                                                 attribute:NSLayoutAttributeCenterX
                                                                 relatedBy:NSLayoutRelationEqual
@@ -652,7 +666,7 @@ NSString *deviceName() {
                                                                 attribute:NSLayoutAttributeCenterX
                                                                 multiplier:1.0
                                                                 constant:0];
-            
+
            _centreVerticallyConstraint = [NSLayoutConstraint constraintWithItem:_route
                                                              attribute:NSLayoutAttributeCenterY
                                                              relatedBy:NSLayoutRelationEqual
@@ -660,7 +674,7 @@ NSString *deviceName() {
                                                              attribute:NSLayoutAttributeCenterY
                                                              multiplier:1.0
                                                              constant:0];
-            
+
             _widthConstraint = [NSLayoutConstraint constraintWithItem:_route attribute:NSLayoutAttributeWidth
                                                                              relatedBy:NSLayoutRelationEqual
                                                                              toItem:nil
@@ -674,10 +688,10 @@ NSString *deviceName() {
                                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                                               multiplier:1.0
                                                                               constant:200];
-            
+
             [_playerView.controlsContainerView addConstraints:@[_centreHorizontallyConstraint, _centreVerticallyConstraint,
                                                                 _widthConstraint, _heightConstraint]];
-            
+
             [self layoutIfNeeded];
         }
     } else {
@@ -687,18 +701,18 @@ NSString *deviceName() {
 
 - (void)cleanRemoveFromSuperview:(UIView *)view {
     if(!view || !view.superview) return;
-    
+
     //First remove any constraints on the superview
     NSMutableArray * constraints_to_remove = [NSMutableArray new];
     UIView * superview = view.superview;
-    
+
     for( NSLayoutConstraint * constraint in superview.constraints) {
         if( constraint.firstItem == view ||constraint.secondItem == view ) {
             [constraints_to_remove addObject:constraint];
         }
     }
     [superview removeConstraints:constraints_to_remove];
-    
+
     //Then remove the view itself.
     [view removeFromSuperview];
 }
@@ -737,7 +751,7 @@ NSString *deviceName() {
     NSString *code = [NSString stringWithFormat:@"%ld", (long)[error code]];
 
     [_analytics handleError:code];
-    
+
     self.onError(@{kErrorCodeKey: code, kMessageKey: [error localizedDescription]});
 }
 
@@ -757,7 +771,7 @@ NSString *deviceName() {
 - (int64_t)bytesLoaded {
     long bytes = 0;
     AVPlayerItemAccessLog *accessLog = [playbackSession.player.currentItem accessLog];
-    
+
     if (accessLog != nil) {
         if (accessLog.events.count > 0) {
             if (accessLog.events[accessLog.events.count-1].numberOfBytesTransferred > _currentBytesLoaded) {
@@ -766,14 +780,14 @@ NSString *deviceName() {
             _currentBytesLoaded = accessLog.events[accessLog.events.count-1].numberOfBytesTransferred;
         }
     }
-    
+
     return bytes;
 }
 
 - (NSInteger)droppedFrames {
     NSInteger df = 0;
     AVPlayerItemAccessLog *accessLog = [playbackSession.player.currentItem accessLog];
-    
+
     if (accessLog != nil) {
         if (accessLog.events.count > 0) {
             df = accessLog.events[accessLog.events.count-1].numberOfDroppedVideoFrames - _currentDroppedFrames;

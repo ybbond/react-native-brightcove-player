@@ -9,9 +9,12 @@
 #import <BrightcovePlayerSDK/BCOVPlaybackSession.h>
 #import <BrightcovePlayerSDK/BCOVPUISlider.h>
 #import <BrightcovePlayerSDK/BCOVOfflineVideoManager.h>
+#import <BrightcovePlayerSDK/BCOVPUIButton.h>
 #import <React/RCTBridge.h>
 #import <React/UIView+React.h>
 #import <AVKit/AVKit.h>
+#import <ma_sdk/ma_sdk-Swift.h>
+#import <sys/utsname.h>
 
 @interface BrightcovePlayer : UIView<BCOVOfflineVideoManagerDelegate>
 
@@ -31,12 +34,14 @@
 @property (nonatomic) NSDictionary *mediaInfo;
 @property (nonatomic) NSTimeInterval segmentDuration;
 @property (nonatomic) AVRoutePickerView *route;
+@property (nonatomic) AkamaiMediaAnalytics *analytics;
 
 @property (nonatomic, copy) NSString *referenceId;
 @property (nonatomic, copy) NSString *videoId;
 @property (nonatomic, copy) NSString *videoToken;
 @property (nonatomic, copy) NSString *accountId;
 @property (nonatomic, copy) NSString *policyKey;
+@property (nonatomic, copy) NSString *playerId;
 @property (nonatomic, copy) RCTDirectEventBlock onReady;
 @property (nonatomic, copy) RCTDirectEventBlock onMetadataLoaded;
 @property (nonatomic, copy) RCTDirectEventBlock onPlay;
@@ -53,14 +58,25 @@
 @property (nonatomic, copy) RCTDirectEventBlock onExitFullscreen;
 @property (nonatomic, copy) RCTDirectEventBlock onError;
 @property (nonatomic, copy) RCTDirectEventBlock onNetworkConnectivityChange;
+@property (nonatomic, copy) RCTDirectEventBlock onWatchedTime;
+@property (nonatomic, copy) RCTDirectEventBlock onRewind;
+@property (nonatomic, copy) RCTDirectEventBlock onLiveSelection;
 
 -(void) setPlay:(BOOL)play;
 -(void) seekTo:(NSNumber *)time;
+-(void) setFullscreen:(BOOL)fullscreen;
 -(void) seekToLive;
 -(void) setBitRate:(NSNumber *)bitRate;
 -(void) setFullscreen:(BOOL *)fullscreen;
 -(void) createAirplayIconOverlay;
 -(void) dispose;
 
+typedef enum {
+    title = 0,
+    contentLength,
+    device,
+    playerId,
+    eventName
+} AnalyticType;
 
 @end

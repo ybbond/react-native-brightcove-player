@@ -31,78 +31,90 @@ class BrightcovePlayer extends Component {
 
   render() {
     return (
-        <NativeBrightcovePlayer
-            ref={e => (this._root = e)}
-            {...this.props}
-            style={[
-              this.props.style,
-              this.state.fullscreen && {
-                position: 'absolute',
-                zIndex: 9999,
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%'
-              },
-              this.state.fullscreen && this.props.fullscreenStyle
-            ]}
-            onReady={event =>
-                this.props.onReady && this.props.onReady(event.nativeEvent)
-            }
-            onMetadataLoaded={event =>
-                this.props.onMetadataLoaded && this.props.onMetadataLoaded(event.nativeEvent)
-            }
-            onPlay={event =>
-                this.props.onPlay && this.props.onPlay(event.nativeEvent)
-            }
-            onPause={event =>
-                this.props.onPause && this.props.onPause(event.nativeEvent)
-            }
-            onEnd={event => this.props.onEnd && this.props.onEnd(event.nativeEvent)}
-            onProgress={event =>
-                this.props.onProgress && this.props.onProgress(event.nativeEvent)
-            }
-            onChangeDuration={event =>
-                this.props.onChangeDuration &&
-                this.props.onChangeDuration(event.nativeEvent)
-            }
-            onUpdateBufferProgress={event =>
-                this.props.onUpdateBufferProgress &&
-                this.props.onUpdateBufferProgress(event.nativeEvent)
-            }
-            onBufferingStarted={event =>
-                this.props.onBufferingStarted &&
-                this.props.onBufferingStarted(event.nativeEvent)
-            }
-            onBufferingCompleted={event =>
-                this.props.onBufferingCompleted &&
-                this.props.onBufferingCompleted(event.nativeEvent)
-            }
-            onBeforeEnterFullscreen={event => {
-              this.props.onBeforeEnterFullscreen &&
-              this.props.onBeforeEnterFullscreen(event.nativeEvent)
-            }}
-            onBeforeExitFullscreen={event => {
-              this.props.onBeforeExitFullscreen &&
-              this.props.onBeforeExitFullscreen(event.nativeEvent)
-            }}
-            onEnterFullscreen={event => {
-              this.props.onEnterFullscreen &&
-              this.props.onEnterFullscreen(event.nativeEvent)
-              this.setState({ fullscreen: true })
-            }}
-            onExitFullscreen={event => {
-              this.props.onExitFullscreen &&
-              this.props.onExitFullscreen(event.nativeEvent)
-              this.setState({ fullscreen: false })
-            }}
-            onNetworkConnectivityChange={event => {
-              this.props.onNetworkConnectivityChange && this.props.onNetworkConnectivityChange(event.nativeEvent)
-            }}
-            onError={event => {
-              this.props.onError && this.props.onError(event.nativeEvent)
-            }}
-        />
+      <NativeBrightcovePlayer
+        ref={e => (this._root = e)}
+        {...this.props}
+        style={[
+          this.props.style,
+          this.state.fullscreen && {
+            position: 'absolute',
+            zIndex: 9999,
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%'
+          },
+          this.state.fullscreen && this.props.fullscreenStyle
+        ]}
+        onReady={event =>
+          this.props.onReady && this.props.onReady(event.nativeEvent)
+        }
+        onMetadataLoaded={event =>
+          this.props.onMetadataLoaded && this.props.onMetadataLoaded(event.nativeEvent)
+        }
+        onPlay={event =>
+          this.props.onPlay && this.props.onPlay(event.nativeEvent)
+        }
+        onPause={event =>
+          this.props.onPause && this.props.onPause(event.nativeEvent)
+        }
+        onEnd={event => this.props.onEnd && this.props.onEnd(event.nativeEvent)}
+        onProgress={event =>
+          this.props.onProgress && this.props.onProgress(event.nativeEvent)
+        }
+        onChangeDuration={event =>
+          this.props.onChangeDuration &&
+          this.props.onChangeDuration(event.nativeEvent)
+        }
+        onUpdateBufferProgress={event =>
+          this.props.onUpdateBufferProgress &&
+          this.props.onUpdateBufferProgress(event.nativeEvent)
+        }
+        onBufferingStarted={event =>
+          this.props.onBufferingStarted &&
+          this.props.onBufferingStarted(event.nativeEvent)
+        }
+        onBufferingCompleted={event =>
+          this.props.onBufferingCompleted &&
+          this.props.onBufferingCompleted(event.nativeEvent)
+        }
+        onBeforeEnterFullscreen={event => {
+          this.props.onBeforeEnterFullscreen &&
+          this.props.onBeforeEnterFullscreen(event.nativeEvent)
+        }}
+        onBeforeExitFullscreen={event => {
+          this.props.onBeforeExitFullscreen &&
+          this.props.onBeforeExitFullscreen(event.nativeEvent)
+        }}
+        onEnterFullscreen={event => {
+          this.props.onEnterFullscreen &&
+          this.props.onEnterFullscreen(event.nativeEvent)
+          this.setState({ fullscreen: true })
+        }}
+        onExitFullscreen={event => {
+          this.props.onExitFullscreen &&
+          this.props.onExitFullscreen(event.nativeEvent)
+          this.setState({ fullscreen: false })
+        }}
+        onLiveSelection={event => {
+          this.props.onLiveSelection &&
+          this.props.onLiveSelection(event.nativeEvent)
+        }}
+        onWatchedTime={event => {
+          this.props.onWatchedTime &&
+          this.props.onWatchedTime(event.nativeEvent)
+        }}
+        onRewind={event => {
+          this.props.onRewind &&
+          this.props.onRewind(event.nativeEvent)
+        }}
+        onNetworkConnectivityChange={event => {
+          this.props.onNetworkConnectivityChange && this.props.onNetworkConnectivityChange(event.nativeEvent)
+        }}
+        onError={event => {
+          this.props.onError && this.props.onError(event.nativeEvent)
+        }}
+      />
     );
   }
 }
@@ -226,6 +238,9 @@ BrightcovePlayer.propTypes = {
   onBeforeExitFullscreen: PropTypes.func,
   onEnterFullscreen: PropTypes.func,
   onExitFullscreen: PropTypes.func,
+  onLiveSelection: PropTypes.func,
+  onWatchedTime: PropTypes.func,
+  onRewind: PropTypes.func,
   onError: PropTypes.func,
   onNetworkConnectivityChange: PropTypes.func
 };

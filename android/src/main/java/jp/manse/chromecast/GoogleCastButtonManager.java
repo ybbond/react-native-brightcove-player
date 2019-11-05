@@ -1,16 +1,14 @@
 package jp.manse.chromecast;
 
-import android.support.v7.app.MediaRouteButton;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.MediaRouteButton;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -18,16 +16,15 @@ import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
-import android.widget.LinearLayout;
-import android.view.ViewGroup.LayoutParams;
-import jp.manse.R;
-
 
 public class GoogleCastButtonManager
         extends SimpleViewManager<MediaRouteButton> {
 
     public static final String REACT_CLASS = "RNGoogleCastButton";
     private Integer mColor = null;
+
+    public GoogleCastButtonManager() {
+    }
 
     @Override
     public String getName() {
@@ -38,15 +35,10 @@ public class GoogleCastButtonManager
     public MediaRouteButton createViewInstance(ThemedReactContext context) {
         CastContext castContext = CastContext.getSharedInstance(context);
         final MediaRouteButton button = new ColorableMediaRouteButton(context);
-        button.setMinimumHeight(40);
         button.setMinimumWidth(40);
+        button.setMinimumHeight(40);
         button.setBackgroundColor(Color.GREEN);
         button.setVisibility(View.VISIBLE);
-        GradientDrawable shape = new GradientDrawable();
-        shape.setShape(GradientDrawable.OVAL);
-        shape.setColor(Color.WHITE);
-        shape.setStroke(2, Color.WHITE);
-        button.setRemoteIndicatorDrawable(shape);
         CastButtonFactory.setUpMediaRouteButton(context, button);
 
         updateButtonState(button, castContext.getCastState());
@@ -58,17 +50,6 @@ public class GoogleCastButtonManager
                 GoogleCastButtonManager.this.updateButtonState(button, newState);
             }
         });
-
-        LayoutParams params =
-                new LinearLayout.LayoutParams(
-                        LayoutParams.FILL_PARENT,
-                        LayoutParams.WRAP_CONTENT);
-
-        //create a text view
-        TextView tvAddARoom = new TextView(context);
-        tvAddARoom.setTextColor(Color.rgb(255,255,255));
-        tvAddARoom.setText("Add a Room");
-        tvAddARoom.setLayoutParams(params);
 
         return button;
     }
@@ -84,13 +65,12 @@ public class GoogleCastButtonManager
     private void updateButtonState(MediaRouteButton button, int state) {
         // hide the button when no device available (default behavior is show it
         // disabled)
-        button.setVisibility(View.VISIBLE);
         if (CastState.NO_DEVICES_AVAILABLE == state) {
             Log.v("BCast", "updateButtonState NO_DEVICES_AVAILABLE HIDE BUTTON");
-            //button.setVisibility(View.GONE);
+            // button.setVisibility(View.GONE);
         } else {
             Log.v("BCast", "updateButtonState DEVICES_AVAILABLE SHOW BUTTON");
-           button.setVisibility(View.VISIBLE);
+            button.setVisibility(View.VISIBLE);
         }
     }
 

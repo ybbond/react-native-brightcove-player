@@ -11,7 +11,8 @@ function withEvents(BCPlayerComponent) {
 			this.state = {
 				percentageTracked: {Q1: false, Q2: false, Q3: false, Q4: false},
 				mediainfo: null,
-				firstPlayed: false
+				firstPlayed: false,
+				quality: 'Auto'
 			}
 		}
 
@@ -95,6 +96,11 @@ function withEvents(BCPlayerComponent) {
 		onNetworkConnectivityChange(event) {
 			this.onEvent({'type': PlayerEventTypes.NETWORK_CONNECTIVITY_CHANGE, status: event.status });
 			this.props.onNetworkConnectivityChange && this.props.onNetworkConnectivityChange(event);
+		}
+
+
+		onDurationChange(event) {
+			this.props.onDurationChange && this.props.onDurationChange(event);
 		}
 
 
@@ -276,6 +282,7 @@ function withEvents(BCPlayerComponent) {
 				onEnterFullscreen={this.onEnterFullscreen.bind(this)}
 				onExitFullscreen={this.onExitFullscreen.bind(this)}
 				onError={this.onError.bind(this)}
+				onDurationChange={this.onDurationChange.bind(this)}
 			/>;
 		}
 	}

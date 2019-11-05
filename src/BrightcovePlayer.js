@@ -23,7 +23,7 @@ class BrightcovePlayer extends Component {
   componentWillUnmount = Platform.select({
     ios: function() {
       NativeModules.BrightcovePlayerManager.dispose(
-        ReactNative.findNodeHandle(this)
+          ReactNative.findNodeHandle(this)
       );
     },
     android: function() {}
@@ -31,94 +31,150 @@ class BrightcovePlayer extends Component {
 
   render() {
     return (
-      <NativeBrightcovePlayer
-        ref={e => (this._root = e)}
-        {...this.props}
-        style={[
-          this.props.style,
-          this.state.fullscreen && {
-            position: 'absolute',
-            zIndex: 9999,
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%'
-          },
-          this.state.fullscreen && this.props.fullscreenStyle
-        ]}
-        onReady={event =>
-          this.props.onReady && this.props.onReady(event.nativeEvent)
-        }
-        onMetadataLoaded={event =>
-          this.props.onMetadataLoaded && this.props.onMetadataLoaded(event.nativeEvent)
-        }
-        onPlay={event =>
-          this.props.onPlay && this.props.onPlay(event.nativeEvent)
-        }
-        onPause={event =>
-          this.props.onPause && this.props.onPause(event.nativeEvent)
-        }
-        onEnd={event => this.props.onEnd && this.props.onEnd(event.nativeEvent)}
-        onProgress={event =>
-          this.props.onProgress && this.props.onProgress(event.nativeEvent)
-        }
-        onChangeDuration={event =>
-          this.props.onChangeDuration &&
-          this.props.onChangeDuration(event.nativeEvent)
-        }
-        onUpdateBufferProgress={event =>
-          this.props.onUpdateBufferProgress &&
-          this.props.onUpdateBufferProgress(event.nativeEvent)
-        }
-        onBufferingStarted={event =>
-          this.props.onBufferingStarted &&
-          this.props.onBufferingStarted(event.nativeEvent)
-        }
-        onBufferingCompleted={event =>
-          this.props.onBufferingCompleted &&
-          this.props.onBufferingCompleted(event.nativeEvent)
-        }
-        onBeforeEnterFullscreen={event => {
-          this.props.onBeforeEnterFullscreen &&
-          this.props.onBeforeEnterFullscreen(event.nativeEvent)
-        }}
-        onBeforeExitFullscreen={event => {
-          this.props.onBeforeExitFullscreen &&
-          this.props.onBeforeExitFullscreen(event.nativeEvent)
-        }}
-        onEnterFullscreen={event => {
-          this.props.onEnterFullscreen &&
-          this.props.onEnterFullscreen(event.nativeEvent)
-          this.setState({ fullscreen: true })
-        }}
-        onExitFullscreen={event => {
-          this.props.onExitFullscreen &&
-          this.props.onExitFullscreen(event.nativeEvent)
-          this.setState({ fullscreen: false })
-        }}
-        onNetworkConnectivityChange={event => {
-          this.props.onNetworkConnectivityChange && this.props.onNetworkConnectivityChange(event.nativeEvent)
-        }}
-        onError={event => {
-          this.props.onError && this.props.onError(event.nativeEvent)
-        }}
-      />
+        <NativeBrightcovePlayer
+            ref={e => (this._root = e)}
+            {...this.props}
+            style={[
+              this.props.style,
+              this.state.fullscreen && {
+                position: 'absolute',
+                zIndex: 9999,
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%'
+              },
+              this.state.fullscreen && this.props.fullscreenStyle
+            ]}
+            onReady={event =>
+                this.props.onReady && this.props.onReady(event.nativeEvent)
+            }
+            onMetadataLoaded={event =>
+                this.props.onMetadataLoaded && this.props.onMetadataLoaded(event.nativeEvent)
+            }
+            onPlay={event =>
+                this.props.onPlay && this.props.onPlay(event.nativeEvent)
+            }
+            onPause={event =>
+                this.props.onPause && this.props.onPause(event.nativeEvent)
+            }
+            onEnd={event => this.props.onEnd && this.props.onEnd(event.nativeEvent)}
+            onProgress={event =>
+                this.props.onProgress && this.props.onProgress(event.nativeEvent)
+            }
+            onChangeDuration={event =>
+                this.props.onChangeDuration &&
+                this.props.onChangeDuration(event.nativeEvent)
+            }
+            onUpdateBufferProgress={event =>
+                this.props.onUpdateBufferProgress &&
+                this.props.onUpdateBufferProgress(event.nativeEvent)
+            }
+            onBufferingStarted={event =>
+                this.props.onBufferingStarted &&
+                this.props.onBufferingStarted(event.nativeEvent)
+            }
+            onBufferingCompleted={event =>
+                this.props.onBufferingCompleted &&
+                this.props.onBufferingCompleted(event.nativeEvent)
+            }
+            onBeforeEnterFullscreen={event => {
+              this.props.onBeforeEnterFullscreen &&
+              this.props.onBeforeEnterFullscreen(event.nativeEvent)
+            }}
+            onBeforeExitFullscreen={event => {
+              this.props.onBeforeExitFullscreen &&
+              this.props.onBeforeExitFullscreen(event.nativeEvent)
+            }}
+            onEnterFullscreen={event => {
+              this.props.onEnterFullscreen &&
+              this.props.onEnterFullscreen(event.nativeEvent)
+              this.setState({ fullscreen: true })
+            }}
+            onExitFullscreen={event => {
+              this.props.onExitFullscreen &&
+              this.props.onExitFullscreen(event.nativeEvent)
+              this.setState({ fullscreen: false })
+            }}
+            onNetworkConnectivityChange={event => {
+              this.props.onNetworkConnectivityChange && this.props.onNetworkConnectivityChange(event.nativeEvent)
+            }}
+            onError={event => {
+              this.props.onError && this.props.onError(event.nativeEvent)
+            }}
+        />
     );
   }
 }
 
+// createAirplayIconOverlay
+BrightcovePlayer.prototype.createAirplayIconOverlay = Platform.select({
+  ios: function (prop) {
+    console.log('reached');
+    NativeModules.BrightcovePlayerManager.createAirplayIconOverlay(
+        ReactNative.findNodeHandle(this)
+    );
+  }
+});
+
+BrightcovePlayer.prototype.setBitRate = Platform.select({
+  ios: function (prop) {
+    NativeModules.BrightcovePlayerManager.setBitRate(
+        ReactNative.findNodeHandle(this),
+        prop
+    );
+  },
+  android: function (prop) {
+    UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.setBitRate,
+        [prop]
+    );
+  }
+});
+BrightcovePlayer.prototype.seekToLive = Platform.select({
+  ios: function (prop) {
+    NativeModules.BrightcovePlayerManager.seekToLive(
+        ReactNative.findNodeHandle(this)
+    );
+  },
+  android: function (prop) {
+    UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.seekToLive,
+        [prop]
+    );
+  }
+});
+
+BrightcovePlayer.prototype.playVideo = Platform.select({
+  ios: function (prop) {
+    NativeModules.BrightcovePlayerManager.playVideo(
+        ReactNative.findNodeHandle(this),
+        prop
+    );
+  },
+  android: function (prop) {
+    UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.playVideo,
+        [prop]
+    );
+  }
+});
+
 BrightcovePlayer.prototype.seekTo = Platform.select({
   ios: function(seconds) {
     NativeModules.BrightcovePlayerManager.seekTo(
-      ReactNative.findNodeHandle(this),
-      seconds
+        ReactNative.findNodeHandle(this),
+        seconds
     );
   },
   android: function(seconds) {
     UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this._root),
-      UIManager.getViewManagerConfig('BrightcovePlayer').Commands.seekTo,
-      [seconds]
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.seekTo,
+        [seconds]
     );
   }
 });
@@ -126,15 +182,15 @@ BrightcovePlayer.prototype.seekTo = Platform.select({
 BrightcovePlayer.prototype.setFullscreen = Platform.select({
   ios: function(fullscreen) {
     NativeModules.BrightcovePlayerManager.setFullscreen(
-      ReactNative.findNodeHandle(this),
-      fullscreen
+        ReactNative.findNodeHandle(this),
+        fullscreen
     );
   },
   android: function(fullscreen) {
     UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this._root),
-      UIManager.getViewManagerConfig('BrightcovePlayer').Commands.setFullscreen,
-      [fullscreen]
+        ReactNative.findNodeHandle(this._root),
+        UIManager.getViewManagerConfig('BrightcovePlayer').Commands.setFullscreen,
+        [fullscreen]
     );
   }
 });
@@ -177,8 +233,8 @@ BrightcovePlayer.propTypes = {
 BrightcovePlayer.defaultProps = {};
 
 const NativeBrightcovePlayer = requireNativeComponent(
-  'BrightcovePlayer',
-  BrightcovePlayer
+    'BrightcovePlayer',
+    BrightcovePlayer
 );
 
 module.exports = BrightcovePlayer;

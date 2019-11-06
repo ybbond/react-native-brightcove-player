@@ -380,7 +380,7 @@ NSString *deviceName() {
 #pragma mark - BCOVPlaybackControllerDelegate
 
 - (NSNumber *)liveEdge {
-    CMTimeRange seekableRange = [_playbackSession.player.currentItem.seekableTimeRanges.lastObject CMTimeRangeValue];
+    CMTimeRange seekableRange = [playbackSession.player.currentItem.seekableTimeRanges.lastObject CMTimeRangeValue];
     CGFloat seekableStart = CMTimeGetSeconds(seekableRange.start);
     CGFloat seekableDuration = CMTimeGetSeconds(seekableRange.duration);
     CGFloat livePosition = seekableStart + seekableDuration;
@@ -557,7 +557,7 @@ NSString *deviceName() {
     if (self.onProgress && progress > 0 && progress != INFINITY) {
         self.onProgress(@{
                           kCurrentTimeKey: @(progress),
-                          kDurationKey: @(!isnan(duration) ? duration : -1)
+                          kDurationKey: @(!isnan(duration) ? duration : -1),
                           @"liveEdge": [self liveEdge],
                           @"isInLiveEdge": @(abs((int)(progress - [[self liveEdge] doubleValue])) < 7)
                           });
@@ -622,23 +622,6 @@ NSString *deviceName() {
 
         [_playbackController seekToTime:CMTimeMakeWithSeconds(CMTimeGetSeconds(newTime), NSEC_PER_SEC) completionHandler:^(BOOL finished) {
             [_analytics handleSeek];
-        }];
-    }
-}
-
-- (void)seekToLive {
-    NSArray *seekableTimeRanges = playbackSession.player.currentItem.seekableTimeRanges;
-
-    if (seekableTimeRanges.count > 0) {
-        NSValue *range = seekableTimeRanges[seekableTimeRanges.count - 1];
-        CMTimeRange timeRange = range.CMTimeRangeValue;
-        Float64 startSeconds = CMTimeGetSeconds(timeRange.start);
-        Float64 durationSeconds = CMTimeGetSeconds(timeRange.duration);
-
-        [_playbackController seekToTime:CMTimeMakeWithSeconds(startSeconds + durationSeconds, 1) completionHandler:^(BOOL finished) {
-            if (self.onLiveSelection) {
-                self.onLiveSelection(@{ });
-            }
         }];
     }
 }

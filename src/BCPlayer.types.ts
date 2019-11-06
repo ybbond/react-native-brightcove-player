@@ -20,7 +20,8 @@ export interface BCPlayerProps {
     referenceId: string
     accountId: string
     forwardedRef: any
-    fullscreenStyle: ViewStyle
+    fullscreenStyle: ViewStyle,
+
 
 }
 
@@ -48,6 +49,7 @@ export interface BCPlayerState {
     completed: boolean
     isInLiveEdge: boolean | undefined
     liveEdge: number | undefined
+    playerOverlayClicked: boolean
 }
 
 export interface ProgressTime {

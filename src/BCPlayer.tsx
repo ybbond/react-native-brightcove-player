@@ -1,5 +1,5 @@
-import * as React from'react'
-import  {Component} from 'react'
+import * as React from 'react'
+import {Component} from 'react'
 import {
     Animated,
     AppState,
@@ -12,7 +12,8 @@ import {
     View,
     TouchableOpacity,
     SafeAreaView,
-    ActivityIndicator
+    ActivityIndicator,
+    Text
 } from 'react-native'
 import BrightcovePlayer from './BrightcovePlayer'
 import * as Orientation from 'react-native-orientation'
@@ -58,12 +59,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         width: '100%',
         height: '100%',
-        backgroundColor: '#00000080'
+        backgroundColor: '#00000080',
+        right: 0,
+        opacity: 1
     },
-    topSubMenu : {
+    topSubMenu: {
         display: 'flex',
         flexDirection: 'row-reverse',
-        zIndex:1000
+        zIndex: 1000
     },
     bottomBar: {
         zIndex: 1900,
@@ -85,20 +88,83 @@ const styles = StyleSheet.create({
         height: 40,
     },
     controlsVisibility: {
-        zIndex: 10000,
+        zIndex: 110,
         position: 'absolute',
         width: '100%',
         height: '100%'
-    }
+    },
+    overlayCloseButton: {
+        width: 20,
+        height: 20,
+        top: 20,
+        backgroundColor: 'red'
+    },
+    overlayContent: {
+        width: '100%',
+        height: '100%',
+    },
+    overlayActionOpen: {
+        zIndex: 102,
+        position: 'absolute',
+        width: '40%',
+        height: '100%',
+        right: 0,
+        transform: [
+            {translateX: 0},
+            {perspective: 1000},
+        ],
+        backgroundColor: '#000',
+        opacity: 0.5
+    },
+    overlayActionClose: {
+        zIndex: 102,
+        position: 'absolute',
+        width: '40%',
+        height: '100%',
+        backgroundColor: '#000',
+        right: 0,
+        transform: [
+            {translateX: 240},
+            {perspective: 1000},
+        ],
+        opacity: 0.5
+    },
+    overlayActionButtonOpen: {
+        zIndex: 101,
+        position: 'absolute',
+        width: '40%',
+        height: 40,
+        backgroundColor: '#fff',
+        right: 0,
+        top: '10%',
+        transform: [
+            {translateX: -25},
+            {perspective: 1000},
+        ],
+        opacity: 0.9
+    },
+    overlayActionButtonClose: {
+        zIndex: 101,
+        position: 'absolute',
+        width: '40%',
+        height: 40,
+        backgroundColor: '#fff',
+        right: 0,
+        top: '10%',
+        transform: [
+            {translateX: 215},
+            {perspective: 1000},
+        ],
+        opacity: 0.9
+    },
 })
 
 
-
 class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
-    animInline : Value
-    animFullscreen : Value
-    timer : any
-    player :any
+    animInline: Value
+    animFullscreen: Value
+    timer: any
+    player: any
     static defaultProps: DefaultProps
 
 
@@ -128,6 +194,7 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
             liveEdge: 0,
             selectedQualityIndex: 0,
             completed: false,
+            playerOverlayClicked: false
         }
         this.animInline = new Animated.Value(Win.width * 0.5625)
         this.animFullscreen = new Animated.Value(Win.width * 0.5625)
@@ -196,13 +263,13 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
     }
 
 
-    onRotated({ window: { width, height } } : {window : {width: number, height : number}}) {
+    onRotated({window: {width, height}}: { window: { width: number, height: number } }) {
         // Add this condition incase if inline and fullscreen options are turned on
         if (this.props.inlineOnly) return
         const orientation = width > height ? 'LANDSCAPE' : 'PORTRAIT'
         if (this.props.rotateToFullScreen) {
             if (orientation === 'LANDSCAPE') {
-                this.setState({ fullScreen: true }, () => {
+                this.setState({fullScreen: true}, () => {
                     this.animToFullscreen(height)
                     this.props.onFullScreen(this.state.fullScreen)
                 })
@@ -234,9 +301,14 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
     }
 
     seekToLive() {
-        if(this.state.liveEdge){
-            this.setState({currentTime : this.state.liveEdge}, () => {
-                this.progress({currentTime: this.state.currentTime, liveEdge: this.state.liveEdge, duration: 0, isInLiveEdge: undefined});
+        if (this.state.liveEdge) {
+            this.setState({currentTime: this.state.liveEdge}, () => {
+                this.progress({
+                    currentTime: this.state.currentTime,
+                    liveEdge: this.state.liveEdge,
+                    duration: 0,
+                    isInLiveEdge: undefined
+                });
                 this.player && this.player.seekToLive()
                 this.forcePlay()
                 this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.SEEK_TO_LIVE})
@@ -268,14 +340,14 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
         })
     }
 
-    animToFullscreen(height : number) {
+    animToFullscreen(height: number) {
         Animated.parallel([
             Animated.timing(this.animFullscreen, {toValue: height, duration: 200}),
             Animated.timing(this.animInline, {toValue: height, duration: 200})
         ]).start()
     }
 
-    animToInline(height? : number) {
+    animToInline(height?: number) {
         const newHeight = height || this.state.inlineHeight
         Animated.parallel([
             Animated.timing(this.animFullscreen, {toValue: newHeight, duration: 100}),
@@ -303,7 +375,7 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
         })
     }
 
-    seekTo(seconds:  number) {
+    seekTo(seconds: number) {
         const percent = seconds / this.state.duration
         if (seconds > this.state.duration) {
             // throw new Error(`Current time (${seconds}) exceeded the duration ${this.state.duration}`)
@@ -313,10 +385,15 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
     }
 
     onSeekRelease(percent: number) {
-        const seconds = this.state.liveEdge && this.state.liveEdge > 0 ?  percent * this.state.liveEdge : percent * this.state.duration
-        this.setState({progress: percent, completed: false, seeking: false, currentTime: (this.state.liveEdge && this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 :  seconds}, () => {
+        const seconds = this.state.liveEdge && this.state.liveEdge > 0 ? percent * this.state.liveEdge : percent * this.state.duration
+        this.setState({
+            progress: percent,
+            completed: false,
+            seeking: false,
+            currentTime: (this.state.liveEdge && this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 : seconds
+        }, () => {
 
-            this.player && this.player.seekTo((this.state.liveEdge && this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - 0.01 :  seconds)
+            this.player && this.player.seekTo((this.state.liveEdge && this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - 0.01 : seconds)
             this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.SEEK_TO, time: seconds})
             this.forcePlay()
         })
@@ -324,7 +401,7 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
 
     progress(time: ProgressTime) {
         const {currentTime, duration, isInLiveEdge, liveEdge} = time
-        const progress = currentTime / (liveEdge && liveEdge > 0 ? liveEdge : duration  )
+        const progress = currentTime / (liveEdge && liveEdge > 0 ? liveEdge : duration)
         if (!this.state.seeking) {
             this.setState({progress, currentTime, isInLiveEdge, liveEdge})
         }
@@ -342,10 +419,13 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
         this.setState({
             qualityControlMenu: !this.state.qualityControlMenu,
             controlsOverlayClicked: true,
-            bitRate: ( value !== null && value >= 0) ? quality[value] : this.state.bitRate,
-            selectedQualityIndex: ( value !== null && value >= 0 ) ? value : this.state.selectedQualityIndex
+            bitRate: (value !== null && value >= 0) ? quality[value] : this.state.bitRate,
+            selectedQualityIndex: (value !== null && value >= 0) ? value : this.state.selectedQualityIndex
         }, () => {
-            this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.QUALITY_SELECTED, bitRate : qualityContent[value as number]})
+            this.props.onEvent && this.props.onEvent({
+                'type': PlayerEventTypes.QUALITY_SELECTED,
+                bitRate: qualityContent[value as number]
+            })
         })
     }
 
@@ -355,7 +435,7 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
             controlsOverlayClicked: true
         }, () => {
             this.player && this.player.playVideo(!this.state.paused)
-            if(this.state.paused)
+            if (this.state.paused)
                 this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.PAUSE})
         })
     }
@@ -376,7 +456,7 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
     forward() {
         this.setState({
             controlsOverlayClicked: true,
-            currentTime: (Math.floor(this.state.currentTime) <= Math.floor(this.state.liveEdge as number) || Math.floor(this.state.currentTime) <= Math.floor(this.state.duration))  ? (this.state.currentTime + FORWARD_CONTROL) :  this.state.currentTime
+            currentTime: (Math.floor(this.state.currentTime) <= Math.floor(this.state.liveEdge as number) || Math.floor(this.state.currentTime) <= Math.floor(this.state.duration)) ? (this.state.currentTime + FORWARD_CONTROL) : this.state.currentTime
         }, () => {
             this.player && this.player.seekTo(this.state.currentTime + FORWARD_CONTROL)
             this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.FORWARD})
@@ -384,14 +464,14 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
     }
 
     rewind() {
-        if(this.state.completed)
+        if (this.state.completed)
             this.forcePlay()
         this.setState({
             controlsOverlayClicked: true,
-            currentTime : ((this.state.currentTime - FORWARD_CONTROL) >= 0 ) ? this.state.currentTime - FORWARD_CONTROL : this.state.currentTime,
+            currentTime: ((this.state.currentTime - FORWARD_CONTROL) >= 0) ? this.state.currentTime - FORWARD_CONTROL : this.state.currentTime,
             completed: false
         }, () => {
-            if ((this.state.currentTime - FORWARD_CONTROL) >= 0 ){
+            if ((this.state.currentTime - FORWARD_CONTROL) >= 0) {
                 this.player && this.player.seekTo(this.state.currentTime - FORWARD_CONTROL)
                 this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.REWIND})
             }
@@ -401,11 +481,17 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
     onAnimEnd() {
         this.setState({showClickOverlay: !this.state.showControls})
     }
+
     replay() {
         this.player && this.player.seekTo(0);
         this.player && this.player.playVideo(true)
-        this.setState( {currentTime: 0, paused: false, completed: false},  () => {
-            this.progress({currentTime : this.state.currentTime, duration : this.state.duration, isInLiveEdge: undefined, liveEdge: undefined})
+        this.setState({currentTime: 0, paused: false, completed: false}, () => {
+            this.progress({
+                currentTime: this.state.currentTime,
+                duration: this.state.duration,
+                isInLiveEdge: undefined,
+                liveEdge: undefined
+            })
             this.props.onEvent && this.props.onEvent({'type': PlayerEventTypes.REPLAY})
         })
     }
@@ -444,69 +530,96 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
             isInLiveEdge,
             muted,
             completed,
-            liveEdge
+            liveEdge,
+            playerOverlayClicked
         } = this.state
 
         const {
             style
         } = this.props
         const AnimView = showControls ? FadeInAnim : FadeOutAnim
+        console.log({playerOverlayClicked})
         // @ts-ignore
         return (
             <View>
-                {loading && <View style={styles.loader}><View style={{position:'absolute', left: '45%', top: '43%', zIndex: 4000}}><ActivityIndicator size="large" color="#fff" /></View></View>}
+                {loading &&
+                <View style={styles.loader}><View
+                    style={{position: 'absolute', left: '45%', top: '43%', zIndex: 101}}><ActivityIndicator
+                    size="large" color="#fff"/></View></View>}
+
+                <Animated.View
+                    style={playerOverlayClicked ? styles.overlayActionButtonOpen : styles.overlayActionButtonClose}>
+                    <TouchableOpacity style={styles.overlayContent} onPress={() => {
+                        this.setState({playerOverlayClicked: !playerOverlayClicked})
+                    }}>
+                        <Text>X</Text>
+                    </TouchableOpacity>
+
+                </Animated.View>
+
+                <Animated.View style={playerOverlayClicked ? styles.overlayActionOpen : styles.overlayActionClose}>
+                    <View style={styles.overlayContent}>
+                        {this.props.children}
+                    </View>
+                </Animated.View>
+
+
                 <AnimView style={styles.topMenu}
                           onEnd={this.onAnimEnd}
                           onOverlayClick={() => this.setState({controlsOverlayClicked: !this.state.controlsOverlayClicked})}>
                     <>
-                    <SafeAreaView style={styles.topSubMenu}>
-                        <ToggleIcon
-                            onPress={() => this.toggleFS()}
-                            iconOff="fullscreen"
-                            iconOn="fullscreen-exit"
-                            isOn={fullScreen}
-                            theme={theme.fullscreen}
-                            size={35}
-                        />
-                        <QualityControl
-                            theme={theme.qualityControl}
-                            toggleQuality={() => this.toggleQualityOverlay()}
-                            paddingRight={10}
-                            selectedOption={selectedQualityIndex}
+                        <SafeAreaView style={styles.topSubMenu}>
+                            <SafeAreaView style={styles.topSubMenu}>
+                                <ToggleIcon
+                                    onPress={() => this.toggleFS()}
+                                    iconOff="fullscreen"
+                                    iconOn="fullscreen-exit"
+                                    isOn={fullScreen}
+                                    theme={theme.fullscreen}
+                                    size={35}
+                                />
+                                <QualityControl
+                                    theme={theme.qualityControl}
+                                    toggleQuality={() => this.toggleQualityOverlay()}
+                                    paddingRight={10}
+                                    selectedOption={selectedQualityIndex}
 
+                                />
+                            </SafeAreaView>
+                        </SafeAreaView>
+                        {qualityControlMenu &&
+                        <QualityOverlayButtons onPress={(value: number | null) => this.toggleQuality(value)}
+                                               qualityContent={qualityContent}
+                                               selectedQualityIndex={selectedQualityIndex}/>
+                        }
+                        <ScreenButtons togglePlay={() => this.togglePlay()}
+                                       forcePlay={() => this.forcePlay()}
+                                       loading={loading}
+                                       forward={() => this.forward()}
+                                       rewind={() => this.rewind()}
+                                       theme={theme}
+                                       paused={paused}
+                                       completed={completed}
+                                       replay={() => this.replay()}
+                                       onOverlayClick={() => this.overlayClick()}
+                                       showForward={(liveEdge && liveEdge > 0) ? (liveEdge - currentTime) > 10 : (duration - currentTime) > 10}
+                                       showBackward={currentTime > 10}
                         />
-                    </SafeAreaView>
-                    {qualityControlMenu &&
-                    <QualityOverlayButtons onPress={(value: number | null) => this.toggleQuality(value)}
-                                           qualityContent={qualityContent} selectedQualityIndex={selectedQualityIndex}/>
-                    }
-                    <ScreenButtons togglePlay={() => this.togglePlay()}
-                                   forcePlay={() => this.forcePlay()}
-                                   loading={loading}
-                                   forward={() => this.forward()}
-                                   rewind={() => this.rewind()}
-                                   theme={theme}
-                                   paused={paused}
-                                   completed={completed}
-                                   replay={() => this.replay()}
-                                   onOverlayClick={() => this.overlayClick()}
-                                   showForward={(liveEdge && liveEdge > 0) ? (liveEdge - currentTime) > 10   : (duration - currentTime) > 10}
-                                   showBackward={currentTime > 10}
-                    />
 
-                    {<View style={[styles.bottomBar, (Platform.OS === 'ios' && this.state.fullScreen) ? {bottom : 15} : {bottom: 0}]}>
-                        <ControlBar
-                            onSeek={(pos: number) => this.seek(pos)}
-                            onSeekRelease={(pos: number) => this.onSeekRelease(pos)}
-                            progress={progress}
-                            currentTime={currentTime}
-                            theme={theme}
-                            duration={duration}
-                            isInLiveEdge={isInLiveEdge}
-                            seekToLive={() => this.seekToLive()}
-                            liveEdge={liveEdge}
-                        />
-                    </View>}
+                        {<View
+                            style={[styles.bottomBar, (Platform.OS === 'ios' && this.state.fullScreen) ? {bottom: 15} : {bottom: 0}]}>
+                            <ControlBar
+                                onSeek={(pos: number) => this.seek(pos)}
+                                onSeekRelease={(pos: number) => this.onSeekRelease(pos)}
+                                progress={progress}
+                                currentTime={currentTime}
+                                theme={theme}
+                                duration={duration}
+                                isInLiveEdge={isInLiveEdge}
+                                seekToLive={() => this.seekToLive()}
+                                liveEdge={liveEdge}
+                            />
+                        </View>}
                     </>
                 </AnimView>
                 {showClickOverlay &&
@@ -523,7 +636,7 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
                 >
                     <StatusBar hidden={fullScreen}/>
                     <BrightcovePlayerWithEvents
-                        ref={(player : any) => this.player = player}
+                        ref={(player: any) => this.player = player}
                         {...this.props}
                         style={this.props.style}
                         playerId={this.props.playerId ? this.props.playerId : `com.brightcove/react-native/${Platform.OS}`}
@@ -531,12 +644,12 @@ class BCPlayer extends Component<BCPlayerProps, BCPlayerState> {
                         onBeforeExitFullscreen={this.toggleFS.bind(this)}
                         disableDefaultControl={true}
                         onChangeDuration={(duration) => this.setDuration(duration.duration)}
-                        onProgress={(e : ProgressTime) => this.progress(e)}
+                        onProgress={(e: ProgressTime) => this.progress(e)}
                         volume={muted ? 0 : 10}
                         bitRate={bitRate}
                         onBufferingStarted={() => this.setState({loading: true})}
                         onBufferingCompleted={() => this.setState({loading: false})}
-                        onEnd={() => this.setState({completed : true})}
+                        onEnd={() => this.setState({completed: true})}
                         autoPlay={true}
                     />
                 </Animated.View>
@@ -556,6 +669,4 @@ BCPlayer.defaultProps = {
     lockPortraitOnFsExit: false,
     disableControls: false
 }
-
-
 module.exports = BCPlayer

@@ -5,13 +5,13 @@ const PropTypes = require("prop-types");
 const react_native_1 = require("react-native");
 const styles = react_native_1.StyleSheet.create({
     ovlySafeContainer: {
-        zIndex: 3000,
+        zIndex: 110,
         position: 'absolute',
         width: '100%',
         height: '85%',
     },
     ovlyContainer: {
-        zIndex: 3000,
+        zIndex: 110,
         width: '100%',
         height: '85%',
     },
@@ -25,7 +25,7 @@ const styles = react_native_1.StyleSheet.create({
         width: '100%'
     },
     btnContainer: {
-        zIndex: 3000,
+        zIndex: 110,
         position: 'absolute',
         top: 10,
         right: 78,
@@ -37,7 +37,7 @@ const styles = react_native_1.StyleSheet.create({
         borderRadius: 5,
     },
     arrowIcon: {
-        zIndex: 1000,
+        zIndex: 110,
         width: 8,
         height: 8,
         right: 76,

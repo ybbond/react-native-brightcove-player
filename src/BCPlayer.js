@@ -34,7 +34,9 @@ const styles = react_native_1.StyleSheet.create({
         position: 'absolute',
         width: '100%',
         height: '100%',
-        backgroundColor: '#00000080'
+        backgroundColor: '#00000080',
+        right: 0,
+        opacity: 1
     },
     topSubMenu: {
         display: 'flex',
@@ -60,11 +62,75 @@ const styles = react_native_1.StyleSheet.create({
         height: 40,
     },
     controlsVisibility: {
-        zIndex: 10000,
+        zIndex: 110,
         position: 'absolute',
         width: '100%',
         height: '100%'
-    }
+    },
+    overlayCloseButton: {
+        width: 20,
+        height: 20,
+        top: 20,
+        backgroundColor: 'red'
+    },
+    overlayContent: {
+        width: '100%',
+        height: '100%',
+    },
+    overlayActionOpen: {
+        zIndex: 102,
+        position: 'absolute',
+        width: '40%',
+        height: '100%',
+        right: 0,
+        transform: [
+            { translateX: 0 },
+            { perspective: 1000 },
+        ],
+        backgroundColor: '#000',
+        opacity: 0.5
+    },
+    overlayActionClose: {
+        zIndex: 102,
+        position: 'absolute',
+        width: '40%',
+        height: '100%',
+        backgroundColor: '#000',
+        right: 0,
+        transform: [
+            { translateX: 240 },
+            { perspective: 1000 },
+        ],
+        opacity: 0.5
+    },
+    overlayActionButtonOpen: {
+        zIndex: 101,
+        position: 'absolute',
+        width: '40%',
+        height: 40,
+        backgroundColor: '#fff',
+        right: 0,
+        top: '10%',
+        transform: [
+            { translateX: -25 },
+            { perspective: 1000 },
+        ],
+        opacity: 0.9
+    },
+    overlayActionButtonClose: {
+        zIndex: 101,
+        position: 'absolute',
+        width: '40%',
+        height: 40,
+        backgroundColor: '#fff',
+        right: 0,
+        top: '10%',
+        transform: [
+            { translateX: 215 },
+            { perspective: 1000 },
+        ],
+        opacity: 0.9
+    },
 });
 class BCPlayer extends react_1.Component {
     constructor(props) {
@@ -93,6 +159,7 @@ class BCPlayer extends react_1.Component {
             liveEdge: 0,
             selectedQualityIndex: 0,
             completed: false,
+            playerOverlayClicked: false
         };
         this.animInline = new react_native_1.Animated.Value(Win.width * 0.5625);
         this.animFullscreen = new react_native_1.Animated.Value(Win.width * 0.5625);
@@ -195,7 +262,12 @@ class BCPlayer extends react_1.Component {
     seekToLive() {
         if (this.state.liveEdge) {
             this.setState({ currentTime: this.state.liveEdge }, () => {
-                this.progress({ currentTime: this.state.currentTime, liveEdge: this.state.liveEdge, duration: 0, isInLiveEdge: undefined });
+                this.progress({
+                    currentTime: this.state.currentTime,
+                    liveEdge: this.state.liveEdge,
+                    duration: 0,
+                    isInLiveEdge: undefined
+                });
                 this.player && this.player.seekToLive();
                 this.forcePlay();
                 this.props.onEvent && this.props.onEvent({ 'type': PlayerEventTypes_1.PlayerEventTypes.SEEK_TO_LIVE });
@@ -267,7 +339,12 @@ class BCPlayer extends react_1.Component {
     }
     onSeekRelease(percent) {
         const seconds = this.state.liveEdge && this.state.liveEdge > 0 ? percent * this.state.liveEdge : percent * this.state.duration;
-        this.setState({ progress: percent, completed: false, seeking: false, currentTime: (this.state.liveEdge && this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 : seconds }, () => {
+        this.setState({
+            progress: percent,
+            completed: false,
+            seeking: false,
+            currentTime: (this.state.liveEdge && this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - .01 : seconds
+        }, () => {
             this.player && this.player.seekTo((this.state.liveEdge && this.state.liveEdge < 1) && (this.state.duration <= seconds) ? this.state.duration - 0.01 : seconds);
             this.props.onEvent && this.props.onEvent({ 'type': PlayerEventTypes_1.PlayerEventTypes.SEEK_TO, time: seconds });
             this.forcePlay();
@@ -293,7 +370,10 @@ class BCPlayer extends react_1.Component {
             bitRate: (value !== null && value >= 0) ? quality[value] : this.state.bitRate,
             selectedQualityIndex: (value !== null && value >= 0) ? value : this.state.selectedQualityIndex
         }, () => {
-            this.props.onEvent && this.props.onEvent({ 'type': PlayerEventTypes_1.PlayerEventTypes.QUALITY_SELECTED, bitRate: qualityContent[value] });
+            this.props.onEvent && this.props.onEvent({
+                'type': PlayerEventTypes_1.PlayerEventTypes.QUALITY_SELECTED,
+                bitRate: qualityContent[value]
+            });
         });
     }
     togglePlay() {
@@ -347,7 +427,12 @@ class BCPlayer extends react_1.Component {
         this.player && this.player.seekTo(0);
         this.player && this.player.playVideo(true);
         this.setState({ currentTime: 0, paused: false, completed: false }, () => {
-            this.progress({ currentTime: this.state.currentTime, duration: this.state.duration, isInLiveEdge: undefined, liveEdge: undefined });
+            this.progress({
+                currentTime: this.state.currentTime,
+                duration: this.state.duration,
+                isInLiveEdge: undefined,
+                liveEdge: undefined
+            });
             this.props.onEvent && this.props.onEvent({ 'type': PlayerEventTypes_1.PlayerEventTypes.REPLAY });
         });
     }
@@ -367,19 +452,29 @@ class BCPlayer extends react_1.Component {
             screenButtons: '#fff',
             qualityControl: '#fff'
         };
-        const { fullScreen, paused, bitRate, progress, duration, currentTime, qualityControlMenu, loading, showControls, showClickOverlay, selectedQualityIndex, isInLiveEdge, muted, completed, liveEdge } = this.state;
+        const { fullScreen, paused, bitRate, progress, duration, currentTime, qualityControlMenu, loading, showControls, showClickOverlay, selectedQualityIndex, isInLiveEdge, muted, completed, liveEdge, playerOverlayClicked } = this.state;
         const { style } = this.props;
         const AnimView = showControls ? fade_anim_1.FadeInAnim : fade_anim_1.FadeOutAnim;
+        console.log({ playerOverlayClicked });
         // @ts-ignore
         return (React.createElement(react_native_1.View, null,
-            loading && React.createElement(react_native_1.View, { style: styles.loader },
-                React.createElement(react_native_1.View, { style: { position: 'absolute', left: '45%', top: '43%', zIndex: 4000 } },
-                    React.createElement(react_native_1.ActivityIndicator, { size: "large", color: "#fff" }))),
+            loading &&
+                React.createElement(react_native_1.View, { style: styles.loader },
+                    React.createElement(react_native_1.View, { style: { position: 'absolute', left: '45%', top: '43%', zIndex: 101 } },
+                        React.createElement(react_native_1.ActivityIndicator, { size: "large", color: "#fff" }))),
+            React.createElement(react_native_1.Animated.View, { style: playerOverlayClicked ? styles.overlayActionButtonOpen : styles.overlayActionButtonClose },
+                React.createElement(react_native_1.TouchableOpacity, { style: styles.overlayContent, onPress: () => {
+                        this.setState({ playerOverlayClicked: !playerOverlayClicked });
+                    } },
+                    React.createElement(react_native_1.Text, null, "X"))),
+            React.createElement(react_native_1.Animated.View, { style: playerOverlayClicked ? styles.overlayActionOpen : styles.overlayActionClose },
+                React.createElement(react_native_1.View, { style: styles.overlayContent }, this.props.children)),
             React.createElement(AnimView, { style: styles.topMenu, onEnd: this.onAnimEnd, onOverlayClick: () => this.setState({ controlsOverlayClicked: !this.state.controlsOverlayClicked }) },
                 React.createElement(React.Fragment, null,
                     React.createElement(react_native_1.SafeAreaView, { style: styles.topSubMenu },
-                        React.createElement(ToggleIcon_1.ToggleIcon, { onPress: () => this.toggleFS(), iconOff: "fullscreen", iconOn: "fullscreen-exit", isOn: fullScreen, theme: theme.fullscreen, size: 35 }),
-                        React.createElement(qualityControl_1.QualityControl, { theme: theme.qualityControl, toggleQuality: () => this.toggleQualityOverlay(), paddingRight: 10, selectedOption: selectedQualityIndex })),
+                        React.createElement(react_native_1.SafeAreaView, { style: styles.topSubMenu },
+                            React.createElement(ToggleIcon_1.ToggleIcon, { onPress: () => this.toggleFS(), iconOff: "fullscreen", iconOn: "fullscreen-exit", isOn: fullScreen, theme: theme.fullscreen, size: 35 }),
+                            React.createElement(qualityControl_1.QualityControl, { theme: theme.qualityControl, toggleQuality: () => this.toggleQualityOverlay(), paddingRight: 10, selectedOption: selectedQualityIndex }))),
                     qualityControlMenu &&
                         React.createElement(qualityOverlayButtons_1.QualityOverlayButtons, { onPress: (value) => this.toggleQuality(value), qualityContent: qualityContent, selectedQualityIndex: selectedQualityIndex }),
                     React.createElement(screenButtons_1.ScreenButtons, { togglePlay: () => this.togglePlay(), forcePlay: () => this.forcePlay(), loading: loading, forward: () => this.forward(), rewind: () => this.rewind(), theme: theme, paused: paused, completed: completed, replay: () => this.replay(), onOverlayClick: () => this.overlayClick(), showForward: (liveEdge && liveEdge > 0) ? (liveEdge - currentTime) > 10 : (duration - currentTime) > 10, showBackward: currentTime > 10 }),

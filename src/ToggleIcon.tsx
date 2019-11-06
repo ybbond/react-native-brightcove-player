@@ -7,8 +7,7 @@ const styles = StyleSheet.create({
     btnContainer: {
         alignItems: 'center',
         backgroundColor,
-        justifyContent: 'center',
-        zIndex: 101
+        justifyContent: 'center'
     }
 })
 interface ToggleIconProps {

@@ -8,8 +8,7 @@ const styles = react_native_1.StyleSheet.create({
     btnContainer: {
         alignItems: 'center',
         backgroundColor,
-        justifyContent: 'center',
-        zIndex: 101
+        justifyContent: 'center'
     }
 });
 const ToggleIcon = (props) => {

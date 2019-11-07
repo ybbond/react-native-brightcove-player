@@ -4,8 +4,8 @@ import {
     View,
     Platform,
     StyleSheet,
-    Slider as RNSlider
 } from 'react-native'
+import {Slider as RNSlider} from 'react-native-slider'
 import Slider from '@react-native-community/slider'
 const ThumbTracker = require('../Resources/controller.png')
 

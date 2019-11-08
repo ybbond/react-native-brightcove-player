@@ -1,14 +1,14 @@
 {
   "name": "react-native-brightcove-player",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "description": "A React Native implementation of Brightcove Player SDK.",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:manse/react-native-brightcove-player.git"
+    "url": "git@github.com:pankaj-pp/react-native-brightcove-player.git"
   },
   "bugs": {
-    "url": "https://github.com/manse/react-native-brightcove-player/issues"
+    "url": "https://github.com/pankaj-pp/react-native-brightcove-player/issues"
   },
   "keywords": [
     "react-native",
@@ -17,14 +17,14 @@
     "brightcove",
     "react-component"
   ],
-  "author": "Ryota Mannari <info@manse.jp> (https://github.com/manse)",
+  "author": "FanCode",
   "license": "MIT",
-  "homepage": "https://github.com/manse/react-native-brightcove-player",
+  "homepage": "https://github.com/pankaj-pp/react-native-brightcove-player",
   "dependencies": {
     "prop-types": "^15.5.10",
     "react-native-orientation": "^3.1.3",
-    "react-native-slider": "https://github.com/vikasd11/react-native-slider.git",
     "react-native-vector-icons": "^6.6.0",
     "@react-native-community/slider": "git://github.com/shwetsolanki/react-native-slider.git#feat/slider-track"
-  }
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }

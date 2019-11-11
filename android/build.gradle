@@ -46,4 +46,8 @@ android {
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.brightcove.player:exoplayer2:6.8.1'
+
+    // IMA SDK
+    implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.10.9'
+    implementation 'com.google.android.gms:play-services-ads-identifier:16.0.0'
 }

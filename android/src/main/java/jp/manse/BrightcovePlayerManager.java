@@ -1,7 +1,7 @@
 package jp.manse;
 
-import android.support.annotation.Nullable;
 
+import android.support.annotation.Nullable;
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableArray;
@@ -169,7 +169,8 @@ public class BrightcovePlayerManager extends SimpleViewManager<BrightcovePlayerV
     }
 
     @Override
-    public @Nullable Map <String,Object> getExportedCustomDirectEventTypeConstants() {
+    public @Nullable
+    Map <String,Object> getExportedCustomDirectEventTypeConstants() {
         Map<String, Object> map = new HashMap<>();
         map.put(EVENT_READY, (Object) MapBuilder.of("registrationName", "onReady"));
         map.put(EVENT_METADATA_LOADED, (Object) MapBuilder.of("registrationName", "onMetadataLoaded"));

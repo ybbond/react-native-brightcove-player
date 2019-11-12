@@ -140,20 +140,13 @@ public class BrightcovePlayerView extends RelativeLayout implements LifecycleEve
 
                 ReactContext reactContext = (ReactContext) BrightcovePlayerView.this.getContext();
                 reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(BrightcovePlayerView.this.getId(), BrightcovePlayerManager.EVENT_METADATA_LOADED, event);
-
                 // Only enable DAI plugin when the Custom field of the stream is the same as the Configuration DAI Asset Key
                 Map<String, String> customFields = (HashMap<String, String>) playerVideoView.getCurrentVideo().getProperties().get(VideoFields.CUSTOM_FIELDS);
-                Log.v("DIAMAN", "custom"+ customFields);
                 if (!customFields.isEmpty()) {
-                    Log.v("DIAMAN", "feild"+ jp.manse.util.Configuration.CUSTOM_FIELD_DAI);
-                    Log.v("DIAMAN", "key"+ jp.manse.util.Configuration.DAI_ASSET_KEY);
-                    Log.v("DIAMAN", "function" + customFields.get(jp.manse.util.Configuration.CUSTOM_FIELD_DAI));
 
                     if (customFields.get(jp.manse.util.Configuration.CUSTOM_FIELD_DAI) != null &&
                         customFields.get(jp.manse.util.Configuration.CUSTOM_FIELD_DAI).equals(jp.manse.util.Configuration.DAI_ASSET_KEY)) {
                         // Enable DAI plugin
-
-                        Log.v("DIAMAN", ""+ jp.manse.util.Configuration.CUSTOM_FIELD_DAI);
                         DAIManager daiManager = new DAIManager(BrightcovePlayerView.this.getContext(), BrightcovePlayerView.this, playerVideoView);
                         daiManager.requestAndPlayAds();
                     }

@@ -2,9 +2,10 @@
 # yarn lockfile v1
 
 
-"@react-native-community/slider@git://github.com/shwetsolanki/react-native-slider.git#feat/slider-track":
-  version "2.0.2"
-  resolved "git://github.com/shwetsolanki/react-native-slider.git#35405cd4674d99cf294d587fdc185abda98e79fd"
+"@react-native-community/slider@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-2.0.5.tgz#2efd009ff083e4321fc9f0ebf380a3d3f5d8121f"
+  integrity sha512-cvi3ZexD2nAWesoTVPHH1AlaR8ccOIhVfoDV79JeCSKIq1NSVXDgynclYlcNNTbI5nls0FstZjGj1jJVcSsB1Q==
 
 ansi-regex@^4.1.0:
   version "4.1.0"
